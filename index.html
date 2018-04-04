@@ -25,8 +25,22 @@
 	</div>
 	
 	<div class="chat-input">
-		<input class="chat-input-box" type="text">
-		<input class="chat-input-button" type="submit" value="Send">	
+		<input class="chat-input-box" type="text"></input>
+		<input class="chat-input-button" type="submit" value="Send" onclick="enterInput()">	
 	</div>
 </body>
+
+<script>
+	var input = document.getElementsByClassName("chat-input-box")[0];
+	
+	input.onkeypress = function(e){
+		if(e.keyCode == '13'){
+			enterInput();
+		}
+	}
+	function enterInput(){
+		//TODO send the text to the server for processing
+		input.value = ""; //clear the input
+	}
+</script>
 </html>
