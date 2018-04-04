@@ -1,0 +1,78 @@
+.chat-window {
+    margin: 10px 10px 40px 10px;
+}
+.chat-entry {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+.chat-time {
+    margin-right: 7px;
+    color: gray;
+}
+.chat-time p::before {
+    content: "<";
+}
+.chat-time p::after {
+    content: ">";
+}
+.chat-name {
+    margin-right: 7px;
+    color: crimson;
+}
+.chat-name p::after {
+    content: ":";
+}
+.chat-message {
+    margin-right: 7px;
+}
+
+.chat-input {
+    display: flex;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 10px;
+    flex-direction: row;
+    background-color: white;
+}
+.chat-input-box {
+    flex-grow: 1000;
+    border: 1px solid Gray;
+}
+.chat-input-button {
+    flex-grow: 1;
+    margin-left: 7px;
+    border: 1px solid Gray;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background-color: #000000;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #595959;
+    box-shadow: inset 0 0 3.2px #000000;
+    border-radius: 1.25px;
+    border: 0.5px solid #000000;
+}
+::-webkit-scrollbar-track-piece {
+    background-color: #999999;
+    box-shadow: inset 0 0 0px #000000;
+    border: 0px solid #000000;
+    border-radius: 0px;
+}
+::-webkit-scrollbar-corner {
+    background-color: #595959;
+}
+
+p{
+    padding:0;
+    margin:0;
+}
+body{
+    padding:0;
+    margin:0;
+}
