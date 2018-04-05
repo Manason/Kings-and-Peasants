@@ -4,6 +4,16 @@ const Role = require('./Roles.js');
 class Game{
 	constructor(playerList, minPlayers){
 		this.playerList = playerList;
+		this.numLords = 0;
+		this.maxLords;
+		this.numDukes = 0;
+		this.maxDukes;
+		this.numEarls = 0;
+		this.maxEarls;
+		this.numKnights = 0;
+		this.maxKnights;
+		this.numPeasants = 0;
+		this.dukes = [];
 	}
     addPlayer(name, id){
         this.playerList.push(new Player(name, id, null));
@@ -34,65 +44,24 @@ class Game{
 		highestPlayer.role = new Role.King();
 		return highestPlayer;
 	}
-    assignRoles(){
-        var playerPool = playerList;
-        var player;
-
-        var numKnights = playerList.length/3;
-        var numEarls = numKnights/3;
-        var numDukes = 2*numEarls+2;
-        
-        shuffle(playerPool);
-       
-        //King is chosen by vote (for now it's just the last player)
-        player = playerPool.pop();
-        player.role = new King();
-
-        //King chooses Dukes (for now its just the last players)
-        var dukes = [];
-        for(x = 0; x < numDukes; x++){
-           
-            player = playerPool.pop();
-            player.role = new Duke();
-            dukes.push(player);
-         
-        }
-        shuffle(dukes);
-        
-        //assign 2 random Dukes as Lords
-        for(x = 0; x < 2; x++){
-            player = dukes.pop();
-            player.role = new Lord();
-            
-        }
-
-        //assign knights
-        for(x = 0; x < numKnights; x++){
-            
-            player = playerPool.pop();
-            player.role = new Knight();
-        }
-
-        //assign earls
-        for(x = 0; x < numEarls; x++){
-           
-            player = playerPool.pop();
-            player.role = new Earl();
-            
-        }
-
-       
-        
-        //assign remaining players as peasants
-        for(x = 0; x < playerPool.length; x++){
-            player = playerPool.pop();
-            player.role = new Peasant();
-        }
-
-    }
-		// shuffle unbiasedly shuffles the passed array
-	static shuffle(array) {
-		var currenstIndex = array.length, temporaryValue, randomIndex;
+	setDuke(player){
+		player.role = new Role.Duke();
+		this.numDukes++;
+		this.dukes.push(player);
+		return player;
+	}
+	calculateRoles(){
+		var numPlayers = this.playerList.length;
+		
+			this.maxKnights = numPlayers/3;
+			this.maxEarls = this.maxKnights/3;
+			this.maxDukes = 2*this.maxEarls;
+			this.maxLords = 2;
+		
+	}
+	// shuffle unbiasedly shuffles the passed array
+	shuffle(array) {
+		var currentIndex = array.length, temporaryValue, randomIndex;
 
 		// While there remain elements to shuffle...
 		while (0 !== currentIndex) {
@@ -109,6 +78,53 @@ class Game{
 
 		return array;
 	}
+    assignRoles(){
+		console.log("assigning roles");
+		var playerPool = [];
+        var player;
+		this.calculateRoles();
+       
+        for(var i = 0; i < this.playerList.length; i++){
+			if(this.playerList[i].role == null)
+				playerPool.push(this.playerList[i]);
+		}
+		this.shuffle(playerPool);
+		
+		//randomly assign dukes if king hasn't done it already
+		for(var x = 0; x < this.maxDukes - this.dukes.length; x++){
+			player = playerPool.pop();
+			this.setDuke(player);
+		}
+        //assign dukes randomly to lord
+		this.shuffle(this.dukes);
+        for(var x = 0; x < this.maxLords; x++){
+            player = this.dukes.pop();
+            player.role = new Role.Lord();  
+        }
+		
+        //assign knights
+        for(var x = 0; x < this.maxKnights; x++){
+            player = playerPool.pop();
+            player.role = new Role.Knight();
+			this.numKnights++;
+        }
+
+        //assign earls
+        for(x = 0; x < this.maxEarls; x++){
+            player = playerPool.pop();
+            player.role = new Role.Earl();
+			this.numEarls++;
+        }
+
+        //assign remaining players as peasants
+        for(x = 0; x < playerPool.length; x++){
+            player = playerPool.pop();
+            player.role = new Role.Peasant();
+			this.numPeasants++;
+        }
+
+    }
+		
 };
 
 module.exports = Game;
