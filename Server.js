@@ -52,7 +52,9 @@ function setState(){
 	}
 	else if(state == 2){
 		name = "Day 1";
+		timer = 600;
 		game.assignRoles();
+		
 	}
 	else if(state == 8){
 		name = "Fin";
