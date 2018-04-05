@@ -6,7 +6,6 @@ var io = require('socket.io')(http);
 var timerInterval = null;
 var timer = 30;
 var state = -1;
-var transition = false;
 const Game = require('./Game.js');
 
 //called on server startup
