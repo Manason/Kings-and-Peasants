@@ -6,7 +6,7 @@
   <title>Kings and Peasants</title>
   <meta name="description" content="Rise to the top, or die trying.">
   <meta name="author" content="Manason">
-  <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script> 
+  <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <link rel="stylesheet" href="./style.css">
 </head>
@@ -25,7 +25,7 @@
 			</div>-->
 		</div>
 	</div>
-	
+
 	<div class="chat-input">
 			<input class="chat-input-box" type="text"></input>
 			<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
@@ -40,32 +40,30 @@
 			enterInput();
 		}
 	}
-	
+
 	//send message to server for processing
 	function enterInput(){
-		socket.emit('messageFromClient', {content: input.value});	
+		socket.emit('messageFromClient', {content: input.value});
 		input.value = ""; //clear the input
 	}
-	
+
 	//receive messages from server
-		
-			socket.on('message', function(msg){
-				console.log(msg.message);
-				var timestamp = new Date().toTimeString().substring(0, 8);
-				$(".chat-window").append(
-				'<div class="chat-entry">' +
-					'<div class="chat-time">'+
-						'<p>'+timestamp+'</p>'+
-					'</div>'+
-					'<div class="chat-name">'+
-						'<p>'+msg.player+'</p>'+
-					'</div>'+
-					'<div class="chat-message">'+
-						'<p>'+msg.message+'</p>'+
-					'</div>'+
-				'</div>');
-					
-			});
+	socket.on('message', function(msg){
+		console.log(msg.message);
+		var timestamp = new Date().toTimeString().substring(0, 8);
+		$(".chat-window").append(
+		'<div class="chat-entry">' +
+			'<div class="chat-time">'+
+				'<p>'+timestamp+'</p>'+
+			'</div>'+
+			'<div class="chat-name">'+
+				'<p>'+msg.player+'</p>'+
+			'</div>'+
+			'<div class="chat-message">'+
+				'<p>'+msg.message+'</p>'+
+			'</div>'+
+		'</div>');
+	});
 
 </script>
 </html>
