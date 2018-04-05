@@ -38,6 +38,10 @@ function setState(){
 		name = "Pre-Game";
 		timer = 30;
 	}
+	else if(state == 2){
+		name = "Day 1";
+		game.assignRoles();
+	}
 	else
 		name = "Day " + state-1;
 	var obj = {"state":name};
@@ -105,7 +109,7 @@ io.on('connection', function(socket){
 				case "/v":
 				case "/vote":
 					if(state != 0){
-						error("You can only vote during the pre-game");
+						error("The vote is closed");
 						break;
 					}
 					//G can do this, only during pre-game <username>
@@ -129,8 +133,31 @@ io.on('connection', function(socket){
 				case "/d":
 				case "/duke":
 					//R can do this, only during pre-game <username>
-					var obj = {"player":"Server","message":input.split(" ")[1]+" is now a duke."};
-					io.sockets.emit('message', obj); //to sending client and everyone
+					if(player.role == null || player.role.title != "King"){
+						error("Only the king can appoint Dukes!");
+						break;
+					}
+					if(state != 1){
+						error("You can only select dukes during the pre-game");
+						break;
+					}
+					if(game.numDukes >= game.maxDukes + game.maxLords){
+						error("Maximum number of Dukes already appointed");
+						break;
+					}
+					var dukeCandidate = game.getPlayerByName(input.split(" ")[1]);
+					
+					if(dukeCandidate == false){
+						error("Cannot find player");
+						break;
+					}
+					if(dukeCandidate.role != null){
+						error("Player already has a role");
+					}
+					
+					game.setDuke(dukeCandidate);
+					sendAll(dukeCandidate.name + " has been appointed a Duke!");
+					
 					//Could remove the duke'd person's socket and send one specific to say "You are now a duke."
 					break;
 				case "/sc":

@@ -22,7 +22,7 @@ class Role{
 
     }
 
-}
+};
 
 class King extends Role{
 	constructor(){
@@ -36,62 +36,59 @@ class King extends Role{
     assassinate(player){
         
     }
-}
+};
 
-module.exports = {Role, King};
-
-function Lord(){
-    Role.call(this, "Lord", 2, 100, 5);
-
-    Lord.prototype.assassinate = function(player){
-        alert("Lords cannot assassinate!!!");
+class Lord extends Role{
+	constructor(){
+		super("Lord", 2, 100, 5);
+	}
+    assassinate(player){
+        
     }
+	setSuccessor(player){
+		
+	}
+	lookupPrestige(player){
+		
+	}
+};
 
-    Lord.prototype.setSuccessor = function(player){ //sets Lords successor from pool of Dukes
-
+class Duke extends Role{
+	constructor(){
+		super("Duke", 3, 60, 6);
+	}
+    assassinate(player){
+        
     }
-    
-    Lord.prototype.seePrestige = function(player){ //looks up someones prestige amount, except for King
+	setSuccessor(player){
+		
+	}
+	block(player){
+		
+	}
+};
 
-    }
-}
+class Earl extends Role{
+	constructor(){
+		super("Earl", 4, 40, 6);
+	} 
+	
+};
 
-function Duke(){
-    Role.call(this, "Duke", 3, 60, 6);
+class Knight extends Role{
+	constructor(){
+		super("Knight", 5, 20, 6);
+	}
+    spy(player){
+		
+	}
+};
 
-    Duke.prototype.assassinate = function(player){
-        alert("Dukes cannot assassinate!!!");
-    }
-
-    Duke.prototype.setSuccessor = function(player){ //sets duke's successor from pool of earls and knights
-
-    }
-
-    Duke.prototype.block = function(player){ //chooses a player to block. expires at end of the day. Can't block ranks above. fellow Duke takes effect following day. Players are notified they are blocked.
-
-    }
-
-}
-
-function Earl(){
-    Role.call(this, "Earl", 4, 40, 6);
-
-    Earl.prototype.seeTransactions = function(){ //sees transactions with player names removed in real time updates
-
-    }
-
-}
-
-function Knight(){
-    Role.call(this, "Knight", 5, 20, 6);
-
-    Knight.prototype.spy = function(player){ //sees all activity of targetted player, except for chat. Expires at end of the day
-
-    }
-
-}
-
-function Peasant(){
-    Role.call(this, "Peasant", 6, 10, 6);
-    this.discount = 0.20
-}
+class Peasant extends Role{
+	constructor(){
+		super("King", 6, 10, 6);
+		this.discount = 0.20;
+	}
+	
+};
+module.exports = {Role, King, Lord, Duke, Earl, Knight, Peasant};
