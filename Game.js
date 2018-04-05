@@ -1,4 +1,5 @@
 const Player = require('./Player.js');
+const Role = require('./Roles.js');
 
 class Game{
 	constructor(playerList, minPlayers){
@@ -13,6 +14,25 @@ class Game{
 				return this.playerList[i];
 			}
 		}
+	}
+	getPlayerByName(name){
+		for(var i = 0; i < this.playerList.length; i++){
+			if(this.playerList[i].name == name)
+				return this.playerList[i];
+		}
+		return false;
+	}
+	setKingByVotes(){
+		var highestVotes = 0;
+		var highestPlayer = this.playerList[0];
+		for(var i = 1; i < this.playerList.length; i++){
+			if(this.playerList[i].votes > highestVotes){
+				highestPlayer = this.playerList[i];
+				highestVotes = highestPlayer.votes;
+			}
+		}
+		highestPlayer.role = new Role.King();
+		return highestPlayer;
 	}
     assignRoles(){
         var playerPool = playerList;
