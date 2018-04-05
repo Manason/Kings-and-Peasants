@@ -12,6 +12,11 @@ http.listen(8080, function(){
 	console.log("server running on port 8080");
 });
 
+function sendAll(message){
+	var obj = {"player":"Server","message":message};
+	io.sockets.emit('message', obj);
+}
+
 //TODO fix the timer
 function timerFunc() {
 	var obj = {"cur_time":timer};
@@ -19,16 +24,22 @@ function timerFunc() {
 	timer--;
 	if(timer <= 0){
 		state++;
-		setState();
 		timer = 600;
+		setState();
 	}
 }
 function setState(){
 	var name = "";
 	if(state == 0)
+		name = "Voting";
+	else if (state == 1){
+		var king = game.setKingByVotes();
+		sendAll(king.name + " has been elected King with " + king.votes + " votes!");
 		name = "Pre-Game";
+		timer = 30;
+	}
 	else
-		name = "Day " + state;
+		name = "Day " + state-1;
 	var obj = {"state":name};
 	io.sockets.emit('gamestate', obj);
 }
@@ -56,10 +67,7 @@ io.on('connection', function(socket){
 		var obj = {"player":"Server","message":message};
 		socket.emit('message', obj);
 	}
-	function sendAll(message){
-		var obj = {"player":"Server","message":message};
-		io.sockets.emit('message', obj);
-	}
+	
 	
 	socket.on('messageFromClient', function(data){
 		var input = data.content;

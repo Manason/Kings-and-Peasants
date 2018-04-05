@@ -1,40 +1,44 @@
 // Role is the base Object from which all other roles inherit from. Used to keep track of abilities and stats.
-function Role(title, rank, wage, defense){
-    this.title = title;
-    this.rank = rank
-    this.wage = wage;
-    this.defense = defense; 
-    Role.prototype.sendAnonMessage = function(player, message){
+class Role{
+	constructor(title, rank, wage, defense){
+		this.title = title;
+		this.rank = rank
+		this.wage = wage;
+		this.defense = defense;
+	}
+    sendAnonMessage(player, message){
 
     }
-    Role.prototype.assassinate     = function(player){
+    assassinate(player){
 
     }
-    Role.prototype.execute         = function(player, reason){
+    execute(player, reason){
 
     }
-    Role.prototype.protect         = function(player){
+    protect(player){
 
     }
-    Role.prototype.sendPrestige = function(player, amount){
+    sendPrestige(player, amount){
 
     }
 
 }
 
-function King(){
-    Role.call(this, "King", 1, 250, 3);
-
-    King.prototype.setTax = function(rank){ //targets which group to tax for the day
+class King extends Role{
+	constructor(){
+		super("King", 1, 250, 3);
+	}
+    setTax(rank){ //targets which group to tax for the day
+    }
+    getTaxList(){ //gets a list of each role's prestige totals
 
     }
-    King.prototype.getTaxList = function(){ //gets a list of each role's prestige totals
-
-    }
-    King.prototype.assassinate = function(player){
-        alert("Kings cannot assassinate!!!");
+    assassinate(player){
+        
     }
 }
+
+module.exports = {Role, King};
 
 function Lord(){
     Role.call(this, "Lord", 2, 100, 5);
