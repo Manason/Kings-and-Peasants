@@ -3,11 +3,20 @@ var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var timer = 600;
 const Game = require('./Game.js');
+
 //called on server startup
 http.listen(8080, function(){
 	console.log("server running on port 8080");
+	setInterval(timerFunc,1000);
 });
+
+function timerFunc() {
+	var obj = {"cur_time":timer};
+	io.sockets.emit('timer', obj);
+	timer--;
+}
 
 app.use(express.static('public')); //serves index.html
 
@@ -22,7 +31,7 @@ io.on('connection', function(socket){
 	game.addPlayer("User"+currentID, currentID);
 	var player = game.getPlayerById(userID);
 	currentID++;
-	
+
 	socket.on('messageFromClient', function(data){
 		var input = data.content;
 		input = input.trim();
@@ -46,7 +55,7 @@ io.on('connection', function(socket){
 					//HOST can do this, only during lobby
 					var obj = {"player":"Server","message":"The game is starting!"};
 					io.sockets.emit('message', obj); //to everyone
-					
+
 					break;
 				case "/v":
 				case "/vote":

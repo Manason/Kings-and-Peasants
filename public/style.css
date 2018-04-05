@@ -1,3 +1,19 @@
+.state {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+	margin: 10px 15px;
+	font: 30px "Trebuchet MS";
+	border: 1px solid black;
+	padding: 15px;
+}
+.gamestate {
+	margin-bottom: 5px;
+}
+.timer {
+	float: right;
+}
+
 .chat-window {
     margin: 10px 10px 40px 10px;
 }
