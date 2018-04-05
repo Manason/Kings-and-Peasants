@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var timer = 600;
+const Game = require('./Game.js');
 
 //called on server startup
 http.listen(8080, function(){
@@ -19,15 +20,24 @@ function timerFunc() {
 
 app.use(express.static('public')); //serves index.html
 
+var currentID = 1;
+let game = new Game([], 1);
+
+
 //called when player connects, establishes socket between client and server
 io.on('connection', function(socket){
 	console.log('user connected');
+	var userID = currentID;
+	game.addPlayer("User"+currentID, currentID);
+	var player = game.getPlayerById(userID);
+	currentID++;
+
 	socket.on('messageFromClient', function(data){
 		var input = data.content;
 		input = input.trim();
 		//public chat
 		if(!input.startsWith("/")){
-			var obj = {"player":"John","message":input};
+			var obj = {"player":player.name,"message":input};
 			io.sockets.emit('message', obj); //this is sent to all clients
 		}
 		else{
@@ -36,7 +46,8 @@ io.on('connection', function(socket){
 				case "/n":
 				case "/name":
 					//G can do this, only during lobby <newusername>
-					var obj = {"player":"Server","message":"Username set to: "+input.split(" ")[1]};
+					player.name = input.split(" ")[1];
+					var obj = {"player":"Server","message":"Username set to: "+player.name};
 					socket.emit('message', obj); //to sending client
 					break;
 				case "/start":
@@ -44,6 +55,7 @@ io.on('connection', function(socket){
 					//HOST can do this, only during lobby
 					var obj = {"player":"Server","message":"The game is starting!"};
 					io.sockets.emit('message', obj); //to everyone
+
 					break;
 				case "/v":
 				case "/vote":
