@@ -3,11 +3,19 @@ var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var timer = 600;
 
 //called on server startup
 http.listen(8080, function(){
 	console.log("server running on port 8080");
+	setInterval(timerFunc,1000);
 });
+
+function timerFunc() {
+	var obj = {"cur_time":timer};
+	io.sockets.emit('timer', obj);
+	timer--;
+}
 
 app.use(express.static('public')); //serves index.html
 

@@ -12,18 +12,26 @@
 </head>
 
 <body>
+	<div class="state">
+		<div class="gamestate">
+			<p>PreGame</p>
+		</div>
+		<div class="timer">
+			<p>3:09:52</p>
+		</div>
+	</div>
 	<div class="chat-window">
-		<div class="chat-entry">
-			<!--<div class="chat-time">
-				<p><10:50></p>
+		<!-- <div class="chat-entry">
+			<div class="chat-time">
+				<p>10:50</p>
 			</div>
 			<div class="chat-name">
 				<p>Manason</p>
 			</div>
 			<div class="chat-message">
 				<p>This is an example message</p>
-			</div>-->
-		</div>
+			</div>
+		</div> -->
 	</div>
 
 	<div class="chat-input">
@@ -34,6 +42,8 @@
 
 <script>
 	var input = document.getElementsByClassName("chat-input-box")[0];
+	var gamestate = document.getElementsByClassName("gamestate")[0];
+	var timer = document.getElementsByClassName("timer")[0];
 	var socket = io.connect('http://localhost:8080');
 	input.onkeypress = function(e){
 		if(e.keyCode == '13'){
@@ -64,6 +74,15 @@
 			'</div>'+
 		'</div>');
 	});
-
+	socket.on('gamestate', function(gmst){
+		console.log(gmst.state);
+		gamestate.innerHTML = gmst.state;
+	});
+	socket.on('timer', function(time){
+		console.log(time.cur_time);
+		var date = new Date(null);
+    	date.setSeconds(time.cur_time);
+		timer.innerHTML = date.toISOString().substr(11, 8);
+	});
 </script>
 </html>
