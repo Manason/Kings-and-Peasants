@@ -1,16 +1,24 @@
-function Game(playerList, minPlayers){
-    this.numPlayers = playerList.length;
-    this.playerList = playerList;
+const Player = require('./Player.js');
 
-    Game.prototype.addPlayer = function(name){
-        playerList.push(new Player(name, null));
+class Game{
+	constructor(playerList, minPlayers){
+		this.playerList = playerList;
+	}
+    addPlayer(name, id){
+        this.playerList.push(new Player(name, id, null));
     }
-
-    Game.prototype.assignRoles = function(){
+	getPlayerById(id){
+		for(var i = 0; i < this.playerList.length; i++){
+			if(this.playerList[i].id == id){
+				return this.playerList[i];
+			}
+		}
+	}
+    assignRoles(){
         var playerPool = playerList;
         var player;
 
-        var numKnights = numPlayers/3;
+        var numKnights = playerList.length/3;
         var numEarls = numKnights/3;
         var numDukes = 2*numEarls+2;
         
@@ -62,24 +70,25 @@ function Game(playerList, minPlayers){
         }
 
     }
-}
+		// shuffle unbiasedly shuffles the passed array
+	static shuffle(array) {
+		var currenstIndex = array.length, temporaryValue, randomIndex;
 
-// shuffle unbiasedly shuffles the passed array
-function shuffle(array) {
-  var currenstIndex = array.length, temporaryValue, randomIndex;
+		// While there remain elements to shuffle...
+		while (0 !== currentIndex) {
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
 
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+			// And swap it with the current element.
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
 
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
+		return array;
+	}
+};
 
-  return array;
-}
+module.exports = Game;
