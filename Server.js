@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var timerInterval = null;
 var timer = 30;
 var state = -1;
 const Game = require('./Game.js');
@@ -17,29 +18,48 @@ function sendAll(message){
 	io.sockets.emit('message', obj);
 }
 
-//TODO fix the timer
 function timerFunc() {
-	var obj = {"cur_time":timer};
-	io.sockets.emit('timer', obj);
-	timer--;
+	//Send out final message once game is over
+	if(timer == -10){
+		var obj = {"cur_time":"Game Finished"};
+		io.sockets.emit('timer', obj);
+		return;
+	}
 	if(timer <= 0){
 		state++;
-		timer = 600;
 		setState();
+		var obj = {"cur_time":timer};
+		io.sockets.emit('timer', obj);
+		return;
 	}
+	timer--;
+	var obj = {"cur_time":timer};
+	io.sockets.emit('timer', obj);
+
+
 }
 function setState(){
 	var name = "";
-	if(state == 0)
+	if(state == 0){
 		name = "Voting";
-	else if (state == 1){
+		timer = 30;
+	}
+	else if(state == 1){
 		var king = game.setKingByVotes();
 		sendAll(king.name + " has been elected King with " + king.votes + " votes!");
 		name = "Pre-Game";
 		timer = 30;
 	}
-	else
-		name = "Day " + state-1;
+	else if(state == 8){
+		name = "Fin";
+		timer = -10;
+		clearInterval(timerInterval);
+		timerFunc();
+	}
+	else{
+		name = "Day " + (state-1);
+		timer = 600;
+	}
 	var obj = {"state":name};
 	io.sockets.emit('gamestate', obj);
 }
@@ -67,8 +87,8 @@ io.on('connection', function(socket){
 		var obj = {"player":"Server","message":message};
 		socket.emit('message', obj);
 	}
-	
-	
+
+
 	socket.on('messageFromClient', function(data){
 		var input = data.content;
 		input = input.trim();
@@ -82,25 +102,34 @@ io.on('connection', function(socket){
 			switch(input.split(" ")[0]){
 				case "/n":
 				case "/name":
+					//G can do this, only during lobby <newusername>
 					if(state != -1){
 						error("You cannot change your name outside the lobby");
 						break;
 					}
-					//G can do this, only during lobby <newusername>
+					if(game.getPlayerByName(input.split(" ")[1]) != false){
+						if(player.name == input.split(" ")[1]){
+							sendBack("Your name is already "+input.split(" ")[1]);
+						} else {
+							sendBack("Username already taken.");
+						}
+						break;
+					}
 					player.name = input.split(" ")[1];
 					sendBack("Username set to: " + player.name);
 					break;
 				case "/start":
 				case "/startgame":
 					if(state != -1){
-						error("You can only start the game from the lobby");
+						error("The game is already started!");
 						break;
 					}
 					//HOST can do this, only during lobby
 					sendAll("The game is starting!");
-					state++;
-					setInterval(timerFunc,1000);
+					state = 0; //Voting
 					setState();
+					timerFunc();
+					timerInterval = setInterval(timerFunc,1000);
 					break;
 				case "/v":
 				case "/vote":
@@ -116,12 +145,9 @@ io.on('connection', function(socket){
 					}
 					if(player.votedFor != null)
 						player.votedFor.votes--;
-					
+
 					player.votedFor = votingFor;
 					votingFor.votes++;
-						
-						
-					
 					sendBack("You've voted for "+player.votedFor.name);
 					//Voting could be semi-public, displaying current votes for certain people next to names.
 					//Who did the vote wouldn't be shown though.
