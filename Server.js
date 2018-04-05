@@ -37,9 +37,8 @@ io.on('connection', function(socket){
 				case "/n":
 				case "/name":
 					//G can do this, only during lobby <newusername>
-					var name = input.split(" ")[1];
-					player.name = name;
-					var obj = {"player":"Server","message":"Username set to: "+name};
+					player.name = input.split(" ")[1];
+					var obj = {"player":"Server","message":"Username set to: "+player.name};
 					socket.emit('message', obj); //to sending client
 					break;
 				case "/start":
