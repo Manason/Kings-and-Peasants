@@ -3,7 +3,6 @@ const Player = require('./Player.js');
 class Game{
 	constructor(playerList, minPlayers){
 		this.playerList = playerList;
-		
 	}
     addPlayer(name, id){
         this.playerList.push(new Player(name, id, null));
@@ -14,6 +13,13 @@ class Game{
 				return this.playerList[i];
 			}
 		}
+	}
+	getPlayerByName(name){
+		for(var i = 0; i < this.playerList.length; i++){
+			if(this.playerList[i].name == name)
+				return this.playerList[i];
+		}
+		return false;
 	}
     assignRoles(){
         var playerPool = playerList;

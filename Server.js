@@ -33,6 +33,7 @@ function setState(){
 	io.sockets.emit('gamestate', obj);
 }
 
+
 app.use(express.static('public')); //serves index.html
 
 var currentID = 1;
@@ -47,6 +48,19 @@ io.on('connection', function(socket){
 	var player = game.getPlayerById(userID);
 	currentID++;
 
+	function error(message){
+		var obj = {"player":"Error","message":message};
+		socket.emit('message', obj);
+	}
+	function sendBack(message){
+		var obj = {"player":"Server","message":message};
+		socket.emit('message', obj);
+	}
+	function sendAll(message){
+		var obj = {"player":"Server","message":message};
+		io.sockets.emit('message', obj);
+	}
+	
 	socket.on('messageFromClient', function(data){
 		var input = data.content;
 		input = input.trim();
@@ -60,31 +74,53 @@ io.on('connection', function(socket){
 			switch(input.split(" ")[0]){
 				case "/n":
 				case "/name":
+					if(state != -1){
+						error("You cannot change your name outside the lobby");
+						break;
+					}
 					//G can do this, only during lobby <newusername>
 					player.name = input.split(" ")[1];
-					var obj = {"player":"Server","message":"Username set to: "+player.name};
-					socket.emit('message', obj); //to sending client
+					sendBack("Username set to: " + player.name);
 					break;
 				case "/start":
 				case "/startgame":
+					if(state != -1){
+						error("You can only start the game from the lobby");
+						break;
+					}
 					//HOST can do this, only during lobby
-					var obj = {"player":"Server","message":"The game is starting!"};
-					io.sockets.emit('message', obj); //to everyone
+					sendAll("The game is starting!");
 					state++;
 					setInterval(timerFunc,1000);
 					setState();
 					break;
 				case "/v":
 				case "/vote":
-					//G can do this, only during lobby <username>
-					var obj = {"player":"Server","message":"You've voted for "+input.split(" ")[1]+"."};
-					socket.emit('message', obj); //to sending client
+					if(state != 0){
+						error("You can only vote during the pre-game");
+						break;
+					}
+					//G can do this, only during pre-game <username>
+					var votingFor = game.getPlayerByName(input.split(" ")[1]);
+					if(votingFor == false){
+						error("Cannot find player");
+						break;
+					}
+					if(player.votedFor != null)
+						player.votedFor.votes--;
+					
+					player.votedFor = votingFor;
+					votingFor.votes++;
+						
+						
+					
+					sendBack("You've voted for "+player.votedFor.name);
 					//Voting could be semi-public, displaying current votes for certain people next to names.
 					//Who did the vote wouldn't be shown though.
 					break;
 				case "/d":
 				case "/duke":
-					//R can do this, only during pregame <username>
+					//R can do this, only during pre-game <username>
 					var obj = {"player":"Server","message":input.split(" ")[1]+" is now a duke."};
 					io.sockets.emit('message', obj); //to sending client and everyone
 					//Could remove the duke'd person's socket and send one specific to say "You are now a duke."

@@ -5,6 +5,8 @@ class Player{
 		this.role = role;
 		this.prestige = 0;
 		this.blocked = false;
+		this.votedFor = null;
+		this.votes = 0;
 	}
 };
 

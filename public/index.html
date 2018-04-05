@@ -59,7 +59,6 @@
 
 	//receive messages from server
 	socket.on('message', function(msg){
-		console.log(msg.message);
 		var timestamp = new Date().toTimeString().substring(0, 8);
 		$(".chat-window").append(
 		'<div class="chat-entry">' +
@@ -75,11 +74,9 @@
 		'</div>');
 	});
 	socket.on('gamestate', function(gmst){
-		console.log(gmst.state);
 		gamestate.innerHTML = gmst.state;
 	});
 	socket.on('timer', function(time){
-		console.log(time.cur_time);
 		var date = new Date(null);
     	date.setSeconds(time.cur_time);
 		timer.innerHTML = date.toISOString().substr(11, 8);
