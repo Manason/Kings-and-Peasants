@@ -3,6 +3,7 @@ const Player = require('./Player.js');
 class Game{
 	constructor(playerList, minPlayers){
 		this.playerList = playerList;
+		
 	}
     addPlayer(name, id){
         this.playerList.push(new Player(name, id, null));

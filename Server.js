@@ -3,19 +3,34 @@ var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var timer = 600;
+var timer = 30;
+var state = -1;
 const Game = require('./Game.js');
 
 //called on server startup
 http.listen(8080, function(){
 	console.log("server running on port 8080");
-	setInterval(timerFunc,1000);
 });
 
+//TODO fix the timer
 function timerFunc() {
 	var obj = {"cur_time":timer};
 	io.sockets.emit('timer', obj);
 	timer--;
+	if(timer <= 0){
+		state++;
+		setState();
+		timer = 600;
+	}
+}
+function setState(){
+	var name = "";
+	if(state == 0)
+		name = "Pre-Game";
+	else
+		name = "Day " + state;
+	var obj = {"state":name};
+	io.sockets.emit('gamestate', obj);
 }
 
 app.use(express.static('public')); //serves index.html
@@ -55,7 +70,9 @@ io.on('connection', function(socket){
 					//HOST can do this, only during lobby
 					var obj = {"player":"Server","message":"The game is starting!"};
 					io.sockets.emit('message', obj); //to everyone
-
+					state++;
+					setInterval(timerFunc,1000);
+					setState();
 					break;
 				case "/v":
 				case "/vote":
