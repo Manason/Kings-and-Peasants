@@ -190,9 +190,35 @@ io.on('connection', function(socket){
 					break;
 				case "/sc":
 				case "/sucessor":
-					//L & D can do this during the day <username>
-					var obj = {"player":"Server","message":input.split(" ")[1]+" is now your sucessor."};
-					socket.emit('message', obj); //to sending client
+					if(state < 2 || state > 8){
+						error("Cannot set a sucessor right now");
+						break;
+					}
+					if(player.role == null || player.role.name != "Lord" || player.role.name != "Duke"){
+						error("You cannot set a sucessor");
+						break;
+					}
+					var sucessorName = input.split(" ")[1];
+					var sucessor = getPlayerByName(sucessorName);
+					if(sucessor == false){
+						error("cannot find player");
+						break;
+					}
+					if(player.role.name == "Lord"){
+						if(sucessor.role == null || sucessor.role.title != "Duke"){
+							error("Cannot appoint that player as sucessor");
+							break;
+						}
+					}
+					else if(player.role.name == "Duke"){
+						if(sucessor.role == null || (sucessor.role.title != "Earl" && sucessor.role.title != "Knight"){
+							error("Cannot appoint that player as sucessor");
+							break;
+						}
+					}
+					player.sucessor = sucessor;
+					sendBack(sucessor.name + " is now your sucessor.");
+					
 					break;
 				case "/t":
 				case "/tax":
