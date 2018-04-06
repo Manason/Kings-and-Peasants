@@ -26,7 +26,7 @@ class Game{
 		var obj = {"player":"Game","message":message};
 		this.io.to(this.name).emit('message', obj);
 	}
-	
+
 	timerFunc() {
 		//Send out final message once game is over
 		if(this.timer == -10){
@@ -46,19 +46,19 @@ class Game{
 		this.io.to(this.name).emit('timer', obj);
 	}
 	setState(){
-		var name = "";
+		var state_name = "";
 		if(this.state == 0){
-			name = "Voting";
+			state_name = "Voting";
 			this.timer = 2;
 		}
 		else if(this.state == 1){
 			var king = this.setKingByVotes();
 			this.sendAll(king.name + " has been elected King with " + king.votes + " votes!");
-			name = "Pre-Game";
+			state_name = "Pre-Game";
 			this.timer = 2;
 		}
 		else if(this.state == 2){
-			name = "Day 1";
+			state_name = "Day 1";
 			this.timer = 600;
 			this.assignRoles();
 			for(var i = 0; i < this.playerList.length; i++){
@@ -66,28 +66,27 @@ class Game{
 			}
 		}
 		else if(this.state == 8){
-			name = "Fin";
+			state_name = "Fin";
 			this.timer = -10;
 			this.clearInterval(this.timerInterval);
 			this.timerFunc();
 		}
 		else{
-			name = "Day " + (state-1);
+			state_name = "Day " + (state-1);
 			this.timer = 600;
 		}
-		var obj = {"state":name};
+		var obj = {"state":state_name};
 		this.io.to(this.name).emit('gamestate', obj);
 	}
 
     addPlayer(name, id, socket){
 		this.socketList.push(socket);
-		var player = new Player(name, id, null, socket);
+
+		var player = new Player(name, id,  new Role.Spectator(), socket);
         this.playerList.push(player);
 		var game = this;
-		
+
 		socket.on('messageFromClient', function(data){
-			
-			//TODO move these to Game class
 			
 			var input = data.content;
 			input = input.trim();
@@ -109,10 +108,7 @@ class Game{
 				}
 				player.sendBack("Command not found. Use /help for help");
 			}
-			
-				
 		});
-		
     }
 	getPlayerById(id){
 		for(var i = 0; i < this.playerList.length; i++){
@@ -148,12 +144,12 @@ class Game{
 	}
 	calculateRoles(){
 		var numPlayers = this.playerList.length;
-		
+
 			this.maxKnights = Math.floor(numPlayers/3);
 			this.maxEarls = Math.floor(numPlayers/9);
 			this.maxDukes = 2*this.maxEarls;
 			this.maxLords = 2;
-		
+
 	}
 	// shuffle unbiasedly shuffles the passed array
 	shuffle(array) {
@@ -179,7 +175,7 @@ class Game{
 		var playerPool = [];
         var player;
 		this.calculateRoles();
-       
+
         for(var i = 0; i < this.playerList.length; i++){
 			if(this.playerList[i].role == null)
 				playerPool.push(this.playerList[i]);
@@ -197,7 +193,7 @@ class Game{
             player = this.dukes.pop();
             player.role = new Role.Lord();
         }
-		
+
         //assign knights
         for(var x = 0; x < this.maxKnights; x++){
             player = playerPool.pop();
@@ -220,7 +216,7 @@ class Game{
 		}
 
     }
-		
+
 };
 
 module.exports = Game;
