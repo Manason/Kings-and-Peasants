@@ -8,6 +8,7 @@ class Player{
 		this.votedFor = null;
 		this.votes = 0;
 		this.sucessor = null;
+		this.isHost = false;
 	}
 };
 

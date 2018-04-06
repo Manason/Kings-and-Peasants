@@ -86,7 +86,7 @@ class Game{
 		
 		socket.on('messageFromClient', function(data){
 			
-			
+			//TODO move these to Game class
 			function error(message){
 				var obj = {"player":"Error","message":message};
 				socket.emit('message', obj);
