@@ -29,7 +29,7 @@ class Command{
 	//TODO do the allowedStates, allowedRoles, and hostOnly error messages
 };
 
-class Name{
+class Name extends Command{
 	constructor(){
 		super(["/n", "/name"], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, "/name <player name> - sets your player name.");
 	}
@@ -55,4 +55,80 @@ class Name{
 	}
 }
 
+
 module.exports = {Command, Name};
+
+/*case "/t":
+					case "/tax":
+						//R can do this during the day <role-group>
+						var obj = {"player":"Server","message":"You've taxed the "+input.split(" ")[1]+"."};
+						socket.emit('message', obj); //to sending client
+						//Add something to tell the other players which group got taxed.
+						break;
+					case "/l":
+					case "/lp":
+					case "/lookup":
+					case "/lookuppresige":
+						//L can do this during the day <username>
+						var obj = {"player":"Server","message":input.split(" ")[1]+" has X amount of prestige."};
+						socket.emit('message', obj); //to sending client
+						break;
+					case "/b":
+					case "/block":
+						//D can do this during the day (ONCE PER DAY) <username>
+						var obj = {"player":"Server","message":"You've blocked "+input.split(" ")[1]+" for the day."};
+						socket.emit('message', obj); //to sending client
+						break;
+					case "/s":
+					case "/spy":
+						//K can do this during the day (ONCE PER DAY) <username>
+						var obj = {"player":"Server","message":"You're spying on "+input.split(" ")[1]+"."};
+						socket.emit('message', obj); //to sending client
+						break;
+					case "/g":
+					case "/give":
+						//G can do this during the day <username> <amount>
+						var obj = {"player":"Server","message":"You've given "+input.split(" ")[2]+" to "+input.split(" ")[1]+"."};
+						socket.emit('message', obj); //to sending client
+						//Add a message to the other player to tell them they've recieved money.
+						break;
+					case "/w":
+					case "/m":
+					case "/pm":
+					case "/whisper":
+					case "/message":
+					case "/privatemessage":
+						//G can do this during the day (COSTS PRESTIGE) <username> <message>
+						var obj = {"player":"Server","message":"Sent the whisper."};
+						socket.emit('message', obj); //to sending client
+						//Add a message to the player they're whispering to.
+						break;
+					case "/y":
+					case "/yell":
+						//G can do this during the day (COSTS PRESTIGE) <message>
+						var obj = {"player":"PlayerThatYelled","message":input.substring(input.split(" ")[0].length)};
+						io.sockets.emit('message', obj); //to everyone
+						//Need to change "message" to "yell" or add a tag somehow.
+						break;
+					case "/a":
+					case "/assassinate":
+						//E, K, & P can do this during the day (COSTS PRESTIGE) <username>
+						var obj = {"player":"Server","message":"You will attempt an assassination on "+input.split(" ")[1]+" tonight."};
+						socket.emit('message', obj); //to sending client
+						break;
+					case "/e":
+					case "/execute":
+						//R, L, & D can do this during the day (COSTS PRESTIGE) <username>
+						var obj = {"player":"Server","message":input.split(" ")[1]+" will be executed tonight."};
+						socket.emit('message', obj); //to sending client
+						break;
+					case "/p":
+					case "/protect":
+						//G can do this during the day (COSTS PRESTIGE) <username>
+						var obj = {"player":"Server","message":"You are protecting "+input.split(" ")[1]+"."};
+						socket.emit('message', obj); //this is only sent to the client which sent the message
+						break;
+					case "/":
+					case "/h":
+					case "/help":
+					*/
