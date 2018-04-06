@@ -7,6 +7,7 @@ class Player{
 		this.blocked = false;
 		this.votedFor = null;
 		this.votes = 0;
+		this.sucessor = null;
 	}
 };
 

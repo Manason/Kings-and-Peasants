@@ -42,19 +42,21 @@ function setState(){
 	var name = "";
 	if(state == 0){
 		name = "Voting";
-		timer = 30;
+		timer = 2;
 	}
 	else if(state == 1){
 		var king = game.setKingByVotes();
 		sendAll(king.name + " has been elected King with " + king.votes + " votes!");
 		name = "Pre-Game";
-		timer = 30;
+		timer = 2;
 	}
 	else if(state == 2){
 		name = "Day 1";
 		timer = 600;
 		game.assignRoles();
-		
+		for(var i = 0; i < game.playerList.length; i++){
+			console.log(game.playerList[i].name + " is a " + game.playerList[i].role.title);
+		}
 	}
 	else if(state == 8){
 		name = "Fin";
@@ -190,9 +192,43 @@ io.on('connection', function(socket){
 					break;
 				case "/sc":
 				case "/sucessor":
-					//L & D can do this during the day <username>
-					var obj = {"player":"Server","message":input.split(" ")[1]+" is now your sucessor."};
-					socket.emit('message', obj); //to sending client
+					if(state < 2 || state > 8){
+						error("Cannot set a sucessor right now");
+						break;
+					}
+					if(player.role == null || (player.role.title != "Lord" && player.role.title != "Duke")){
+						error("You cannot set a sucessor");
+						console.log(player.role.title);
+						break;
+					}
+					if(input.split(" ").length == 1){
+						if(player.sucessor == null)
+							sendBack("You don't have a sucessor.");
+						else
+							sendBack("Your sucessor is currently " + player.sucessor.name);
+						break;
+					}
+					var sucessorName = input.split(" ")[1];
+					var sucessor = game.getPlayerByName(sucessorName);
+					if(sucessor == false){
+						error("cannot find player");
+						break;
+					}
+					if(player.role.title == "Lord"){
+						if(sucessor.role == null || sucessor.role.title != "Duke"){
+							error("Sucessor must be a Duke.");
+							break;
+						}
+					}
+					else if(player.role.title == "Duke"){
+						if(sucessor.role == null || (sucessor.role.title != "Earl" && sucessor.role.title != "Knight")){
+							error("Sucessor must either be an Earl or a Knight.");
+							break;
+						}
+					}
+					player.sucessor = sucessor;
+					sendBack(sucessor.name + " is now your sucessor.");
+					
 					break;
 				case "/t":
 				case "/tax":

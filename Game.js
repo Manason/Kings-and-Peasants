@@ -53,8 +53,8 @@ class Game{
 	calculateRoles(){
 		var numPlayers = this.playerList.length;
 		
-			this.maxKnights = numPlayers/3;
-			this.maxEarls = this.maxKnights/3;
+			this.maxKnights = Math.floor(numPlayers/3);
+			this.maxEarls = Math.floor(numPlayers/9);
 			this.maxDukes = 2*this.maxEarls;
 			this.maxLords = 2;
 		
@@ -88,18 +88,18 @@ class Game{
 			if(this.playerList[i].role == null)
 				playerPool.push(this.playerList[i]);
 		}
-		this.shuffle(playerPool);
-		
+		playerPool = this.shuffle(playerPool);
+		var initDukes = this.maxDukes+ this.maxLords - this.dukes.length;
 		//randomly assign dukes if king hasn't done it already
-		for(var x = 0; x < this.maxDukes - this.dukes.length; x++){
+		for(var x = 0; x < initDukes; x++){
 			player = playerPool.pop();
 			this.setDuke(player);
 		}
         //assign dukes randomly to lord
-		this.shuffle(this.dukes);
+		this.dukes = this.shuffle(this.dukes);
         for(var x = 0; x < this.maxLords; x++){
             player = this.dukes.pop();
-            player.role = new Role.Lord();  
+            player.role = new Role.Lord();
         }
 		
         //assign knights
@@ -117,11 +117,11 @@ class Game{
         }
 
         //assign remaining players as peasants
-        for(x = 0; x < playerPool.length; x++){
-            player = playerPool.pop();
-            player.role = new Role.Peasant();
+		while(playerPool.length > 0){
+			player = playerPool.pop();
+			player.role = new Role.Peasant();
 			this.numPeasants++;
-        }
+		}
 
     }
 		
