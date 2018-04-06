@@ -95,6 +95,5 @@ class Peasant extends Role{
 		super("Peasant", 6, 10, 6);
 		this.discount = 0.20;
 	}
-
 };
-module.exports = {Role, King, Lord, Duke, Earl, Knight, Peasant};
+module.exports = {Role, Spectator, King, Lord, Duke, Earl, Knight, Peasant};

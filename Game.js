@@ -49,13 +49,13 @@ class Game{
 		var state_name = "";
 		if(this.state == 0){
 			state_name = "Voting";
-			this.timer = 2;
+			this.timer = 30;
 		}
 		else if(this.state == 1){
 			var king = this.setKingByVotes();
 			this.sendAll(king.name + " has been elected King with " + king.votes + " votes!");
 			state_name = "Pre-Game";
-			this.timer = 2;
+			this.timer = 30;
 		}
 		else if(this.state == 2){
 			state_name = "Day 1";
@@ -83,11 +83,14 @@ class Game{
 		this.socketList.push(socket);
 
 		var player = new Player(name, id,  new Role.Spectator(), socket);
+		if(this.playerList.length == 0){
+			player.isHost = true;
+		}
         this.playerList.push(player);
 		var game = this;
 
 		socket.on('messageFromClient', function(data){
-			
+
 			var input = data.content;
 			input = input.trim();
 			//public chat
@@ -98,15 +101,18 @@ class Game{
 			else{
 				for(var i = 1; true; i++){
 					var objName = Object.keys(Command)[i];
-					if(objName == null)
+					if(objName == null){
+						player.sendBack("Command not found. Use /help for help");
 						return;
+					}
 					var commandObj = new Command[objName];
-					if(commandObj.names.includes(input.trim(" ")[0])){
-						command.Obj.execute(input, player, game);
+					console.log("game.forloopthing "+commandObj.names);
+					console.log(input.split(" ")[0]);
+					if(commandObj.names.includes(input.split(" ")[0])){
+						commandObj.execute(input, player, game);
 						return;
 					}
 				}
-				player.sendBack("Command not found. Use /help for help");
 			}
 		});
     }
@@ -126,15 +132,19 @@ class Game{
 	}
 	setKingByVotes(){
 		var highestVotes = 0;
-		var highestPlayer = this.playerList[0];
+		var highestPlayers = [this.playerList[0]];
 		for(var i = 1; i < this.playerList.length; i++){
-			if(this.playerList[i].votes > highestVotes){
-				highestPlayer = this.playerList[i];
+			if(this.playerList[i].votes == highestVotes){
+				highestPlayers.push(this.playerList[i]);
+			}
+			else if(this.playerList[i].votes > highestVotes){
+				highestPlayers = [this.playerList[i]];
 				highestVotes = highestPlayer.votes;
 			}
 		}
-		highestPlayer.role = new Role.King();
-		return highestPlayer;
+		this.shuffle(highestPlayers);
+		highestPlayers[0].role = new Role.King();
+		return highestPlayers[0];
 	}
 	setDuke(player){
 		player.role = new Role.Duke();
@@ -144,12 +154,10 @@ class Game{
 	}
 	calculateRoles(){
 		var numPlayers = this.playerList.length;
-
-			this.maxKnights = Math.floor(numPlayers/3);
-			this.maxEarls = Math.floor(numPlayers/9);
-			this.maxDukes = 2*this.maxEarls;
-			this.maxLords = 2;
-
+		this.maxKnights = Math.floor(numPlayers/3);
+		this.maxEarls = Math.floor(numPlayers/9);
+		this.maxDukes = 2*this.maxEarls;
+		this.maxLords = 2;
 	}
 	// shuffle unbiasedly shuffles the passed array
 	shuffle(array) {
@@ -167,7 +175,6 @@ class Game{
 			array[currentIndex] = array[randomIndex];
 			array[randomIndex] = temporaryValue;
 		}
-
 		return array;
 	}
     assignRoles(){
@@ -177,7 +184,7 @@ class Game{
 		this.calculateRoles();
 
         for(var i = 0; i < this.playerList.length; i++){
-			if(this.playerList[i].role == null)
+			if(this.playerList[i].role.title == "Spectator")
 				playerPool.push(this.playerList[i]);
 		}
 		playerPool = this.shuffle(playerPool);
@@ -193,30 +200,25 @@ class Game{
             player = this.dukes.pop();
             player.role = new Role.Lord();
         }
-
         //assign knights
         for(var x = 0; x < this.maxKnights; x++){
             player = playerPool.pop();
             player.role = new Role.Knight();
 			this.numKnights++;
         }
-
         //assign earls
         for(x = 0; x < this.maxEarls; x++){
             player = playerPool.pop();
             player.role = new Role.Earl();
 			this.numEarls++;
         }
-
         //assign remaining players as peasants
 		while(playerPool.length > 0){
 			player = playerPool.pop();
 			player.role = new Role.Peasant();
 			this.numPeasants++;
 		}
-
     }
-
 };
 
 module.exports = Game;

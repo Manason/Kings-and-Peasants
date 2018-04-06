@@ -22,7 +22,7 @@ class Command{
 			player.error(this.helpText[2]);
 			return false;
 		}
-		if(hostOnly && !player.isHost){
+		if(this.hostOnly && !player.isHost){
 			player.error("Only the host can do this action.");
 			return false;
 		}
@@ -55,11 +55,12 @@ class Name extends Command{
 	}
 }
 
-class StartGame{
+class StartGame extends Command{
 	constructor(){
 		super(["/start", "/startgame"], [0], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], true, ["/startgame - Starts the game. 🙃","The game is already started!","Everyone should be able to do this. Contact admin."]);
 	}
-	execute(input, numArgs, player, game){
+	execute(input, player, game){
+		console.log("test "+(game == null));
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
 			return;
 		game.sendAll("The game is starting!");
@@ -72,9 +73,9 @@ class StartGame{
 	}
 }
 
-class Vote{
+class Vote extends Command{
 	constructor(){
-		super(["/v", "/vote"], [1], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], true, ["/vote <playerName> - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
+		super(["/v", "/vote"], [1], [0], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/vote <playerName> - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -94,9 +95,9 @@ class Vote{
 	}
 }
 
-class Duke{
+class Duke extends Command{
 	constructor(){
-		super(["/d", "/duke"], [1], [0], ["King"], true, ["/duke <playerName> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
+		super(["/d", "/duke"], [1], [1], ["King"], false, ["/duke <playerName> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -111,8 +112,12 @@ class Duke{
 			player.error("Cannot find player.");
 			return;
 		}
-		if(dukeCandidate.role != null){
+		if(dukeCandidate.role.title == "Duke"){
 			player.error("Player has already been appointed as Duke.");
+			return;
+		}
+		if(dukeCandidate == player){
+			player.error("You can't duke yourself!");
 			return;
 		}
 		game.setDuke(dukeCandidate);
@@ -121,9 +126,9 @@ class Duke{
 	}
 }
 
-class Successor{
+class Successor extends Command{
 	constructor(){
-		super(["/sc", "/successor"], [0,1], [1,2,3,4,5,6,7,8], ["Lord"], true, ["/successor <playerName> - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
+		super(["/sc", "/successor"], [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor <playerName> - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -143,13 +148,13 @@ class Successor{
 			return;
 		}
 		if(player.role.title == "Lord"){
-			if(sucessor.role == null || sucessor.role.title != "Duke"){
+			if(sucessor.role.title != "Duke"){
 				player.error("Sucessor must be a Duke.");
 				return;
 			}
 		}
 		else if(player.role.title == "Duke"){
-			if(sucessor.role == null || (sucessor.role.title != "Earl" && sucessor.role.title != "Knight")){
+			if(sucessor.role.title != "Earl" && sucessor.role.title != "Knight"){
 				player.error("Sucessor must either be an Earl or a Knight.");
 				return;
 			}
@@ -235,5 +240,3 @@ module.exports = {Command, Name, StartGame, Vote, Duke, Successor};
 					case "/h":
 					case "/help":
 					*/
-
-

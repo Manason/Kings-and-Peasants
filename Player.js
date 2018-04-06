@@ -16,7 +16,7 @@ class Player{
 		this.socket.emit('message', obj);
 	}
 	sendBack(message){
-		var obj = {"player":"Error","message":message};
+		var obj = {"player":"Server","message":message};
 		this.socket.emit('message', obj);
 	}
 };
