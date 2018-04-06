@@ -42,19 +42,21 @@ function setState(){
 	var name = "";
 	if(state == 0){
 		name = "Voting";
-		timer = 30;
+		timer = 2;
 	}
 	else if(state == 1){
 		var king = game.setKingByVotes();
 		sendAll(king.name + " has been elected King with " + king.votes + " votes!");
 		name = "Pre-Game";
-		timer = 30;
+		timer = 2;
 	}
 	else if(state == 2){
 		name = "Day 1";
 		timer = 600;
 		game.assignRoles();
-		
+		for(var i = 0; i < game.playerList.length; i++){
+			console.log(game.playerList[i].name + " is a " + game.playerList[i].role.title);
+		}
 	}
 	else if(state == 8){
 		name = "Fin";
@@ -194,25 +196,33 @@ io.on('connection', function(socket){
 						error("Cannot set a sucessor right now");
 						break;
 					}
-					if(player.role == null || player.role.name != "Lord" || player.role.name != "Duke"){
+					if(player.role == null || (player.role.title != "Lord" && player.role.title != "Duke")){
 						error("You cannot set a sucessor");
+						console.log(player.role.title);
+						break;
+					}
+					if(input.split(" ").length == 1){
+						if(player.sucessor == null)
+							sendBack("You don't have a sucessor.");
+						else
+							sendBack("Your sucessor is currently " + player.sucessor.name);
 						break;
 					}
 					var sucessorName = input.split(" ")[1];
-					var sucessor = getPlayerByName(sucessorName);
+					var sucessor = game.getPlayerByName(sucessorName);
 					if(sucessor == false){
 						error("cannot find player");
 						break;
 					}
-					if(player.role.name == "Lord"){
+					if(player.role.title == "Lord"){
 						if(sucessor.role == null || sucessor.role.title != "Duke"){
-							error("Cannot appoint that player as sucessor");
+							error("Sucessor must be a Duke.");
 							break;
 						}
 					}
-					else if(player.role.name == "Duke"){
-						if(sucessor.role == null || (sucessor.role.title != "Earl" && sucessor.role.title != "Knight"){
-							error("Cannot appoint that player as sucessor");
+					else if(player.role.title == "Duke"){
+						if(sucessor.role == null || (sucessor.role.title != "Earl" && sucessor.role.title != "Knight")){
+							error("Sucessor must either be an Earl or a Knight.");
 							break;
 						}
 					}

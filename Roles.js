@@ -86,7 +86,7 @@ class Knight extends Role{
 
 class Peasant extends Role{
 	constructor(){
-		super("King", 6, 10, 6);
+		super("Peasant", 6, 10, 6);
 		this.discount = 0.20;
 	}
 	
