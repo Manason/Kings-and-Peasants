@@ -1,8 +1,8 @@
 States:
 -1: lobby
 0: voting
-1-7: days
-8: end
+1: pre-game
+2-8: days
+9: end
 
-States 0-7 also have a transition period.
-0.5: SETUP? (King sets his dukes, people are given their roles once he's done)
+States 2-8 also have a transition period.

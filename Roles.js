@@ -24,6 +24,12 @@ class Role{
 
 };
 
+class Spectator extends Role{
+	constructor(){
+		super("Spectator", 0, 0, 0);
+	}
+};
+
 class King extends Role{
 	constructor(){
 		super("King", 1, 250, 3);
@@ -34,7 +40,7 @@ class King extends Role{
 
     }
     assassinate(player){
-        
+
     }
 };
 
@@ -43,13 +49,13 @@ class Lord extends Role{
 		super("Lord", 2, 100, 5);
 	}
     assassinate(player){
-        
+
     }
 	setSuccessor(player){
-		
+
 	}
 	lookupPrestige(player){
-		
+
 	}
 };
 
@@ -58,21 +64,21 @@ class Duke extends Role{
 		super("Duke", 3, 60, 6);
 	}
     assassinate(player){
-        
+
     }
 	setSuccessor(player){
-		
+
 	}
 	block(player){
-		
+
 	}
 };
 
 class Earl extends Role{
 	constructor(){
 		super("Earl", 4, 40, 6);
-	} 
-	
+	}
+
 };
 
 class Knight extends Role{
@@ -80,7 +86,7 @@ class Knight extends Role{
 		super("Knight", 5, 20, 6);
 	}
     spy(player){
-		
+
 	}
 };
 
@@ -89,6 +95,5 @@ class Peasant extends Role{
 		super("Peasant", 6, 10, 6);
 		this.discount = 0.20;
 	}
-	
 };
-module.exports = {Role, King, Lord, Duke, Earl, Knight, Peasant};
+module.exports = {Role, Spectator, King, Lord, Duke, Earl, Knight, Peasant};
