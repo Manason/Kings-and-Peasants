@@ -60,7 +60,7 @@ class Name extends Command{
 		super(["/n", "/name"], [1], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/name <playerName> - Sets your player name.","You can't change your name once the game has started!","Everyone should be able to do this. Contact admin."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		if(game.getPlayerByName(input[1]) != false){
@@ -82,7 +82,7 @@ class StartGame extends Command{
 	}
 	execute(input, player, game){
 		console.log("test "+(game == null));
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		game.sendAll("The game is starting!");
 		game.state = 0; //Voting
@@ -100,7 +100,7 @@ class Vote extends Command{
 		super(["/v", "/vote"], [1], [0], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/vote [playerName] - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		var votingFor = game.getPlayerByName(input[1]);
@@ -122,7 +122,7 @@ class Duke extends Command{
 		super(["/d", "/duke"], [1], [1], ["King"], false, ["/duke <playerName> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		if(game.numDukes >= game.maxDukes + game.maxLords){
@@ -153,7 +153,7 @@ class Successor extends Command{
 		super(["/sc", "/successor"], [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor [playerName] - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		if(input.length == 1){
@@ -209,7 +209,7 @@ class Lookup extends Command{
 		super(["/l", "/look", "/lookup"], [0,1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <playerName/roleGroup> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		if(player.role.title == "King"){
@@ -240,7 +240,7 @@ class Block extends Command{
 		super(["/b", "/block"], [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/block [playerName] - Allows a Duke to block a player of equal or lower rank.","Block can only be used during the day.","Only Dukes can use this command."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		if(input.length == 1){
@@ -273,7 +273,7 @@ class Spy extends Command{
 		super(["/s", "/spy"], [0,1], [2,3,4,5,6,7,8], ["Knight"], false, ["/spy [playerName] - Allows a Knight to spy on any player besides King.","You can only spy on someone during the day.","Only Knights can use this command."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
 		if(input.length == 1){
