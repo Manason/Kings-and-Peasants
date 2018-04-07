@@ -398,13 +398,53 @@ class Protect extends Command{
 	}
 }
 
-case "/p":
-					case "/protect":
-						//G can do this during the day (COSTS PRESTIGE) <username>
-						var obj = {"player":"Server","message":"You are protecting "+input.split(" ")[1]+"."};
-						socket.emit('message', obj); //this is only sent to the client which sent the message
+class Execute extends Command{
+	constructor(){
+		super(["/e", "/execute"], [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke"], false, ["/execute [player name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		input = input.split(" +");
+		//tell player who they have currently selected
+		if(input.length == 1){
+			if(player.role.executeTarget == null)
+				player.sendBack("You have not marked anyone for execution.");
+			else
+				player.sendBack("You have marked " + player.role.executeTarget + " for execution.");
+		}
+		else{
+			var target = super.playerArgument(input[1]);
+			if(target == false)
+				return;
+			//check that players are only executing one rank below you
+			if((player.role.title == "King" && target.role.title != "Lord") || (player.role.title == "Lord" && target.role.title != "Duke") || player.role.title == "Duke" && target.role.title != "Earl"){
+				player.error("Can only order the execution of one rank below you.");
+				return;
+			}
+			//order execution
+			if(player.role.executeTarget == null){
+				player.role.executeTarget = target;
+				game.sendAll(player.name + " has ordered " + target.name + " executed tonight!");
+			}
+			//take back an execution
+			else if(player.role.executeTarget == target){
+				game.sendAll(player.name + " has rescinded their order to execute " + target.name);
+				player.role.executeTarget = null;
+			}
+			//order a different execution
+			else{
+				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget+ ", and has instead ordered " + target.name + " assassinated tonight!");
+				player.role.executeTarget = target;
+			}
+		}
+			
+}
+case "/execute":
+						//R, L, & D can do this during the day (COSTS PRESTIGE) <username>
+						var obj = {"player":"Server","message":input.split(" ")[1]+" will be executed tonight."};
+						socket.emit('message', obj); //to sending client
 						break;
-
 module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect};
 /*case "/t":
 					case "/tax":

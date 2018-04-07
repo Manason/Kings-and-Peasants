@@ -8,6 +8,7 @@ class Role{
 		this.discount = 1;
 		this.target = null;
 		this.protectTarget = null;
+		this.executeTarget = null;
 	}
     sendAnonMessage(player, message){
 
