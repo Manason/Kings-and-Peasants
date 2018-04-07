@@ -50,13 +50,13 @@ class Game{
 		var state_name = "";
 		if(this.state == 0){
 			state_name = "Voting";
-			this.timer = 30;
+			this.timer = 3;
 		}
 		else if(this.state == 1){
 			var king = this.setKingByVotes();
 			this.sendAll(king.name + " has been elected King with " + king.votes + " votes!");
 			state_name = "Pre-Game";
-			this.timer = 30;
+			this.timer = 3;
 		}
 		else if(this.state == 2){
 			state_name = "Day 1";
@@ -73,7 +73,7 @@ class Game{
 			this.timerFunc();
 		}
 		else{
-			state_name = "Day " + (state-1);
+			state_name = "Day " + (this.state-1);
 			this.timer = 600;
 		}
 		var obj = {"state":state_name};

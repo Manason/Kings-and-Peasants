@@ -206,7 +206,7 @@ class Tax extends Command{
 
 class Lookup extends Command{
 	constructor(){
-		super(["/l", "/look", "/lookup"], [0,1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <playerName/roleGroup> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
+		super(["/l", "/look", "/lookup"], [1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <playerName/roleGroup> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false)
@@ -222,11 +222,9 @@ class Lookup extends Command{
 			player.sendBack("The "+input[1]+"s have "+(totalPrestige+1)+" total prestige.");
 		}
 		else if(player.role.title == "Lord"){
-			var checkedPlayer = game.getPlayerByName(input[1]);
-			if(checkedPlayer == false){
-				player.error("Cannot find player.");
+			var checkedPlayer = super.playerArgument(input[1]);
+			if(checkedPlayer == false)
 				return;
-			}
 			if(checkedPlayer.role.title == "King"){
 				player.error("The king's treasury is locked.");
 			}
@@ -250,27 +248,31 @@ class Block extends Command{
 				player.sendBack("You are blocking " + player.role.blocking.name);
 			return;
 		}
-		if(player.role.blocking != null){
+		if(player.role.blocking != null && player.role.blocking.role.title != "Duke"){
 			player.error("You are already blocking "+player.role.blocking.name);
-		}
-		var blockedPlayer = game.getPlayerByName(input[1]);
-		if(blockedPlayer == false){
-			player.error("Cannot find player.");
 			return;
 		}
-		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord"){
+		var blockedPlayer = super.playerArgument(input[1]);
+		if(blockedPlayer == false)
+			return;
+		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
 			player.error("You can't block a "+blockedPlayer.role.title+"!");
-			return;
+		else if(blockedPlayer.role.title == "Duke"){
+			blockedPlayer.role.dukeBlocked = true;
+			player.role.blocking = blockedPlayer;
+			player.sendBack("You are set to block " +blockedPLayer.name+" first thing in the morning!");
 		}
-		blockedPlayer.blocked = true;
-		player.role.blocking = blockedPlayer;
-		player.sendBack("You are now blocking "+blockedPlayer.name+".");
+		else{
+			blockedPlayer.blocked = true;
+			player.role.blocking = blockedPlayer;
+			player.sendBack("You are now blocking "+blockedPlayer.name+".");
+		}
 	}
 }
 
-class Spy extends Command{
+class Watch extends Command{
 	constructor(){
-		super(["/s", "/spy"], [0,1], [2,3,4,5,6,7,8], ["Knight"], false, ["/spy [playerName] - Allows a Knight to spy on any player besides King.","You can only spy on someone during the day.","Only Knights can use this command."]);
+		super(["/watch"], [0,1], [2,3,4,5,6,7,8], ["Knight"], false, ["/watch [playerName] - Allows a Knight to watch any player besides King.","You can only watch someone during the day and cannot change your selection.","Only Knights can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false)
@@ -278,26 +280,25 @@ class Spy extends Command{
 		input = input.split(" ");
 		if(input.length == 1){
 			if(player.role.spying == null)
-				player.sendBack("You aren't spying on anyone yet.");
+				player.sendBack("You aren't watch anyone yet.");
 			else
-				player.sendBack("You are spying on " + player.role.spying.name);
+				player.sendBack("You are watching " + player.role.spying.name);
 			return;
 		}
 		if(player.role.spying != null){
-			player.error("You are already spying on "+player.role.spying.name);
-		}
-		var spiedPlayer = game.getPlayerByName(input[1]);
-		if(spiedPlayer == false){
-			player.error("Cannot find player.");
+			player.error("You are already watching "+player.role.spying.name);
 			return;
 		}
+		var spiedPlayer = super.playerArgument(input[1]);
+		if(spiedPlayer == false)
+			return;
 		if(spiedPlayer.role.title == "King"){
-			player.error("You don't want to get caught spying on the king! ☠️");
+			player.error("You don't want to get caught spying on the king!�");
 			return;
 		}
 		spiedPlayer.spies.push(player);
 		player.role.spying = spiedPlayer;
-		player.sendBack("You are now spying on "+spiedPlayer.name+".");
+		player.sendBack("You are now watching on "+spiedPlayer.name+".");
 	}
 }
 
@@ -331,7 +332,7 @@ class Give extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Spy, Give};
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>
