@@ -21,6 +21,7 @@ class Game{
 		this.timerInterval = null;
 		this.timer = 30;
 		this.state = -1;
+		this.roleToTax = "Lord";
 	}
 	sendAll(message){
 		var obj = {"player":"Game","message":message};

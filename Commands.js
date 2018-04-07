@@ -31,7 +31,13 @@ class Command{
 	sendHelp(){
 		this.player.sendBack(this.helpText[0]); //this won't work until Game.sendBack() is updated
 	}
-	//TODO do the allowedStates, allowedRoles, and hostOnly error messages
+	static groupArgument(argument){
+		argument = argument.toLowerCase();
+		argument = argument.slice(0,1).toUpperCase() + argument.substring(1);
+		if(argument.endsWith("s"))
+			argument = argument.slice(0, argument.length-1);
+		return argument;
+	}
 };
 
 class Name extends Command{
@@ -164,8 +170,26 @@ class Successor extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor};
+class Tax extends Command{
+	constructor(){
+		super(["/t", "/tax"], [0,1], [2,3,4,5,6,7], ["King"], false, ["/tax [group name] - Selects a group to tax at the beginning of the day, e.g. /tax Lords","Cannot set a tax now.","Only the King can tax the subjects!"]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		var input = input.split(" ");
+		if(input.length == 1){
+			player.sendBack("The " + game.roleToTax +"s will be taxed at the beginning of the next day");
+		}
+		else{
+			game.roleToTax = groupArgment(input[1]);
+			player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
+		}
+		
+	}
+}
 
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>
