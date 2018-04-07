@@ -129,6 +129,14 @@ class Game{
 		}
 		return false;
 	}
+	getPlayersByRole(roleName){
+		var players = [];
+		for(var i = 0; i < this.playerList.length; i++){
+			if(this.playerList[i].role.title == roleName)
+				players.push(this.playerList[i]);
+		}
+		return players;
+	}
 	setKingByVotes(){
 		var highestVotes = this.playerList[0].votes;
 		var highestPlayers = [this.playerList[0]];

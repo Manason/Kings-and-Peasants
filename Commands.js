@@ -453,7 +453,33 @@ class Prestige extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige};
+class PlayerList extends Command{
+	constructor(){
+		super(["/list"], [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		
+		function printPlayersByRole(roleName){
+			var players = game.getPlayersByRole(roleName);
+			for(var i = 0; i < players.length; i++){
+				player.sendBack(players[i].role.title + " " + players[i].name);
+			}
+		}
+		
+		printPlayersByRole("King");
+		printPlayersByRole("Lord");
+		printPlayersByRole("Duke");
+		printPlayersByRole("Earl");
+		printPlayersByRole("Knight");
+		printPlayersByRole("Peasant");
+		printPlayersByRole("Spectator");
+	
+	
+	}
+}
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige, PlayerList};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>
