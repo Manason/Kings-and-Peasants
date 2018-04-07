@@ -73,9 +73,10 @@ class StartGame extends Command{
 	}
 }
 
+//TODO make /vote with no playername display your current vote
 class Vote extends Command{
 	constructor(){
-		super(["/v", "/vote"], [1], [0], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/vote <playerName> - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
+		super(["/v", "/vote"], [1], [0], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/vote [playerName] - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -128,7 +129,7 @@ class Duke extends Command{
 
 class Successor extends Command{
 	constructor(){
-		super(["/sc", "/successor"], [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor <playerName> - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
+		super(["/sc", "/successor"], [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor [playerName] - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -141,10 +142,9 @@ class Successor extends Command{
 				sendBack("Your sucessor is currently " + player.sucessor.name);
 			return;
 		}
-		var sucessorName = input[1];
-		var sucessor = game.getPlayerByName(sucessorName);
+		var sucessor = game.getPlayerByName(input[1]);
 		if(sucessor == false){
-			player.error("cannot find player");
+			player.error("Cannot find player.");
 			return;
 		}
 		if(player.role.title == "Lord"){
@@ -164,7 +164,35 @@ class Successor extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor};
+class Lookup extends Command{
+	constructor(){
+		super(["/l", "/look", "/lookup"], [0,1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <playerName/roleGroup> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+			return;
+		input = input.split(" ");
+		if(player.role.title == "King"){
+			var totalPrestige = -1;
+			for(int i = 0; i < game.playerList.length; i++){
+				if(game.playerList[i].role == input[1]){
+					totalPrestige += game.playerList[i].prestige;
+				}
+			}
+			player.sendBack("The "+input[1]+"s have "+(totalPrestige+1)+" total prestige.");
+		}
+		else if(player.role.title == "Lord"){
+			var checkedPlayer = game.getPlayerByName(input[1]);
+			if(checkedPlayer == false){
+				player.error("Cannot find player.");
+				return;
+			}
+			player.sendBack(checkedPlayer.name+" currently has "+checkedPlayer.prestige+" prestige.");
+		}
+	}
+}
+
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Lookup};
 
 /*case "/t":
 					case "/tax":
