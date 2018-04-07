@@ -38,6 +38,21 @@ class Command{
 			argument = argument.slice(0, argument.length-1);
 		return argument;
 	}
+	static playerArgument(playerName){
+		var player = game.getPlayerByName(playerName);
+		if(player == false){
+			game.error("Player not found.");
+			return false;
+		}
+		else if(playerToGive.role.title == "Spectator"){
+			game.error("No interacting with Spectators. Nice try.");
+			return false;
+		}
+		else{
+			return player;
+		}
+	}
+	
 };
 
 class Name extends Command{
@@ -182,14 +197,44 @@ class Tax extends Command{
 			player.sendBack("The " + game.roleToTax +"s will be taxed at the beginning of the next day");
 		}
 		else{
-			game.roleToTax = groupArgment(input[1]);
+			game.roleToTax = super.groupArgment(input[1]);
 			player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
 		}
 		
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax};
+class Give extends Command{
+	constructor(){
+		super(["/g", "/give", "/ga", "/giveanon"], [2], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player name> <amount> - give your prestige to another player. Use /giveanon to give anonymously.","Spectators don't get prestige, how can they give it?"]);
+		this.prestigeCost = 5;
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		var input = input.split(" ");
+		if(input[0] != "/ga" && input[0] != "/giveanon")
+			this.prestigeCost = 0;
+		var playerToGive = super.playerArgument(input[1]);
+		if(playerToGive == false)
+			return;
+		else if(isNaN(input[2]))
+			game.error("Invalid amount.");
+		else if(int(input[2]) + this.prestigeCost > player.prestige)
+			game.error("You only have " + player.prestige + " prestige. Can't give what you don't have.");
+		else{
+			var amount = int(input[2]);
+			player.prestige = player.prestige - amount - this.prestigeCost;
+			playerToGive.prestige = playerToGive.prestige + amount;
+			if(input[0] != "/ga" && input[0] != "/giveanon")
+				playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
+			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
+		}
+		
+	}
+}
+
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Give};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>

@@ -123,6 +123,7 @@ class Game{
 				return this.playerList[i];
 			}
 		}
+		return false;
 	}
 	getPlayerByName(name){
 		for(var i = 0; i < this.playerList.length; i++){
