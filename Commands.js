@@ -310,7 +310,7 @@ class Give extends Command{
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1, player, game) == false)
 			return;
-		var input = input.split(" ");
+		input = input.split(" ");
 		if(input[0] != "/ga" && input[0] != "/giveanon")
 			this.prestigeCost = 0;
 		var playerToGive = super.playerArgument(input[1]);
@@ -332,7 +332,38 @@ class Give extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give};
+class Assassinate extends Command{
+	constructor(){
+		super(["/a", "/assassinate"], [0,1], [2,3,4,5,6,7,8], ["Earl", "Knight", "Peasant"], false, ["/assassinate [player name] - set your assassination target.","Can only set a target during the day!","Only Earls, Knights, and Peasants can attempt an assassination."]);
+	}
+	execute(input, player, game){
+		input = input.split(" +");
+		if(input.length == 1)
+			if(player.role.target != null)
+				player.sendBack("your assassination target is " + player.role.target.name);
+			else
+				player.sendBack("no assassination target has been set.");
+		else{
+			var target = super.playerArgument(input[1]);
+			if(target == false)
+				return;
+			if(player.role.target == target){
+				player.sendBack(target.name + " is no longer your assassination target.");
+				player.role.target = null;
+				target.assassins.splice(target.assassins.indexOf(player), 1);
+			}
+			else{
+				player.sendBack("assassination target set to " + target.name);
+				player.role.target.assassins.splice(player.role.target.assassins.indexOf(player), 1);
+				player.role.target = target;
+			}
+				
+		}
+		
+	}
+}
+
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>

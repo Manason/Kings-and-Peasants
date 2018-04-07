@@ -5,6 +5,8 @@ class Role{
 		this.rank = rank
 		this.wage = wage;
 		this.defense = defense;
+		this.discount = 1;
+		this.target = null;
 	}
     sendAnonMessage(player, message){
 
@@ -96,7 +98,7 @@ class Knight extends Role{
 class Peasant extends Role{
 	constructor(){
 		super("Peasant", 6, 10, 6);
-		this.discount = 0.20;
+		this.discount = 0.80;
 	}
 };
 module.exports = {Role, Spectator, King, Lord, Duke, Earl, Knight, Peasant};
