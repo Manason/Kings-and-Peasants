@@ -31,7 +31,28 @@ class Command{
 	sendHelp(){
 		this.player.sendBack(this.helpText[0]); //this won't work until Game.sendBack() is updated
 	}
-	//TODO do the allowedStates, allowedRoles, and hostOnly error messages
+	groupArgument(argument){
+		argument = argument.toLowerCase();
+		argument = argument.slice(0,1).toUpperCase() + argument.substring(1);
+		if(argument.endsWith("s"))
+			argument = argument.slice(0, argument.length-1);
+		return argument;
+	}
+	playerArgument(playerName){
+		var player = this.game.getPlayerByName(playerName);
+		if(player == false){
+			this.game.error("Player not found.");
+			return false;
+		}
+		else if(player.role.title == "Spectator"){
+			this.game.error("No interacting with Spectators. Nice try.");
+			return false;
+		}
+		else{
+			return player;
+		}
+	}
+
 };
 
 class Name extends Command{
@@ -164,6 +185,25 @@ class Successor extends Command{
 	}
 }
 
+class Tax extends Command{
+	constructor(){
+		super(["/t", "/tax"], [0,1], [2,3,4,5,6,7], ["King"], false, ["/tax [group name] - Selects a group to tax at the beginning of the day, e.g. /tax Lords","Cannot set a tax now.","Only the King can tax the subjects!"]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		var input = input.split(" ");
+		if(input.length == 1){
+			player.sendBack("The " + game.roleToTax +"s will be taxed at the beginning of the next day");
+		}
+		else{
+			game.roleToTax = super.groupArgment(input[1]);
+			player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
+		}
+
+	}
+}
+
 class Lookup extends Command{
 	constructor(){
 		super(["/l", "/look", "/lookup"], [0,1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <playerName/roleGroup> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
@@ -174,7 +214,7 @@ class Lookup extends Command{
 		input = input.split(" ");
 		if(player.role.title == "King"){
 			var totalPrestige = -1;
-			for(int i = 0; i < game.playerList.length; i++){
+			for(var i = 0; i < game.playerList.length; i++){
 				if(game.playerList[i].role == input[1]){
 					totalPrestige += game.playerList[i].prestige;
 				}
@@ -230,7 +270,7 @@ class Block extends Command{
 
 class Spy extends Command{
 	constructor(){
-		super(["/s", "/spy"], [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/spy [playerName] - Allows a Knight to spy on a player of equal or lower rank.","You can only spy on someone during the day.","Only Knights can use this command."]);
+		super(["/s", "/spy"], [0,1], [2,3,4,5,6,7,8], ["Knight"], false, ["/spy [playerName] - Allows a Knight to spy on any player besides King.","You can only spy on someone during the day.","Only Knights can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -261,8 +301,37 @@ class Spy extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Lookup};
+class Give extends Command{
+	constructor(){
+		super(["/g", "/give", "/ga", "/giveanon"], [2], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player name> <amount> - give your prestige to another player. Use /giveanon to give anonymously.","Spectators don't get prestige, how can they give it?"]);
+		this.prestigeCost = 5;
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		var input = input.split(" ");
+		if(input[0] != "/ga" && input[0] != "/giveanon")
+			this.prestigeCost = 0;
+		var playerToGive = super.playerArgument(input[1]);
+		if(playerToGive == false)
+			return;
+		else if(isNaN(input[2]))
+			player.error("Invalid amount.");
+		else if(parseInt(input[2]) + this.prestigeCost > player.prestige)
+			player.error("You only have " + player.prestige + " prestige. Can't give what you don't have.");
+		else{
+			var amount = parseInt(input[2]);
+			player.prestige = player.prestige - amount - this.prestigeCost;
+			playerToGive.prestige = playerToGive.prestige + amount;
+			if(input[0] != "/ga" && input[0] != "/giveanon")
+				playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
+			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
+		}
 
+	}
+}
+
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Spy, Give};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>

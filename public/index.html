@@ -81,5 +81,10 @@
     	date.setSeconds(time.cur_time);
 		timer.innerHTML = date.toISOString().substr(11, 8);
 	});
+
+	//for testing purposes
+	window.onload = function(){
+		socket.emit('messageFromClient', {content: "/join hi"});
+	}
 </script>
 </html>
