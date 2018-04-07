@@ -62,6 +62,7 @@ class Lord extends Role{
 class Duke extends Role{
 	constructor(){
 		super("Duke", 3, 60, 6);
+		this.blocking = null;
 	}
     assassinate(player){
 

@@ -192,6 +192,39 @@ class Lookup extends Command{
 	}
 }
 
+class Block extends Command{
+	constructor(){
+		super(["/b", "/block"], [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/block <playerName> - Allows a Duke to block a player of equal or lower rank.","Block can only be used during the day.","Only Dukes can use this command."]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+			return;
+		input = input.split(" ");
+		if(input.length == 1){
+			if(player.role.blocking == null)
+				player.sendBack("You aren't blocking anyone yet.");
+			else
+				player.sendBack("You are blocking " + player.sucessor.name);
+			return;
+		}
+		if(player.role.blocking != null){
+			player.error("You are already blocking "+player.role.blocking);
+		}
+		var blockedPlayer = game.getPlayerByName(input[1]);
+		if(blockedPlayer == false){
+			player.error("Cannot find player.");
+			return;
+		}
+		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord"){
+			player.error("You can't block a "+blockedPlayer.role.title+"!");
+			return;
+		}
+		blockedPlayer.blocked = true;
+		player.role.blocking = blockedPlayer;
+		player.sendBack("You are now blocking "+blockedPlayer.name+".");
+	}
+}
+
 module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Lookup};
 
 /*case "/t":
@@ -209,12 +242,12 @@ module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Lookup};
 						var obj = {"player":"Server","message":input.split(" ")[1]+" has X amount of prestige."};
 						socket.emit('message', obj); //to sending client
 						break;
-					case "/b":
-					case "/block":
-						//D can do this during the day (ONCE PER DAY) <username>
-						var obj = {"player":"Server","message":"You've blocked "+input.split(" ")[1]+" for the day."};
-						socket.emit('message', obj); //to sending client
-						break;
+						case "/b":
+						case "/block":
+							//D can do this during the day (ONCE PER DAY) <username>
+							var obj = {"player":"Server","message":"You've blocked "+input.split(" ")[1]+" for the day."};
+							socket.emit('message', obj); //to sending client
+							break;
 					case "/s":
 					case "/spy":
 						//K can do this during the day (ONCE PER DAY) <username>
