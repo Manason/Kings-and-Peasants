@@ -6,7 +6,6 @@ class Game{
 	constructor(name, io,playerList, minPlayers){
 		this.name = name;
 		this.io = io;
-		this.socketList = [];
 		this.playerList = playerList;
 		this.numLords = 0;
 		this.maxLords;
@@ -96,37 +95,38 @@ class Game{
 		this.io.to(this.name).emit('gamestate', obj);
 	}
 
+	//adds a player to this game
     addPlayer(name, socket){
-		this.socketList.push(socket);
 
-		var player = new Player(name, new Role.Spectator(), socket);
-		if(this.playerList.length == 0){
+		var player = new Player(name, new Role.Spectator(), socket); //create player object
+		
+		//set first player as host
+		if(this.playerList.length == 0)
 			player.isHost = true;
-		}
         this.playerList.push(player);
 		var game = this;
-		game.sendAll(player.name+" has joined the game.");
+		game.sendAll(player.name + " has joined the game.");
+		
+		//handle messages from client
 		socket.on('messageFromClient', function(data){
 			var input = data.content;
 			input = input.trim();
-			//public chat
+			
+			//chat
 			if(!input.startsWith("/")){
 				var obj = {"player":player.name,"message":input};
 				game.io.to(game.name).emit('message', obj); //this is sent to all clients
 			}
+			//commands
 			else{
-				for(var i = 1; true; i++){
-					var objName = Object.keys(Command)[i];
-					if(objName == null){
-						player.sendBack("Command not found. Use /help for help");
-						return;
-					}
-					var commandObj = new Command[objName];
-					if(commandObj.names.includes(input.split(" ")[0])){
-						commandObj.execute(input, player, game);
+				var cList = game.getCommandsList();
+				for(var i = 1; i < cList.length; i++){
+					if (cList[i].names.includes(input.split(" ")[0])){
+						cList[i].execute(input, player, game);
 						return;
 					}
 				}
+				player.sendBack("Command not found. Use /help for help");
 			}
 		});
     }
