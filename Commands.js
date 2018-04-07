@@ -84,6 +84,10 @@ class StartGame extends Command{
 		console.log("test "+(game == null));
 		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
+		if(game.playerList.length < game.minPlayers){
+			player.sendBack(game.minPlayers + " players required to start.");
+			return;
+		}
 		game.sendAll("The game is starting!");
 		game.state = 0; //Voting
 		game.setState();

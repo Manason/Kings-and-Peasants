@@ -71,7 +71,7 @@ io.on('connection', function(socket){
 						error("Can't name the game that. Try again.");
 						break;
 					}
-					games.push(new Game(name, io, [], 1));
+					games.push(new Game(name, io, [], 10));
 					sendBack("Game hosted.");
 				case "/join":
 					var name = input.split(" ")[1];
