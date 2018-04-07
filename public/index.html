@@ -73,6 +73,37 @@
 			'</div>'+
 		'</div>');
 	});
+	//TODO make these different from a normal message
+	socket.on('whisper', function(msg){
+		var timestamp = new Date().toTimeString().substring(0, 8);
+		$(".chat-window").append(
+		'<div class="chat-entry">' +
+			'<div class="chat-time">'+
+				'<p>'+timestamp+'</p>'+
+			'</div>'+
+			'<div class="chat-name">'+
+				'<p>'+msg.player+'</p>'+
+			'</div>'+
+			'<div class="chat-message">'+
+				'<p>whispered '+msg.message+'</p>'+
+			'</div>'+
+		'</div>');
+	});
+	socket.on('yell', function(msg){
+		var timestamp = new Date().toTimeString().substring(0, 8);
+		$(".chat-window").append(
+		'<div class="chat-entry">' +
+			'<div class="chat-time">'+
+				'<p>'+timestamp+'</p>'+
+			'</div>'+
+			'<div class="chat-name">'+
+				'<p>'+msg.player+'</p>'+
+			'</div>'+
+			'<div class="chat-message">'+
+				'<p>YELLED '+msg.message+'</p>'+
+			'</div>'+
+		'</div>');
+	});
 	socket.on('gamestate', function(gmst){
 		gamestate.innerHTML = gmst.state;
 	});

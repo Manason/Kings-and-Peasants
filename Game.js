@@ -27,6 +27,22 @@ class Game{
 		var obj = {"player":"Game","message":message};
 		this.io.to(this.name).emit('message', obj);
 	}
+	sendYell(message,player){
+		var obj = {"player":player.name,"message":message};
+		this.io.to(this.name).emit('yell', obj);
+	}
+
+	getCommandsList(){
+		var cList = [];
+		for(var i = 1; true; i++){
+			var objName = Object.keys(Command)[i];
+			if(objName == null){
+				return cList;
+			}
+			var commandObj = new Command[objName];
+			cList.push(commandObj);
+		}
+	}
 
 	timerFunc() {
 		//Send out final message once game is over
