@@ -20,6 +20,10 @@ class Player{
 		var obj = {"player":"Server","message":message};
 		this.socket.emit('message', obj);
 	}
+	sendWhisper(message,player){
+		var obj = {"player":player.name,"message":message};
+		this.socket.emit('whisper', obj);
+	}
 };
 
 module.exports = Player;

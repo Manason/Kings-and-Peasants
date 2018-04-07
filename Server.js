@@ -87,6 +87,10 @@ io.on('connection', function(socket){
 					}
 					error("Game doesn't exist.");
 					break;
+				case "/help":
+					//TODO THIS SHIT
+					sendBack("the help commands should go here");
+					break;
 				default:
 					error("Command not recognized.");
 			}
