@@ -13,14 +13,17 @@ class Player{
 		this.assasssins = [];
 		this.protectors = [];
 	}
+	//sends an error message to the player
 	error(message){
 		var obj = {"player":"Error","message":message};
 		this.socket.emit('message', obj);
 	}
+	//sends a server message to the player
 	sendBack(message){
 		var obj = {"player":"Server","message":message};
 		this.socket.emit('message', obj);
 	}
+	//sends the message to the player
 	sendWhisper(message,player){
 		var obj = {"player":player.name,"message":message};
 		this.socket.emit('whisper', obj);
