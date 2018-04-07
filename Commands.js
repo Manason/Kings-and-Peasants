@@ -337,6 +337,8 @@ class Assassinate extends Command{
 		super(["/a", "/assassinate"], [0,1], [2,3,4,5,6,7,8], ["Earl", "Knight", "Peasant"], false, ["/assassinate [player name] - set your assassination target.","Can only set a target during the day!","Only Earls, Knights, and Peasants can attempt an assassination."]);
 	}
 	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
 		input = input.split(" +");
 		if(input.length == 1)
 			if(player.role.target != null)
@@ -363,7 +365,47 @@ class Assassinate extends Command{
 	}
 }
 
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate};
+class Protect extends Command{
+	constructor(){
+		super(["/p", "/protect"], [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke","Earl", "Knight", "Peasant"], false, ["/protect [player name] - set your protection target.","Can only set a protection target during the day!","I know its hard to watch as a Spectator, but you will just have to let the game run its course."]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		input = input.split(" +");
+		if(input.length == 1)
+			if(player.role.protectTarget != null)
+				player.sendBack("You will protect " + player.role.protectTarget.name + " tonight.");
+			else
+				player.sendBack("no protection target has been set.");
+		else{
+			var target = super.playerArgument(input[1]);
+			if(target == false)
+				return;
+			if(player.role.protectTarget == protectTarget){
+				player.sendBack("You will no longer protect " + target.name + " tonight.");
+				player.role.protectTarget = null;
+				target.protectors.splice(target.protectors.indexOf(player), 1);
+			}
+			else{
+				player.sendBack("You will protect "+ target.name + " tonight.");
+				player.role.protectTarget.protectors.splice(player.role.protectTarget.protectors.indexOf(player), 1);
+				player.role.protectTarget = target;
+			}
+				
+		}
+		
+	}
+}
+
+case "/p":
+					case "/protect":
+						//G can do this during the day (COSTS PRESTIGE) <username>
+						var obj = {"player":"Server","message":"You are protecting "+input.split(" ")[1]+"."};
+						socket.emit('message', obj); //this is only sent to the client which sent the message
+						break;
+
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>

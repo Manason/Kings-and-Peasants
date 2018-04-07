@@ -12,6 +12,7 @@ class Player{
 		this.socket = socket;
 		this.spies = [];
 		this.assasssins = [];
+		this.protectors = [];
 	}
 	error(message){
 		var obj = {"player":"Error","message":message};
