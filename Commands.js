@@ -48,9 +48,8 @@ class Command{
 			this.player.error("No interacting with Spectators. Nice try.");
 			return player;
 		}
-		else{
+		else
 			return player;
-		}
 	}
 
 };
@@ -63,16 +62,20 @@ class Name extends Command{
 		if(super.execute(input.split(" ").length-1,player, game) == false)
 			return;
 		input = input.split(" ");
+		
+		//make sure no player already has that name
 		if(game.getPlayerByName(input[1]) != false){
 			if(player.name == input[1]){
 				player.sendBack("Your name is already "+ player.name);
-			} else {
+			} 
+			else
 				player.sendBack("Username already taken.");
-			}
-			return;
 		}
-		player.name = input[1];
-		player.sendBack("Username set to " + player.name);
+		//set the player name
+		else{
+			player.name = input[1];
+			player.sendBack("Username set to " + player.name);
+		}
 	}
 }
 
