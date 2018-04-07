@@ -1,6 +1,7 @@
 class Command{
-	constructor(names, allowedNumArgs, allowedStates, allowedRoles, hostOnly, helpText){
+	constructor(names, cost, allowedNumArgs, allowedStates, allowedRoles, hostOnly, helpText){
 		this.names = names;
+		this.cost = cost;
 		this.allowedNumArgs = allowedNumArgs;
 		this.allowedStates = allowedStates;
 		this.allowedRoles = allowedRoles;
@@ -10,18 +11,22 @@ class Command{
 	execute(numArgs, player, game){
 		this.player = player;
 		this.game = game;
+		//checks number of arguments valid
 		if(!this.allowedNumArgs.includes(numArgs)){
 			this.sendHelp();
 			return false;
 		}
+		//check command executed in valid state
 		if(!this.allowedStates.includes(game.state)){
 			player.error(this.helpText[1]);
 			return false;
 		}
+		//check that command is only executed by an allowed role
 		if(!this.allowedRoles.includes(player.role.title)){
 			player.error(this.helpText[2]);
 			return false;
 		}
+		//check that command is only executed by host if host only
 		if(this.hostOnly && !player.isHost){
 			player.error("Only the host can do this action.");
 			return false;
@@ -31,40 +36,58 @@ class Command{
 	sendHelp(){
 		this.player.sendBack(this.helpText[0]);
 	}
+	//returns group argument, transforming argument to remove trailing s, and capitalize first letter. Checks for valid group, returns group name if valid, false otherwise
 	groupArgument(argument){
 		argument = argument.toLowerCase();
 		argument = argument.slice(0,1).toUpperCase() + argument.substring(1);
 		if(argument.endsWith("s"))
 			argument = argument.slice(0, argument.length-1);
-		return argument;
+		
+		if(["Lord", "Duke", "Earl", "Knight", "Peasant"].includes(argument))
+			return argument;
+		else{
+			this.player.error("Invalid group.");
+			return false;
+		}
+			
 	}
+	//checks playername for existence and spectator, returns player if found, otherwise false
 	playerArgument(playerName){
 		var player = this.game.getPlayerByName(playerName);
 		if(player == false){
 			this.player.error("Player not found.");
 			return false;
-		}
+		}/*
 		else if(player.role.title == "Spectator"){
 			this.player.error("No interacting with Spectators. Nice try.");
-			return player;
-		}
+			return false;
+		}*/
 		else
 			return player;
+	}
+	//checks that the player can pay the cost of the command + amount, returns totalCost if transaction is valid, false if not
+	checkCost(amount){
+		var totalCost = (Math.floor(this.cost * this.player.role.discount) + amount);
+		if(totalCost < this.player.prestige){
+			player.error("You don't have enough prestige. This command costs " + (totalCost-amount) + " prestige.");
+			return false;
+		}
+		return totalCost;
 	}
 
 };
 
 class Name extends Command{
 	constructor(){
-		super(["/n", "/name"], [1], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/name <player_name> - Sets your player name.","You can't change your name once the game has started!","Everyone should be able to do this. Contact admin."]);
+		super(["/n", "/name"], 0, [1], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/name <player_name> - Sets your player name.","You can't change your name once the game has started!","Everyone should be able to do this. Contact admin."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		input = input.split(" ");
+		input = input.split(/\s+/);
 		
 		//make sure no player already has that name
-		if(game.getPlayerByName(input[1]) != false){
+		if(!game.playerArgument(input[1])){
 			if(player.name == input[1]){
 				player.sendBack("Your name is already "+ player.name);
 			} 
@@ -81,17 +104,16 @@ class Name extends Command{
 
 class StartGame extends Command{
 	constructor(){
-		super(["/start", "/startgame"], [0], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], true, ["/startgame - Starts the game. 🙃","The game is already started!","Everyone should be able to do this. Contact admin."]);
+		super(["/start", "/startgame"], 0, [0], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], true, ["/startgame - Starts the game.","The game is already started!","Everyone should be able to do this. Contact admin."]);
 	}
 	execute(input, player, game){
-		console.log("test "+(game == null));
-		if(super.execute(input.split(" ").length-1,player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
 		if(game.playerList.length < game.minPlayers){
-			player.sendBack(game.minPlayers + " players required to start.");
+			player.error(game.minPlayers + " players required to start.");
 			return;
 		}
-		game.sendAll("The game is starting!");
+		game.sendAll("Voting is now open. Vote for your Ruler with /vote");
 		game.state = 0; //Voting
 		game.setState();
 		game.timerFunc();
@@ -101,68 +123,77 @@ class StartGame extends Command{
 	}
 }
 
-//TODO make /vote with no playername display your current vote
 class Vote extends Command{
 	constructor(){
-		super(["/v", "/vote"], [1], [0], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/vote [player_name] - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
+		super(["/v", "/vote"], 0, [0, 1], [0, -5], ["Duke", "Spectator"], false, ["/vote [player_name] - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		input = input.split(" ");
-		var votingFor = game.getPlayerByName(input[1]);
-		if(votingFor == false){
-			player.error("Cannot find player");
+		input = input.split(/\s+/);
+		if(game.state == -5 && player.role.title == "Spectator"){
+			player.error("You can not vote in this election!");
+			return;
+		}	
+		if(input.length == 1){
+			if(player.votedFor == null)
+				player.sendBack("You have not yet cast a vote");
+			else
+				player.sendBack("You voted for " + player.votedFor.name + ". You can change your vote with /vote");
 			return;
 		}
-		if(player.votedFor != null)
-			player.votedFor.votes--;
+		
+		var votingFor = super.playerArgument(input[1]);
+		if(votingFor == false)
+			return;
+		//if an emergency election make sure they only vote for Lords
+		else if(game.state == -5 && votingFor.role.title != "Lord")
+			player.error("You can only vote for a Lord in the election for the new King!");
+		else{
+			if(player.votedFor != null)
+				player.votedFor.votes--;
 
-		player.votedFor = votingFor;
-		votingFor.votes++;
-		player.sendBack("You've voted for "+player.votedFor.name);
+			player.votedFor = votingFor;
+			votingFor.votes++;
+			player.sendBack("You've voted for "+player.votedFor.name);
+		}
 	}
 }
 
 class Duke extends Command{
 	constructor(){
-		super(["/d", "/duke"], [1], [1], ["King"], false, ["/duke <player_name> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
+		super(["/d", "/duke"], 0, [1], [1], ["King"], false, ["/duke <player_name> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		input = input.split(" ");
+		input = input.split(/\s+/);
 		if(game.numDukes >= game.maxDukes + game.maxLords){
 			player.error("Maximum number of Dukes already appointed");
 			return;
 		}
-		var dukeCandidate = game.getPlayerByName(input[1]);
-		if(dukeCandidate == false){
-			player.error("Cannot find player.");
+		var dukeCandidate = super.playerArgument(input[1]);
+		if(dukeCandidate == false)
 			return;
-		}
-		if(dukeCandidate.role.title == "Duke"){
+		else if(dukeCandidate.role.title == "Duke")
 			player.error("Player has already been appointed as Duke.");
-			return;
-		}
-		if(dukeCandidate == player){
+		else if(dukeCandidate == player)
 			player.error("You can't duke yourself!");
-			return;
+		else{
+			game.setDuke(dukeCandidate);
+			game.sendAll(dukeCandidate.name + " has been appointed a Duke!");
 		}
-		game.setDuke(dukeCandidate);
-		game.sendAll(dukeCandidate.name + " has been appointed a Duke!");
-		//Could remove the duke'd person's socket and send one specific to say "You are now a duke."
 	}
 }
 
 class Successor extends Command{
 	constructor(){
-		super(["/sc", "/successor"], [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor [player_name] - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
+		super(["/sc", "/successor"], 0, [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor [player_name] - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		input = input.split(" ");
+		input = input.split(/\s+/);
 		if(input.length == 1){
 			if(player.sucessor == null)
 				sendBack("You don't have a sucessor.");
@@ -170,72 +201,70 @@ class Successor extends Command{
 				sendBack("Your sucessor is currently " + player.sucessor.name);
 			return;
 		}
-		var sucessor = game.getPlayerByName(input[1]);
-		if(sucessor == false){
-			player.error("Cannot find player.");
+		var sucessor = super.playerArgument(input[1]);
+		if(sucessor == false)
 			return;
-		}
-		if(player.role.title == "Lord"){
-			if(sucessor.role.title != "Duke"){
-				player.error("Sucessor must be a Duke.");
-				return;
-			}
-		}
-		else if(player.role.title == "Duke"){
-			if(sucessor.role.title != "Earl" && sucessor.role.title != "Knight"){
+		if(player.role.title == "Lord" && sucessor.role.title != "Duke")
+			player.error("Sucessor must be a Duke.");
+		else if(player.role.title == "Duke" && sucessor.role.title != "Earl" && sucessor.role.title != "Knight")
 				player.error("Sucessor must either be an Earl or a Knight.");
-				return;
-			}
+		else{
+			player.sucessor = sucessor;
+			player.sendBack(sucessor.name + " is now your sucessor.");
 		}
-		player.sucessor = sucessor;
-		player.sendBack(sucessor.name + " is now your sucessor.");
 	}
 }
 
 class Tax extends Command{
 	constructor(){
-		super(["/t", "/tax"], [0,1], [2,3,4,5,6,7], ["King"], false, ["/tax [role_group] - Selects a group to tax at the beginning of the day, e.g. /tax Lords","Cannot set a tax now.","Only the King can tax the subjects!"]);
+		super(["/t", "/tax"], 0, [0,1], [2,3,4,5,6,7,8], ["King"], false, ["/tax [role_group] - Selects a group to tax at the beginning of the day, e.g. /tax Lords","Cannot set a tax now.","Only the King can tax the subjects!"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1, player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
-		var input = input.split(" ");
-		if(input.length == 1){
-			player.sendBack("The " + game.roleToTax +"s will be taxed at the beginning of the next day");
-		}
-		else{
-			game.roleToTax = super.groupArgment(input[1]);
-			player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
-		}
-
+		var input = input.split(/\s+/);
+		
+		if(input.length == 2)
+			game.roleToTax = super.groupArgument(input[1]);
+		
+		player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
 	}
 }
 
 class Lookup extends Command{
 	constructor(){
-		super(["/l", "/look", "/lookup"], [1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <player_name/role_group> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
+		super(["/l", "/look", "/lookup"], 5, [1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <player_name/role_group> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1,player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		input = input.split(" ");
+		input = input.split(/\s+/);
+		
+		//handle /lookup for the King
 		if(player.role.title == "King"){
-			var totalPrestige = -1;
-			for(var i = 0; i < game.playerList.length; i++){
-				if(game.playerList[i].role == input[1]){
-					totalPrestige += game.playerList[i].prestige;
-				}
-			}
-			player.sendBack("The "+input[1]+"s have "+(totalPrestige+1)+" total prestige.");
+			var roleToLookup = super.groupArgument(input[1]);
+			if(roleToLookup == false)
+				return;
+			
+			var playerList = game.getPlayersByRole(roleToLookup);
+			var totalPrestige = 0;
+			for(var i = 0; i < playerList.length; i++)
+				totalPrestige += playerList[i].prestige;
+			
+			player.sendBack("The " + roleToLookup + "s have " + totalPrestige + " total prestige.");
 		}
+		
+		//hande /lookup for Lords
 		else if(player.role.title == "Lord"){
 			var checkedPlayer = super.playerArgument(input[1]);
 			if(checkedPlayer == false)
 				return;
-			if(checkedPlayer.role.title == "King"){
-				player.error("The king's treasury is locked.");
+			if(checkedPlayer.role.title == "King")
+				player.error("You are forbidden to access the King's treasury.");
+			else if(super.checkCost(0) != false){
+				player.prestige -= super.checkCost(0);
+				player.sendBack(checkedPlayer.name+" currently has "+checkedPlayer.prestige+" prestige.");
 			}
-			player.sendBack(checkedPlayer.name+" currently has "+checkedPlayer.prestige+" prestige.");
 		}
 	}
 }
