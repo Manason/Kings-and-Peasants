@@ -187,6 +187,9 @@ class Lookup extends Command{
 				player.error("Cannot find player.");
 				return;
 			}
+			if(checkedPlayer.role.title == "King"){
+				player.error("The king's treasury is locked.");
+			}
 			player.sendBack(checkedPlayer.name+" currently has "+checkedPlayer.prestige+" prestige.");
 		}
 	}
@@ -194,7 +197,7 @@ class Lookup extends Command{
 
 class Block extends Command{
 	constructor(){
-		super(["/b", "/block"], [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/block <playerName> - Allows a Duke to block a player of equal or lower rank.","Block can only be used during the day.","Only Dukes can use this command."]);
+		super(["/b", "/block"], [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/block [playerName] - Allows a Duke to block a player of equal or lower rank.","Block can only be used during the day.","Only Dukes can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
@@ -204,11 +207,11 @@ class Block extends Command{
 			if(player.role.blocking == null)
 				player.sendBack("You aren't blocking anyone yet.");
 			else
-				player.sendBack("You are blocking " + player.sucessor.name);
+				player.sendBack("You are blocking " + player.role.blocking.name);
 			return;
 		}
 		if(player.role.blocking != null){
-			player.error("You are already blocking "+player.role.blocking);
+			player.error("You are already blocking "+player.role.blocking.name);
 		}
 		var blockedPlayer = game.getPlayerByName(input[1]);
 		if(blockedPlayer == false){
@@ -222,6 +225,39 @@ class Block extends Command{
 		blockedPlayer.blocked = true;
 		player.role.blocking = blockedPlayer;
 		player.sendBack("You are now blocking "+blockedPlayer.name+".");
+	}
+}
+
+class Spy extends Command{
+	constructor(){
+		super(["/s", "/spy"], [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/spy [playerName] - Allows a Knight to spy on a player of equal or lower rank.","You can only spy on someone during the day.","Only Knights can use this command."]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1,player, game) == false) //this might be wrong
+			return;
+		input = input.split(" ");
+		if(input.length == 1){
+			if(player.role.spying == null)
+				player.sendBack("You aren't spying on anyone yet.");
+			else
+				player.sendBack("You are spying on " + player.role.spying.name);
+			return;
+		}
+		if(player.role.spying != null){
+			player.error("You are already spying on "+player.role.spying.name);
+		}
+		var spiedPlayer = game.getPlayerByName(input[1]);
+		if(spiedPlayer == false){
+			player.error("Cannot find player.");
+			return;
+		}
+		if(spiedPlayer.role.title == "King"){
+			player.error("You don't want to get caught spying on the king! ☠️");
+			return;
+		}
+		spiedPlayer.spies.push(player);
+		player.role.spying = spiedPlayer;
+		player.sendBack("You are now spying on "+spiedPlayer.name+".");
 	}
 }
 

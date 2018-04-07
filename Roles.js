@@ -85,6 +85,7 @@ class Earl extends Role{
 class Knight extends Role{
 	constructor(){
 		super("Knight", 5, 20, 6);
+		this.spying = null;
 	}
     spy(player){
 
