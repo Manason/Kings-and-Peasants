@@ -439,13 +439,21 @@ class Execute extends Command{
 			}
 		}
 			
+	}
 }
-case "/execute":
-						//R, L, & D can do this during the day (COSTS PRESTIGE) <username>
-						var obj = {"player":"Server","message":input.split(" ")[1]+" will be executed tonight."};
-						socket.emit('message', obj); //to sending client
-						break;
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect};
+
+class Prestige extends Command{
+	constructor(){
+		super(["/prestige"], [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/prestige - tells you your current prestige","Can not look up your prestige right now","You do not have prestige. You are a spectator. Now go away."]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(" ").length-1, player, game) == false)
+			return;
+		player.sendBack("You currently have " + player.prestige + " prestige.");
+	}
+}
+
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige};
 /*case "/t":
 					case "/tax":
 						//R can do this during the day <role-group>
