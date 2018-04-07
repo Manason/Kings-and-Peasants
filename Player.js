@@ -1,7 +1,6 @@
 class Player{
-	constructor(name, id, role, socket){
+	constructor(name, role, socket){
 		this.name = name;
-		this.id = id;
 		this.role = role;
 		this.prestige = 0;
 		this.blocked = false;

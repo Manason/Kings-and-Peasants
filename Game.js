@@ -96,10 +96,10 @@ class Game{
 		this.io.to(this.name).emit('gamestate', obj);
 	}
 
-    addPlayer(name, id, socket){
+    addPlayer(name, socket){
 		this.socketList.push(socket);
 
-		var player = new Player(name, id,  new Role.Spectator(), socket);
+		var player = new Player(name, new Role.Spectator(), socket);
 		if(this.playerList.length == 0){
 			player.isHost = true;
 		}
@@ -130,14 +130,6 @@ class Game{
 			}
 		});
     }
-	getPlayerById(id){
-		for(var i = 0; i < this.playerList.length; i++){
-			if(this.playerList[i].id == id){
-				return this.playerList[i];
-			}
-		}
-		return false;
-	}
 	getPlayerByName(name){
 		for(var i = 0; i < this.playerList.length; i++){
 			if(this.playerList[i].name == name)

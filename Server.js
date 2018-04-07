@@ -81,7 +81,7 @@ io.on('connection', function(socket){
 							socket.join(name);
 							sendBack("Joined game.");
 							inGame = true;
-							games[i].addPlayer("User"+userID, userID, socket);
+							games[i].addPlayer("User"+userID, socket);
 							return;
 						}
 					}
