@@ -10,6 +10,7 @@ class Player{
 		this.sucessor = null;
 		this.isHost = false;
 		this.socket = socket;
+		this.spies = [];
 	}
 	error(message){
 		var obj = {"player":"Error","message":message};

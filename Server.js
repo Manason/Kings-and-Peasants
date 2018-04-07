@@ -32,7 +32,7 @@ io.on('connection', function(socket){
 	socket.join('lobby');
 	currentID++;
 	sendToLobby("User" +userID + " joined the lobby.");
-	
+
 
 	function error(message){
 		var obj = {"player":"Error","message":message};
@@ -42,7 +42,7 @@ io.on('connection', function(socket){
 		var obj = {"player":"Server","message":message};
 		socket.emit('message', obj);
 	}
-	
+
 	socket.on('messageFromClient', function(data){
 		if(inGame == true){
 			return;
@@ -82,11 +82,15 @@ io.on('connection', function(socket){
 							sendBack("Joined game.");
 							inGame = true;
 							games[i].addPlayer("User"+userID, userID, socket);
+							return;
 						}
 					}
+					error("Game doesn't exist.");
 					break;
+				default:
+					error("Command not recognized.");
 			}
 		}
 	});
-	
+
 });
