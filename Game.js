@@ -23,19 +23,19 @@ class Game{
 		this.dukes = [];
 		this.roleToTax = "Random";
 		this.minPlayers = minPlayers;
-		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"];
+		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
 	}
 	/*doNight(){
 
 
 
 		//process assassinations
-		var orderedPlayerList = this.getPlayersInOrder();
+		var orderedPlayerList = this.getPlayersInOrder(6);
 		for(var i = 0; i < this.playerList.length; i++){
 			//if their attack - protectors >= defense
 			if((orderedPlayerList[i].assassins.length - orderedPlayerList[i].protectors.length) >= Math.floor(orderedPlayerList.length/orderedPlayerList[i].role.defense)){
 				orderedPlayerList[i].kill();
-				game.sendAll(orderedPlayerList[i].name + " has been assassinated!");
+				this.sendAll(orderedPlayerList[i].name + " has been assassinated!");
 			}
 			//attack didn't go through
 			else{
@@ -47,9 +47,19 @@ class Game{
 		}
 
 		//if king dies, new election()
-		if(this.getPlayersByRole("King").length == 0)
+		if(this.getPlayersByRole("King").length == 0){
+
+		}
 
 		//executions
+		orderedPlayerList = this.getPlayersInOrder(3);
+		for(var i = 0; i < orderedPlayerList.length; i++){
+			if(orderedPlayerList[i].role.executeTarget != null){
+				orderedPlayerList[i].role.executeTarget.kill();
+				this.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
+			}
+
+		}
 		//collect tax
 		if(this.getPlayersByRole("King").length != 0){ //king is not dead
 			if(this.roleToTax == "Random"){
@@ -79,10 +89,11 @@ class Game{
 		//income
 
 
-	}*/
-	getPlayersInOrder(){
+	}
+	getPlayersInOrder(limit){
+		if(limit > this.rolesList)
 		var array = [];
-		for(var i = 0; i < this.rolesList.length; i++){
+		for(var i = 0; i < limit; i++){
 			array.concat(this.getPlayersByRole(this.rolesList[i]));
 		}
 		return array;
