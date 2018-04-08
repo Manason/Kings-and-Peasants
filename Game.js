@@ -46,6 +46,8 @@ class Game{
 		}
 		
 		//if king dies, new election()
+		if(this.getPlayersByRole("King").length == 0)
+			
 		//executions
 		//collect tax
 		if(this.getPlayersByRole("King").length != 0){ //king is not dead
@@ -132,7 +134,11 @@ class Game{
 	//changes the state depending on game.state
 	setState(){
 		var state_name = "";
-		switch(this.state){
+		switch(state){
+			case -5:
+				state_name = "Emergency Election";
+				this.timer = 30;
+				break;
 			case 0:
 				state_name = "Voting";
 				this.timer = 3;
