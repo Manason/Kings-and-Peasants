@@ -67,7 +67,9 @@ class Command{
 	}
 	//checks that the player can pay the cost of the command + amount, returns totalCost if transaction is valid, false if not
 	checkCost(amount){
-		var totalCost = (Math.floor(this.cost * this.player.role.discount) + amount);
+		if(this.player.role.title == "Peasant")
+			return amount;
+		var totalCost = (this.cost + amount);
 		if(totalCost < this.player.prestige){
 			player.error("You don't have enough prestige. This command costs " + (totalCost-amount) + " prestige.");
 			return false;
@@ -396,30 +398,46 @@ class Give extends Command{
 
 class Assassinate extends Command{
 	constructor(){
-		super(["/a", "/assassinate"], 10, [0,1], [2,3,4,5,6,7,8], ["Earl", "Knight", "Peasant"], false, ["/assassinate [player name] - set your assassination target.","Can only set a target during the day!","Only Earls, Knights, and Peasants can attempt an assassination."]);
+		super(["/a", "/assassinate"], 10, [0,1], [2,3,4,5,6,7,8], ["Earl", "Knight", "Peasant"], false, ["/assassinate [player_name] - set your assassination target.","Can only set a target during the day!","Only Earls, Knights, and Peasants can attempt an assassination."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1, player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
-		input = input.split(" +");
-		if(input.length == 1)
+		input = input.split(/\s+/);
+		if(input.length == 1){
 			if(player.role.target != null)
 				player.sendBack("your assassination target is " + player.role.target.name);
 			else
 				player.sendBack("no assassination target has been set.");
+		}
 		else{
 			var target = super.playerArgument(input[1]);
 			if(target == false)
 				return;
+			
+			//to remove the target use the command again on same target
 			if(player.role.target == target){
-				player.sendBack(target.name + " is no longer your assassination target.");
 				player.role.target = null;
 				target.assassins.splice(target.assassins.indexOf(player), 1);
+				if(player.role.title != "Peasant")
+					player.prestige += this.cost;
+				player.sendBack(target.name + " is no longer your assassination target.");
+				player.notifyWatchers(player.name + " is no longer planning to attack " + target.name + " tonight.");
 			}
+			//to set the target use the command on a target
 			else{
+				if(super.checkCost(0) == false)
+					return;
+				
+				//if they already have a target, remove it
+				if(player.role.target.assassins.includes(player))
+					player.role.target.assassins.splice(player.role.target.assassins.indexOf(player), 1);
+				else
+					player.prestige -= super.checkCost(0);
+				target.assassins.push(player);
+				player.role.target = target; //set new target
 				player.sendBack("assassination target set to " + target.name);
-				player.role.target.assassins.splice(player.role.target.assassins.indexOf(player), 1);
-				player.role.target = target;
+				player.notifyWatchers(player.name + " is planning to attack " + target.name +" tonight.");
 			}
 
 		}
@@ -429,30 +447,42 @@ class Assassinate extends Command{
 
 class Protect extends Command{
 	constructor(){
-		super(["/p", "/protect"], [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke","Earl", "Knight", "Peasant"], false, ["/protect [player name] - set your protection target.","Can only set a protection target during the day!","I know its hard to watch as a Spectator, but you will just have to let the game run its course."]);
+		super(["/p", "/protect"], 5, [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke","Earl", "Knight", "Peasant"], false, ["/protect [player_name] - set your protection target.","Can only set a protection target during the day!","I know its hard to watch as a Spectator, but you will just have to let the game run its course."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1, player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
-		input = input.split(" +");
-		if(input.length == 1)
+		input = input.split(/\s+/);
+		
+		
+		if(input.length == 1){
 			if(player.role.protectTarget != null)
 				player.sendBack("You will protect " + player.role.protectTarget.name + " tonight.");
 			else
 				player.sendBack("no protection target has been set.");
+		}
 		else{
 			var target = super.playerArgument(input[1]);
 			if(target == false)
 				return;
 			if(player.role.protectTarget == protectTarget){
-				player.sendBack("You will no longer protect " + target.name + " tonight.");
 				player.role.protectTarget = null;
 				target.protectors.splice(target.protectors.indexOf(player), 1);
+				player.prestige += this.cost;
+				player.sendBack("You will no longer protect " + target.name + " tonight.");
+				player.notifyWatchers(player.name + " is no longer protecting " + target.name + " tonight.");
 			}
 			else{
-				player.sendBack("You will protect "+ target.name + " tonight.");
-				player.role.protectTarget.protectors.splice(player.role.protectTarget.protectors.indexOf(player), 1);
+				if(super.checkCost(0) == false)
+					return;
+				if(player.role.target.protectors.includes(player))
+					player.role.protectTarget.protectors.splice(player.role.protectTarget.protectors.indexOf(player), 1);
+				else
+					player.prestige -= super.checkCost(0);
+				target.protectors.push(player);
 				player.role.protectTarget = target;
+				player.sendBack("You will protect "+ target.name + " tonight.");
+				player.notifyWatchers(player.name + " has decided to protect " + target.name + " tonight.");
 			}
 
 		}
@@ -462,12 +492,12 @@ class Protect extends Command{
 
 class Execute extends Command{
 	constructor(){
-		super(["/e", "/execute"], [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke"], false, ["/execute [player name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
+		super(["/e", "/execute"], 50, [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke"], false, ["/execute [player_name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1, player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
-		input = input.split(" +");
+		input = input.split(/\s+/);
 		if(player.blocked){
 			player.error("You can't do this while blocked.");
 			return;
@@ -489,18 +519,20 @@ class Execute extends Command{
 				return;
 			}
 			//order execution
-			if(player.role.executeTarget == null){
+			if(player.role.executeTarget == null && super.checkCost(0) != false){
+				player.prestige -= super.checkCost(0);
 				player.role.executeTarget = target;
 				game.sendAll(player.name + " has ordered " + target.name + " executed tonight!");
 			}
 			//take back an execution
 			else if(player.role.executeTarget == target){
+				player.prestige += this.cost;
 				game.sendAll(player.name + " has rescinded their order to execute " + target.name);
 				player.role.executeTarget = null;
 			}
 			//order a different execution
 			else{
-				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget+ ", and has instead ordered " + target.name + " assassinated tonight!");
+				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget+ ", and has instead ordered " + target.name + " executed tonight!");
 				player.role.executeTarget = target;
 			}
 		}
@@ -510,10 +542,10 @@ class Execute extends Command{
 
 class Prestige extends Command{
 	constructor(){
-		super(["/prestige"], [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/prestige - tells you your current prestige","Can not look up your prestige right now","You do not have prestige. You are a spectator. Now go away."]);
+		super(["/prestige"], 0, [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/prestige - tells you your current prestige","Can not look up your prestige right now","You do not have prestige. You are a spectator. Now go away."]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1, player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
 		player.sendBack("You currently have " + player.prestige + " prestige.");
 	}
@@ -522,22 +554,20 @@ class Prestige extends Command{
 //lists all players in order of their rank
 class PlayerList extends Command{
 	constructor(){
-		super(["/list"], [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
+		super(["/list"], 0, [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(" ").length-1, player, game) == false)
+		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
 
-		var list = "";
 		//prints players of the role in the form of "Role Name"
-		function printPlayersByRole(roleName){
+		var list = "";
+		var roleList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
+		for(int x = 0; x < roleList.length; x++){
 			var players = game.getPlayersByRole(roleName);
 			for(var i = 0; i < players.length; i++)
 				list += (players[i].role.title + " " + players[i].name + "<br>");
 		}
-		var roleList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
-		for(int i = 0; i < roleList.length; i++)
-			printPlayersByRole(roleList[i]);
 		player.sendBack(list.substring(0,list.length-4));
 	}
 }
@@ -545,50 +575,43 @@ class PlayerList extends Command{
 
 class Whisper extends Command{
 	constructor(){
-		super(["/w", "/pm", "/whisper", "/privatemessage"], [1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/whisper <player_name> <message> - Send a private message to another player.","You can only whisper during the game.","Silly Spectator, private messages are for players!"]);
-		this.prestigeCost = 2;
+		super(["/w", "/pm", "/whisper", "/privatemessage"], 0, [1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/whisper <player_name> <message> - Send a private message to another player.","You can only whisper during the game.","Silly Spectator, private messages are for players!"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(/\s+/).length>2 ? 1 : input.split(" ").length, player, game) == false)
+		if(super.execute(input.split(/\s+/).length>2 ? 1 : input.split(/\s+/).length, player, game) == false)
 			return;
 		var inputList = input.split(/\s+/);
 		var toPlayer = super.playerArgument(inputList[1]);
 		if(toPlayer == false)
 			return;
 		toPlayer.sendWhisper((input.substring(input.indexOf(inputList[2],inputList[0].length+inputList[1].length+2))),player);
+		player.notifyWatchers(player.name + " whispered to " + toPlayer.name + ".");
+		toPlayer.notifyWatchers(player.name + " whispered to " + toPlayer.name + ".");
 	}
 }
 
 class Yell extends Command{
 	constructor(){
-		super(["/y", "/yell", "/shout"], [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/yell <message> - Shout something into general chat.","You can only yell at people during the game.","You can try yelling, but they can't hear you!"]);
-		this.prestigeCost = 5;
+		super(["/y", "/yell", "/shout"], 10, [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight"], false, ["/yell <message> - Shout something into general chat.","You can only yell at people during the game.","You can try yelling, but they can't hear you!"]);
 	}
 	execute(input, player, game){
-		if(super.execute(input.split(/\s+/).length>1 ? 0 : input.split(" ").length, player, game) == false)
+		if(super.execute(input.split(/\s+/).length>1 ? 0 : input.split(/\s+/).length, player, game) == false)
 			return;
 		var inputList = input.split(/\s+/);
+		if(super.checkCost(0) == false)
+			return;
+		player.prestige -= super.checkCost(0);
 		game.sendYell((input.substring(input.indexOf(inputList[1],inputList[0].length+1))),player);
 	}
 }
 
 class Help extends Command{
 	constructor(){
-		super(["/h", "/help"], [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant","Spectator"], false, ["/help [command_name] - Send a private message to another player.","The game is broken somewhere, help should work for all states.","The game is broken somewhere, help should work for all roles."]);
-		this.prestigeCost = 0;
+		super(["/h", "/help"], 0, [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant","Spectator"], false, ["/help [command_name] - Send a private message to another player.","The game is broken somewhere, help should work for all states.","The game is broken somewhere, help should work for all roles."]);
 	}
 	execute(input, player, game){
 		input = input.split(/\s+/);
-		//if /help is called send them all the commands available to them at that time.
-		//if /help [command_name] is called send them the help for that command.
-		//if /help all is called send them all commands in the game.
-		//else send them the same thing as /help
-
-		//3 help types
-		//1. help all - sends every helptext for every command
-		//2. help command - sends help for one specific command
-					//work on normal help and if one ends up matching then just send that one and return;
-		//3. normal help - sends help for accessible commands and /help all at the end
+	
 		if(input.length == 1)
 			input[1] = "normal";
 		if(input[1].startsWith("/"))
@@ -598,17 +621,11 @@ class Help extends Command{
 		var helpCommands = [];
 		for(var i = 0; i < commandsList.length; i++){
 			var commandObj = commandsList[i];
-			console.log(commandObj.names);
-			console.log(input[1]);
 			if(commandObj.names.includes("/"+input[1])){
 				player.sendBack(commandObj.helpText[0]);
 				return;
 			}
-			//ho  ih  r
-			//f   t   t
-			//t   t   t
-			//f   f   f
-			//t   f   t
+			
 			if(input[1] == "all" || (commandObj.allowedStates.includes(game.state) && commandObj.allowedRoles.includes(player.role.title) && !(commandObj.hostOnly && !player.isHost))) {
 				helpCommands.push(commandObj.helpText[0]+"<br>");
 			}
@@ -617,9 +634,9 @@ class Help extends Command{
 		if(input[1] != "all")
 			helpCommands.push("/help all - for more commands<br>");
 		var allCommands = "";
-		for(var i = 0; i < helpCommands.length; i++){
+		for(var i = 0; i < helpCommands.length; i++)
 			allCommands += helpCommands[i];
-		}
+		
 		player.sendBack(allCommands.substring(0,allCommands.length-4));
 	}
 }
