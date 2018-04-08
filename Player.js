@@ -1,3 +1,5 @@
+const Role = require('./Roles.js');
+
 class Player{
 	constructor(name, role, socket){
 		this.name = name;
@@ -12,6 +14,7 @@ class Player{
 		this.spies = [];
 		this.assasssins = [];
 		this.protectors = [];
+		this.roleToTake = null;
 	}
 	//sends an error message to the player
 	error(message){
@@ -33,6 +36,23 @@ class Player{
 		for(var i = 0; i < spies.length; i++){
 			spies[i].socket.emit('secret', obj);
 		}
+	}
+	kill(){
+		this.prestige = 0;
+		this.blocked = false;
+		this.votedFor = null;
+		this.votes = 0;
+		if(this.successor != null)
+			this.successor.roleToTake = this.role;
+		this.sucessor = null;
+		this.spies = [];
+		this.assasssins = [];
+		this.protectors = [];
+		this.role = new Role.Peasant();
+	}
+	givePrestige(amount){
+		this.prestige += amount;
+		sendBack("Received " + amount + " prestige");
 	}
 };
 

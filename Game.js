@@ -20,8 +20,43 @@ class Game{
 		this.timerInterval = null;
 		this.timer = 30;
 		this.state = -1;
-		this.roleToTax = "Lord";
+		this.roleToTax = "Random";
 		this.minPlayers = minPlayers;
+		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"];
+	}
+	doNight(){
+		
+		
+		
+		//process then remove assassins
+		//process then remove protectors
+		//if king dies, new election()
+		//executions
+		//collect tax
+		if(this.getPlayersByRole("King").length != 0){ //king is not dead
+			if(this.roleToTax == "Random"){
+				var rolesList = this.rolesList;
+				this.shuffle(rolesList);
+				this.roleToTax = rolesList[0];
+			}
+			var playersToTax = this.getPlayersByRole(this.roleToTax);
+			var amount = 0;
+			for(var i = 0; i < playersToTax.length; i++){
+				var taxPrestige = Math.floor(playersToTax[i].prestige * 15);
+				playersToTax[i].prestige -= taxPrestige;
+				this.getPlayersByRole("King")[0].prestige += taxPrestige;
+				amount += taxPrestige;
+				playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
+			}
+			this.sendAll("The King has collected tax from the " + this.roleToTax + "s.");
+		}
+		//remove spies
+		//remove blocks
+		//set duke blocks
+		//promotions/demotions
+		//income
+		
+		
 	}
 	//sends a Game message to everyone in the game
 	sendAll(message){
