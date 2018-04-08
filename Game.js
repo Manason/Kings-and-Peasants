@@ -28,8 +28,23 @@ class Game{
 		
 		
 		
-		//process then remove assassins
-		//process then remove protectors
+		//process assassinations
+		var orderedPlayerList = this.getPlayersInOrder();
+		for(var i = 0; i < this.playerList.length; i++){
+			//if their attack - protectors >= defense
+			if((orderedPlayerList[i].assassins.length - orderedPlayerList[i].protectors.length) >= Math.floor(orderedPlayerList.length/orderedPlayerList[i].role.defense)){
+				orderedPlayerList[i].kill();
+				game.sendAll(orderedPlayerList[i].name + " has been assassinated!");
+			}
+			//attack didn't go through
+			else{
+				orderedPlayerList[i].sendBack("There was an unsuccessful attempt on your life. The would be assassins managed to escape.");
+				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
+					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
+			}
+			
+		}
+		
 		//if king dies, new election()
 		//executions
 		//collect tax
@@ -53,10 +68,21 @@ class Game{
 		//remove spies
 		//remove blocks
 		//set duke blocks
+		//remove assassins and protectors
+				//orderedPlayerList[i].assassins = [];
+				//orderedPlayerList[i].protectors = [];
+			
 		//promotions/demotions
 		//income
 		
 		
+	}
+	getPlayersInOrder(){
+		var array = [];
+		for(var i = 0; i < this.rolesList.length; i++){
+			array.concat(this.getPlayersByRole(this.rolesList[i]));
+		}
+		return array;
 	}
 	//sends a Game message to everyone in the game
 	sendAll(message){

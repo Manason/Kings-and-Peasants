@@ -48,6 +48,10 @@ class Player{
 		this.spies = [];
 		this.assasssins = [];
 		this.protectors = [];
+		if(this.role.target != null)
+			this.role.target.assassins.splice(this.role.target.assassins.indexOf(this), 1);
+		if(this.role.protectTarget != null)
+			this.role.protectTarget.protectors.splice(this.role.protectTarget.protectors.indexOf(this), 1);
 		this.role = new Role.Peasant();
 	}
 	givePrestige(amount){
