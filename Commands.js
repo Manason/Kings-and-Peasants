@@ -17,10 +17,10 @@ class Command{
 			return false;
 		}
 		//check command executed in valid state
-		// if(!this.allowedStates.includes(game.state)){
-		// 	player.error(this.helpText[1]);
-		// 	return false;
-		// }
+		if(!this.allowedStates.includes(game.state.name)){
+			player.error(this.helpText[1]);
+			return false;
+		}
 		//check that command is only executed by an allowed role
 		if(!this.allowedRoles.includes(player.role.title)){
 			player.error(this.helpText[2]);
@@ -81,7 +81,7 @@ class Command{
 
 class Name extends Command{
 	constructor(){
-		super(["/n", "/name"], 0, [1], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/name <player_name> - Sets your player name.","You can't change your name once the game has started!","Everyone should be able to do this. Contact admin."]);
+		super(["/n", "/name"], 0, [1], ["GameLobby"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/name <player_name> - Sets your player name.","You can't change your name once the game has started!","Everyone should be able to do this. Contact admin."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -106,7 +106,7 @@ class Name extends Command{
 
 class StartGame extends Command{
 	constructor(){
-		super(["/start", "/startgame"], 0, [0], [-1], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], true, ["/startgame - Starts the game.","The game is already started!","Everyone should be able to do this. Contact admin."]);
+		super(["/start", "/startgame"], 0, [0], ["GameLobby"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], true, ["/startgame - Starts the game.","The game is already started!","Everyone should be able to do this. Contact admin."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -122,13 +122,13 @@ class StartGame extends Command{
 
 class Vote extends Command{
 	constructor(){
-		super(["/v", "/vote"], 0, [0, 1], [0, -5], ["Duke", "Spectator"], false, ["/vote [player_name] - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
+		super(["/v", "/vote"], 0, [0, 1], ["Voting","EmergencyElection"], ["Duke", "Spectator"], false, ["/vote [player_name] - Sets or changes your vote to the specified player.","The vote is closed","Only Dukes can vote for the new King!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
 		input = input.split(/\s+/);
-		if(game.state == -5 && player.role.title == "Spectator"){
+		if(game.state.name == "EmergencyElection" && player.role.title == "Spectator"){
 			player.error("You can not vote in this election!");
 			return;
 		}
@@ -144,7 +144,7 @@ class Vote extends Command{
 		if(votingFor == false)
 			return;
 		//if an emergency election make sure they only vote for Lords
-		else if(game.state == -5 && votingFor.role.title != "Lord")
+		else if(game.state.name == "EmergencyElection" && votingFor.role.title != "Lord")
 			player.error("You can only vote for a Lord in the election for the new King!");
 		else{
 			if(player.votedFor != null)
@@ -160,7 +160,7 @@ class Vote extends Command{
 
 class Duke extends Command{
 	constructor(){
-		super(["/d", "/duke"], 0, [1], [1], ["King"], false, ["/duke <player_name> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
+		super(["/d", "/duke"], 0, [1], ["PreGame"], ["King"], false, ["/duke <player_name> - Adds a Duke to the King's Council.","Dukes can only be appointed during Pre-Game.","Only the King may choose his Dukes."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -186,7 +186,7 @@ class Duke extends Command{
 
 class Successor extends Command{
 	constructor(){
-		super(["/sc", "/successor"], 0, [0,1], [1,2,3,4,5,6,7,8], ["Lord","Duke"], false, ["/successor [player_name] - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
+		super(["/sc", "/successor"], 0, [0,1], ["PreGame","Day"], ["Lord","Duke"], false, ["/successor [player_name] - Sets a Lord's or Duke's successor.","Succesors can only be set once the game has started!","Only Lords and Dukes can set their successor."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -216,7 +216,7 @@ class Successor extends Command{
 
 class Tax extends Command{
 	constructor(){
-		super(["/t", "/tax"], 0, [0,1], [2,3,4,5,6,7,8], ["King"], false, ["/tax [role_group] - Selects a group to tax at the beginning of the day, e.g. /tax Lords","Cannot set a tax now.","Only the King can tax the subjects!"]);
+		super(["/t", "/tax"], 0, [0,1], ["Day"], ["King"], false, ["/tax [role_group] - Selects a group to tax at the beginning of the day, e.g. /tax Lords","Cannot set a tax now.","Only the King can tax the subjects!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -232,7 +232,7 @@ class Tax extends Command{
 
 class Lookup extends Command{
 	constructor(){
-		super(["/l", "/look", "/lookup"], 5, [1], [2,3,4,5,6,7,8], ["King","Lord"], false, ["/lookup <player_name/role_group> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
+		super(["/l", "/look", "/lookup"], 5, [1], ["Day"], ["King","Lord"], false, ["/lookup <player_name/role_group> - Allows a King to lookup a group's prestige and a Lord to look up an individual's.","Lookup can only be used during the day.","Only Kings and Lords can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -271,7 +271,7 @@ class Lookup extends Command{
 
 class Block extends Command{
 	constructor(){
-		super(["/b", "/block"], 0, [0,1], [2,3,4,5,6,7,8], ["Duke"], false, ["/block [player_name] - Allows a Duke to block a player of equal or lower rank.","Block can only be used during the day.","Only Dukes can use this command."]);
+		super(["/b", "/block"], 0, [0,1], ["Day"], ["Duke"], false, ["/block [player_name] - Allows a Duke to block a player of equal or lower rank.","Block can only be used during the day.","Only Dukes can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -325,7 +325,7 @@ class Block extends Command{
 
 class Watch extends Command{
 	constructor(){
-		super(["/spy","/watch"], 0, [0,1], [2,3,4,5,6,7,8], ["Knight"], false, ["/watch [player_name] - Allows a Knight to watch any player besides King.","You can only watch someone during the day and cannot change your selection.","Only Knights can use this command."]);
+		super(["/spy","/watch"], 0, [0,1], ["Day"], ["Knight"], false, ["/watch [player_name] - Allows a Knight to watch any player besides King.","You can only watch someone during the day and cannot change your selection.","Only Knights can use this command."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
@@ -362,7 +362,7 @@ class Watch extends Command{
 
 class Give extends Command{
 	constructor(){
-		super(["/g", "/give", "/ga", "/giveanon"], 5, [2], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player_name> <amount> - Give your prestige to another player. Use /giveanon to give anonymously.","You can only give prestige once the game is started.","Spectators don't get prestige, how can they give it?"]);
+		super(["/g", "/give", "/ga", "/giveanon"], 5, [2], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player_name> <amount> - Give your prestige to another player. Use /giveanon to give anonymously.","You can only give prestige once the game is started.","Spectators don't get prestige, how can they give it?"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -393,7 +393,7 @@ class Give extends Command{
 
 class Assassinate extends Command{
 	constructor(){
-		super(["/a", "/assassinate"], 10, [0,1], [2,3,4,5,6,7,8], ["Earl", "Knight", "Peasant"], false, ["/assassinate [player_name] - set your assassination target.","Can only set a target during the day!","Only Earls, Knights, and Peasants can attempt an assassination."]);
+		super(["/a", "/assassinate"], 10, [0,1], ["Day"], ["Earl", "Knight", "Peasant"], false, ["/assassinate [player_name] - set your assassination target.","Can only set a target during the day!","Only Earls, Knights, and Peasants can attempt an assassination."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -442,7 +442,7 @@ class Assassinate extends Command{
 
 class Protect extends Command{
 	constructor(){
-		super(["/p", "/protect"], 5, [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke","Earl", "Knight", "Peasant"], false, ["/protect [player_name] - set your protection target.","Can only set a protection target during the day!","I know its hard to watch as a Spectator, but you will just have to let the game run its course."]);
+		super(["/p", "/protect"], 5, [0,1], ["Day"], ["King", "Lord", "Duke","Earl", "Knight", "Peasant"], false, ["/protect [player_name] - set your protection target.","Can only set a protection target during the day!","I know its hard to watch as a Spectator, but you will just have to let the game run its course."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -487,7 +487,7 @@ class Protect extends Command{
 
 class Execute extends Command{
 	constructor(){
-		super(["/e", "/execute"], 50, [0,1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke"], false, ["/execute [player_name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
+		super(["/e", "/execute"], 50, [0,1], ["Day"], ["King", "Lord", "Duke"], false, ["/execute [player_name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -537,7 +537,7 @@ class Execute extends Command{
 
 class Prestige extends Command{
 	constructor(){
-		super(["/prestige"], 0, [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/prestige - tells you your current prestige","Can not look up your prestige right now","You do not have prestige. You are a spectator. Now go away."]);
+		super(["/prestige"], 0, [0], ["GameLobby","Voting","PreGame","Day","EmergencyElection","Night"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/prestige - tells you your current prestige","Can not look up your prestige right now","You do not have prestige. You are a spectator. Now go away."]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -549,7 +549,7 @@ class Prestige extends Command{
 //lists all players in order of their rank
 class PlayerList extends Command{
 	constructor(){
-		super(["/list"], 0, [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
+		super(["/list"], 0, [0], ["GameLobby","Voting","PreGame","Day","EmergencyElection","Night"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -570,7 +570,7 @@ class PlayerList extends Command{
 
 class Whisper extends Command{
 	constructor(){
-		super(["/w", "/pm", "/whisper", "/privatemessage"], 0, [1], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/whisper <player_name> <message> - Send a private message to another player.","You can only whisper during the game.","Silly Spectator, private messages are for players!"]);
+		super(["/w", "/pm", "/whisper", "/privatemessage"], 0, [1], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/whisper <player_name> <message> - Send a private message to another player.","You can only whisper during the game.","Silly Spectator, private messages are for players!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length>2 ? 1 : input.split(/\s+/).length, player, game) == false)
@@ -587,7 +587,7 @@ class Whisper extends Command{
 
 class Yell extends Command{
 	constructor(){
-		super(["/y", "/yell", "/shout"], 10, [0], [2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight"], false, ["/yell <message> - Shout something into general chat.","You can only yell at people during the game.","You can try yelling, but they can't hear you!"]);
+		super(["/y", "/yell", "/shout"], 10, [0], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight"], false, ["/yell <message> - Shout something into general chat.","You can only yell during the daytime.","You can try yelling, but they can't hear you!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length>1 ? 0 : input.split(/\s+/).length, player, game) == false)
@@ -602,7 +602,7 @@ class Yell extends Command{
 
 class Help extends Command{
 	constructor(){
-		super(["/h", "/help"], 0, [0], [-1,0,1,2,3,4,5,6,7,8], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant","Spectator"], false, ["/help [command_name] - Send a private message to another player.","The game is broken somewhere, help should work for all states.","The game is broken somewhere, help should work for all roles."]);
+		super(["/h", "/help"], 0, [0], ["GameLobby","Voting","PreGame","Day","EmergencyElection","Night"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant","Spectator"], false, ["/help [command_name] - Send a private message to another player.","The game is broken somewhere, help should work for all states.","The game is broken somewhere, help should work for all roles."]);
 	}
 	execute(input, player, game){
 		input = input.split(/\s+/);
@@ -621,7 +621,7 @@ class Help extends Command{
 				return;
 			}
 
-			if(input[1] == "all" || (commandObj.allowedStates.includes(game.state) && commandObj.allowedRoles.includes(player.role.title) && !(commandObj.hostOnly && !player.isHost))) {
+			if(input[1] == "all" || (commandObj.allowedStates.includes(game.state.name) && commandObj.allowedRoles.includes(player.role.title) && !(commandObj.hostOnly && !player.isHost))) {
 				helpCommands.push(commandObj.helpText[0]+"<br>");
 			}
 		}
