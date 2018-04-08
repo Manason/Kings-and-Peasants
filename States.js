@@ -113,6 +113,7 @@ class Day extends State{
 	
 		}
 		//handle promotions
+		this.game.promotePlayers();
 		
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
@@ -155,13 +156,15 @@ class Night extends State{
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
-			if(orderedPlayerList[i].role.executeTarget != null){
+			//if we should execute the player
+			if(orderedPlayerList[i].role.executeTarget != null && orderedPlayerList[i].role.title != orderedPlayerList[i].role.executeTarget.title){
 				orderedPlayerList[i].role.executeTarget.kill();
 				this.game.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 			}
 		}
 		
 		//handle promotions
+		this.game.promotePlayers();
 		
 		//handle blocks
 		orderedPlayerList = this.game.getPlayersInOrder(6);
@@ -183,7 +186,6 @@ class Night extends State{
 			currentPlayer.spies = [];
 			currentPlayer.assassins = [];
 			currentPlayer.protectors = [];
-			currentPlayer.roleToTake = null;
 			currentPlayer.role.target = null;
 			currentPlayer.role.protectTarget = null;
 			currentPlayer.role.executeTarget = null;
@@ -212,6 +214,7 @@ class EmergencyElection extends State{
 	endState(){
 		var newKing = this.game.setKingByVotes();
 		this.game.sendAll("A new Ruler has been elected by the will of the Dukes! Long live King " + newKing.name+"!");
+		this.game.promotePlayers();
 		this.game.state = new Night(this.game,this.dayNumber);
 		this.game.state.startTimer(this.game);
 	}

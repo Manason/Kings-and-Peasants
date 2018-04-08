@@ -26,6 +26,7 @@ class King extends Role{
 class Lord extends Role{
 	constructor(){
 		super("Lord", 2, 100, 5);
+		this.successor = null;
 	}
 };
 
@@ -34,6 +35,7 @@ class Duke extends Role{
 		super("Duke", 3, 60, 6);
 		this.blocking = null;
 		this.dukeBlocked = false;
+		this.successor = null;
 	}
 };
 

@@ -8,13 +8,11 @@ class Player{
 		this.blocked = false;
 		this.votedFor = null;
 		this.votes = 0;
-		this.sucessor = null;
 		this.isHost = false;
 		this.socket = socket;
 		this.spies = [];
 		this.assasssins = [];
 		this.protectors = [];
-		this.roleToTake = null;
 	}
 	//sends an error message to the player
 	error(message){
@@ -42,9 +40,9 @@ class Player{
 		this.blocked = false;
 		this.votedFor = null;
 		this.votes = 0;
-		if(this.successor != null)
-			this.successor.roleToTake = this.role;
-		this.sucessor = null;
+		if(this.role.title == "Lord" || this.role.title == "Duke")
+			game.promoteSuccessor(this);
+		this.successor = null;
 		this.spies = [];
 		this.assasssins = [];
 		this.protectors = [];
