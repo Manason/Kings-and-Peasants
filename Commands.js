@@ -563,7 +563,7 @@ class PlayerList extends Command{
 		//prints players of the role in the form of "Role Name"
 		var list = "";
 		var roleList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
-		for(int x = 0; x < roleList.length; x++){
+		for(var x = 0; x < roleList.length; x++){
 			var players = game.getPlayersByRole(roleName);
 			for(var i = 0; i < players.length; i++)
 				list += (players[i].role.title + " " + players[i].name + "<br>");
