@@ -1,12 +1,16 @@
 const Player = require('./Player.js');
 const Role = require('./Roles.js');
 const Command = require('./Commands.js');
+const State = require('./States.js');
 
 class Game{
 	constructor(name, io,playerList, minPlayers){
 		this.name = name;
 		this.io = io;
 		this.playerList = playerList;
+		this.state = null;
+		this.saveState = null;
+		this.numDays = 7;
 		this.numLords = 0;
 		this.maxLords;
 		this.numDukes = 0;
@@ -17,17 +21,14 @@ class Game{
 		this.maxKnights;
 		this.numPeasants = 0;
 		this.dukes = [];
-		this.timerInterval = null;
-		this.timer = 30;
-		this.state = -1;
 		this.roleToTax = "Random";
 		this.minPlayers = minPlayers;
 		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"];
 	}
-	doNight(){
-		
-		
-		
+	/*doNight(){
+
+
+
 		//process assassinations
 		var orderedPlayerList = this.getPlayersInOrder();
 		for(var i = 0; i < this.playerList.length; i++){
@@ -42,12 +43,12 @@ class Game{
 				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
 					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
 			}
-			
+
 		}
-		
+
 		//if king dies, new election()
 		if(this.getPlayersByRole("King").length == 0)
-			
+
 		//executions
 		//collect tax
 		if(this.getPlayersByRole("King").length != 0){ //king is not dead
@@ -73,12 +74,12 @@ class Game{
 		//remove assassins and protectors
 				//orderedPlayerList[i].assassins = [];
 				//orderedPlayerList[i].protectors = [];
-			
+
 		//promotions/demotions
 		//income
-		
-		
-	}
+
+
+	}*/
 	getPlayersInOrder(){
 		var array = [];
 		for(var i = 0; i < this.rolesList.length; i++){
@@ -132,9 +133,10 @@ class Game{
 		this.io.to(this.name).emit('timer', obj);
 	}
 	//changes the state depending on game.state
-	setState(){
+	setState(state){
 		var state_name = "";
-		switch(state){
+		this.state = state;
+		switch(this.state){
 			case -5:
 				state_name = "Emergency Election";
 				this.timer = 30;
@@ -176,19 +178,22 @@ class Game{
     addPlayer(name, socket){
 
 		var player = new Player(name, new Role.Spectator(), socket); //create player object
-		
+
 		//set first player as host
-		if(this.playerList.length == 0)
+		if(this.playerList.length == 0){
+			this.state = new State.GameLobby(this.name);
+			this.state.startTimer(this);
 			player.isHost = true;
+		}
         this.playerList.push(player);
 		var game = this;
 		game.sendAll(player.name + " has joined the game.");
-		
+
 		//handle messages from client
 		socket.on('messageFromClient', function(data){
 			var input = data.content;
 			input = input.trim();
-			
+
 			//chat
 			if(!input.startsWith("/")){
 				var obj = {"player":player.name,"message":input};
@@ -214,7 +219,7 @@ class Game{
 				return this.playerList[i];
 		return false;
 	}
-	
+
 	//returns an array of all players who have the given role
 	getPlayersByRole(roleName){
 		var players = [];
@@ -223,7 +228,7 @@ class Game{
 				players.push(this.playerList[i]);
 		return players;
 	}
-	
+
 	//set king by votes. player with most votes is king, returns player object who is set as king
 	setKingByVotes(){
 		var highestVotes = this.playerList[0].votes;
@@ -273,7 +278,7 @@ class Game{
 		}
 		return array;
 	}
-	
+
 	//assigns all roles
     assignRoles(){
 		console.log("assigning roles");
@@ -285,7 +290,7 @@ class Game{
         for(var i = 0; i < this.playerList.length; i++)
 			if(this.playerList[i].role.title == "Spectator")
 				playerPool.push(this.playerList[i]);
-			
+
 		playerPool = this.shuffle(playerPool);
 		var initDukes = this.maxDukes+ this.maxLords - this.dukes.length; //number of initial dukes
 		//randomly assign dukes if king hasn't done it already

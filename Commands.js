@@ -17,10 +17,10 @@ class Command{
 			return false;
 		}
 		//check command executed in valid state
-		if(!this.allowedStates.includes(game.state)){
-			player.error(this.helpText[1]);
-			return false;
-		}
+		// if(!this.allowedStates.includes(game.state)){
+		// 	player.error(this.helpText[1]);
+		// 	return false;
+		// }
 		//check that command is only executed by an allowed role
 		if(!this.allowedRoles.includes(player.role.title)){
 			player.error(this.helpText[2]);
@@ -111,17 +111,12 @@ class StartGame extends Command{
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		if(game.playerList.length < game.minPlayers){
-			player.error(game.minPlayers + " players required to start.");
-			return;
-		}
+		// if(game.playerList.length < game.minPlayers){
+		// 	player.error(game.minPlayers + " players required to start.");
+		// 	return;
+		// }
 		game.sendAll("Voting is now open. Vote for your Ruler with /vote");
-		game.state = 0; //Voting
-		game.setState();
-		game.timerFunc();
-		game.timerInterval = setInterval(function(){
-			game.timerFunc();
-		}, 1000);
+		game.state.endState();
 	}
 }
 
@@ -414,7 +409,7 @@ class Assassinate extends Command{
 			var target = super.playerArgument(input[1]);
 			if(target == false)
 				return;
-			
+
 			//to remove the target use the command again on same target
 			if(player.role.target == target){
 				player.role.target = null;
@@ -428,7 +423,7 @@ class Assassinate extends Command{
 			else{
 				if(super.checkCost(0) == false)
 					return;
-				
+
 				//if they already have a target, remove it
 				if(player.role.target.assassins.includes(player))
 					player.role.target.assassins.splice(player.role.target.assassins.indexOf(player), 1);
@@ -453,8 +448,8 @@ class Protect extends Command{
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
 		input = input.split(/\s+/);
-		
-		
+
+
 		if(input.length == 1){
 			if(player.role.protectTarget != null)
 				player.sendBack("You will protect " + player.role.protectTarget.name + " tonight.");
@@ -612,7 +607,7 @@ class Help extends Command{
 	}
 	execute(input, player, game){
 		input = input.split(/\s+/);
-	
+
 		if(input.length == 1)
 			input[1] = "normal";
 		if(input[1].startsWith("/"))
@@ -626,7 +621,7 @@ class Help extends Command{
 				player.sendBack(commandObj.helpText[0]);
 				return;
 			}
-			
+
 			if(input[1] == "all" || (commandObj.allowedStates.includes(game.state) && commandObj.allowedRoles.includes(player.role.title) && !(commandObj.hostOnly && !player.isHost))) {
 				helpCommands.push(commandObj.helpText[0]+"<br>");
 			}
@@ -637,7 +632,7 @@ class Help extends Command{
 		var allCommands = "";
 		for(var i = 0; i < helpCommands.length; i++)
 			allCommands += helpCommands[i];
-		
+
 		player.sendBack(allCommands.substring(0,allCommands.length-4));
 	}
 }
