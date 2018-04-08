@@ -563,7 +563,6 @@ class PlayerList extends Command{
 		//prints players of the role in the form of "Role Name"
 		var list = "";
 		var roleList = game.rolesList;
-		roleList.push("Spectator");
 		for(var x = 0; x < roleList.length; x++){
 			var players = game.getPlayersByRole(roleName);
 			for(var i = 0; i < players.length; i++)
