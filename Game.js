@@ -85,9 +85,6 @@ class Game{
 				//orderedPlayerList[i].protectors = [];
 
 		//promotions/demotions
-		//income
-
-
 	}
 	getPlayersInOrder(limit){
 		if(limit > this.rolesList)
