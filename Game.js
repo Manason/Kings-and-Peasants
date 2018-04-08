@@ -24,71 +24,6 @@ class Game{
 		this.minPlayers = minPlayers;
 		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
 	}
-	doNight(){
-
-
-
-		//process assassinations
-		var orderedPlayerList = this.getPlayersInOrder(6);
-		for(var i = 0; i < this.playerList.length; i++){
-			//if their attack - protectors >= defense
-			if((orderedPlayerList[i].assassins.length - orderedPlayerList[i].protectors.length) >= Math.floor(orderedPlayerList.length/orderedPlayerList[i].role.defense)){
-				orderedPlayerList[i].kill();
-				this.sendAll(orderedPlayerList[i].name + " has been assassinated!");
-			}
-			//attack didn't go through
-			else{
-				orderedPlayerList[i].sendBack("There was an unsuccessful attempt on your life. The would be assassins managed to escape.");
-				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
-					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
-			}
-
-		}
-
-		//if king dies, new election()
-		if(this.getPlayersByRole("King").length == 0){
-
-		}
-
-		//executions
-		orderedPlayerList = this.getPlayersInOrder(3);
-		for(var i = 0; i < orderedPlayerList.length; i++){
-			if(orderedPlayerList[i].role.executeTarget != null){
-				orderedPlayerList[i].role.executeTarget.kill();
-				this.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
-			}
-
-		}
-		//collect tax
-		if(this.getPlayersByRole("King").length != 0){ //king is not dead
-			if(this.roleToTax == "Random"){
-				var rolesList = this.rolesList;
-				this.shuffle(rolesList);
-				this.roleToTax = rolesList[0];
-			}
-			var playersToTax = this.getPlayersByRole(this.roleToTax);
-			var amount = 0;
-			for(var i = 0; i < playersToTax.length; i++){
-				var taxPrestige = Math.floor(playersToTax[i].prestige * 15);
-				playersToTax[i].prestige -= taxPrestige;
-				this.getPlayersByRole("King")[0].prestige += taxPrestige;
-				amount += taxPrestige;
-				playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
-			}
-			this.sendAll("The King has collected tax from the " + this.roleToTax + "s.");
-		}
-		//remove spies
-		//remove blocks
-		//set duke blocks
-		//remove assassins and protectors
-				//orderedPlayerList[i].assassins = [];
-				//orderedPlayerList[i].protectors = [];
-
-		//promotions/demotions
-		//income
-
-
-	}
 	getPlayersInOrder(limit){
 		if(limit > this.rolesList)
 		var array = [];
@@ -239,7 +174,7 @@ class Game{
 		return players;
 	}
 
-	//set king by votes. player with most votes is king, returns player object who is set as king
+	//set king by votes. player with most votes is king, returns player object who is set as king. Clears votes of players.
 	setKingByVotes(){
 		var highestVotes = this.playerList[0].votes;
 		var highestPlayers = [this.playerList[0]];
@@ -250,6 +185,9 @@ class Game{
 				highestPlayers = [this.playerList[i]];
 				highestVotes = highestPlayers[i].votes;
 			}
+			//clear the vote
+			this.playerList[i].votes = 0;
+			this.playerList[i].votedFor = null;
 		}
 		this.shuffle(highestPlayers);
 		highestPlayers[0].role = new Role.King();

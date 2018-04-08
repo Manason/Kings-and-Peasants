@@ -74,7 +74,17 @@ class Day extends State{
 		this.dayNumber = dayNumber;
 		super("Day","Day"+dayNumber,600);
 	}
-
+	startTimer(game){
+		super.startTimer(game);
+		
+		//handle income
+		var orderedPlayerList = this.game.getPlayersInOrder(6);
+		while(orderedPlayerList.length > 0){
+			var currentPlayer = orderedPlayerList.pop();
+			currentPlayer.prestige += currentPlayer.role.wage;
+			currentPlayer.sendBack("A new day. You receive your daily wage of " + currentPlayer.role.wage + " prestige from the Kingdom.");
+		}
+	}
 	endState(){
 		super.endState();
 		
@@ -100,9 +110,10 @@ class Day extends State{
 				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
 					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
 			}
-			
-
+	
 		}
+		//handle promotions
+		
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
 			game.state = new EmergencyElection(this.game,this.dayNumber);	
@@ -124,6 +135,23 @@ class Night extends State{
 	startTimer(game){
 		super.startTimer(game);
 		
+		//collect tax
+		if(this.game.roleToTax == "Random"){
+			var rolesList = this.game.rolesList.splice(1,6);
+			this.game.shuffle(rolesList);
+			this.game.roleToTax = rolesList[0];
+		}
+		var playersToTax = this.game.getPlayersByRole(this.roleToTax);
+		var amount = 0;
+		for(var i = 0; i < playersToTax.length; i++){
+			var taxPrestige = Math.floor(playersToTax[i].prestige * 15);
+			playersToTax[i].prestige -= taxPrestige;
+			this.getPlayersByRole("King")[0].prestige += taxPrestige;
+			amount += taxPrestige;
+			playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
+		}
+		this.sendAll("The King has collected tax from the " + this.roleToTax + "s.");
+		
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
@@ -131,6 +159,34 @@ class Night extends State{
 				orderedPlayerList[i].role.executeTarget.kill();
 				this.game.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 			}
+		}
+		
+		//handle promotions
+		
+		//handle blocks
+		orderedPlayerList = this.game.getPlayersInOrder(6);
+		for(var i = 0; i < orderedPlayerList.length; i++){
+			var currentPlayer = orderedPlayerList[i];
+			currentPlayer.blocked = false; //remove the block of every player
+			//handle dukes
+			if(currentPlayer.role.title == "Duke"){
+				//duke blocks another duke
+				if(currentPlayer.role.blocking.role.title == "Duke")
+					currentPlayer.role.blocking.blocked = true;
+				currentPlayer.role.blocking = null;
+			}
+		}
+		
+		//handle daily reset
+		for (var i = 0; i < this.game.playerList.length; i++){
+			var currentPlayer = this.game.playerList[i];
+			currentPlayer.spies = [];
+			currentPlayer.assassins = [];
+			currentPlayer.protectors = [];
+			currentPlayer.roleToTake = null;
+			currentPlayer.role.target = null;
+			currentPlayer.role.protectTarget = null;
+			currentPlayer.role.executeTarget = null;
 		}
 	}
 
@@ -154,7 +210,8 @@ class EmergencyElection extends State{
 	}
 
 	endState(){
-		
+		var newKing = this.game.setKingByVotes();
+		this.game.sendAll("A new Ruler has been elected by the will of the Dukes! Long live King " + newKing.name+"!");
 		this.game.state = new Night(this.game,this.dayNumber);
 		this.game.state.startTimer(this.game);
 	}
