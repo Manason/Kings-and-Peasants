@@ -1,8 +1,0 @@
-States:
--1: lobby
-0: voting
-1: pre-game
-2-8: days
-9: end
-
-States 2-8 also have a transition period.

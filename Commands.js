@@ -128,7 +128,7 @@ class Vote extends Command{
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
 		input = input.split(/\s+/);
-		if(game.state == -5 && player.role.title == "Spectator"){
+		if(game.state.name == "EmergencyElection" && player.role.title == "Spectator"){
 			player.error("You can not vote in this election!");
 			return;
 		}
@@ -144,7 +144,7 @@ class Vote extends Command{
 		if(votingFor == false)
 			return;
 		//if an emergency election make sure they only vote for Lords
-		else if(game.state == -5 && votingFor.role.title != "Lord")
+		else if(game.state.name == "EmergencyElection" && votingFor.role.title != "Lord")
 			player.error("You can only vote for a Lord in the election for the new King!");
 		else{
 			if(player.votedFor != null)

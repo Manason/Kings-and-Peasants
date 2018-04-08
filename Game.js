@@ -121,69 +121,6 @@ class Game{
 		}
 	}
 
-	//counts timer down and changes state when it reaches 0
-	timerFunc() {
-		//Send out final message once game is over
-		if(this.timer == -10){
-			var obj = {"cur_time":"Game Finished"};
-			this.io.to(this.name).emit('timer', obj);
-			return;
-		}
-		//change state when timer reaches 0
-		else if(this.timer <= 0){
-			this.state++;
-			this.setState();
-			var obj = {"cur_time":this.timer};
-			this.io.to(this.name).emit('timer', obj);
-			return;
-		}
-		//send current time to client
-		this.timer--;
-		var obj = {"cur_time":this.timer};
-		this.io.to(this.name).emit('timer', obj);
-	}
-	//changes the state depending on game.state
-	setState(state){
-		var state_name = "";
-		this.state = state;
-		switch(this.state){
-			case -5:
-				state_name = "Emergency Election";
-				this.timer = 30;
-				break;
-			case 0:
-				state_name = "Voting";
-				this.timer = 3;
-				break;
-			case 1:
-				var king = this.setKingByVotes();
-				this.sendAll(king.name + " has been elected King with " + king.votes + " votes!");
-				state_name = "Pre-Game";
-				this.timer = 3;
-				break;
-			case 2:
-				state_name = "Day 1";
-				this.timer = 600;
-				this.assignRoles();
-				//temporary: console log a list of all players and their role
-				for(var i = 0; i < this.playerList.length; i++)
-					console.log(this.playerList[i].name + " is a " + this.playerList[i].role.title);
-				break;
-			case 8:
-				state_name = "Fin";
-				this.timer = -10;
-				this.clearInterval(this.timerInterval);
-				this.timerFunc();
-				break;
-			default:
-				state_name = "Day " + (this.state-1);
-				this.timer = 600;
-		}
-
-		var obj = {"state":state_name};
-		this.io.to(this.name).emit('gamestate', obj);
-	}
-
 	//adds a player to this game
     addPlayer(name, socket){
 
