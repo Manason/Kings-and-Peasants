@@ -193,20 +193,23 @@ class Game{
 		var highestVotes = this.playerList[0].votes;
 		var highestPlayers = [this.playerList[0]];
 		for(var i = 1; i < this.playerList.length; i++){
-			if(this.playerList[i].votes == highestVotes)
+			if(this.playerList[i].votes == highestVotes){
 				highestPlayers.push(this.playerList[i]);
+				this.playerList[i].votes = 0;
+			}
 			else if(this.playerList[i].votes > highestVotes){
 				highestPlayers = [this.playerList[i]];
 				highestVotes = highestPlayers[i].votes;
 			}
 			//clear the vote
-			this.playerList[i].votes = 0;
+			
 			this.playerList[i].votedFor = null;
 		}
 		this.shuffle(highestPlayers);
 		if(highestPlayers[0].role.title != "Spectator")
 			this.promoteSuccessor(highestPlayers[0]);
 		highestPlayers[0].role = new Role.King();
+		this.sendAll(highestPlayers[0].name + " has been elected King with " + highestPlayers[0].votes + " votes.");
 		return highestPlayers[0];
 	}
 	//sets the player
@@ -245,7 +248,6 @@ class Game{
 
 	//assigns all roles
     assignRoles(){
-		console.log("assigning roles");
 		var playerPool = [];
         var player;
 		this.calculateRoles();

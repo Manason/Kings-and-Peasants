@@ -25,7 +25,6 @@ class State{
 	}
 
 	endState(){
-		console.log((this.timerInterval == null));
 		if(this.timerInterval != null)
 			clearInterval(this.timerInterval);
 	}
@@ -92,9 +91,10 @@ class Day extends State{
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		for(var i = 0; i < orderedPlayerList.length; i++){
 			//notify watchers of visit
-			if(orderedPlayerList[i].target != null)
+			if(orderedPlayerList[i].target != null){
 				orderedPlayerList[i].notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].target.name);
 				orderedPlayerList[i].target.notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].target.name);
+			}
 			else if(orderedPlayerList[i].protectTarget != null){
 				orderedPlayerList[i].notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].protectTarget.name);
 				orderedPlayerList[i].protectTarget.notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].protectTarget.name);

@@ -31,8 +31,8 @@ class Player{
 	}
 	notifyWatchers(message){
 		var obj = {"player":"Game","message":message};
-		for(var i = 0; i < spies.length; i++){
-			spies[i].socket.emit('secret', obj);
+		for(var i = 0; i < this.spies.length; i++){
+			this.spies[i].socket.emit('secret', obj);
 		}
 	}
 	kill(){
