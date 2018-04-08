@@ -28,6 +28,12 @@ class Player{
 		var obj = {"player":player.name,"message":message};
 		this.socket.emit('whisper', obj);
 	}
+	notifyWatchers(message){
+		var obj = {"player":"Game","message":message};
+		for(var i = 0; i < spies.length; i++){
+			spies[i].socket.emit('secret', obj);
+		}
+	}
 };
 
 module.exports = Player;
