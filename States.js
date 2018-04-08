@@ -57,66 +57,107 @@ class Voting extends State{
 }
 
 class PreGame extends State{
-	constructor(game){
-		super("PreGame","Pre-Game",30,game);
+	constructor(){
+		super("PreGame","Pre-Game",30);
 	}
 
 	endState(){
+		super.endState();
 		this.game.assignRoles();
-		this.game.state = new Day(this.game,1);
+		this.game.state = new Day(1);
 		this.game.state.startTimer(this.game);
 	}
 }
 
 class Day extends State{
-	constructor(game,dayNumber){
+	constructor(dayNumber){
 		this.dayNumber = dayNumber;
-		super("Day","Day"+dayNumber,600,game);
+		super("Day","Day"+dayNumber,600);
 	}
 
 	endState(){
-		this.game.state = new NightPt1(this.game,this.dayNumber);
-		this.game.state.startTimer(this.game);
+		super.endState();
+		
+		//process assassinations
+		var orderedPlayerList = this.game.getPlayersInOrder(6);
+		for(var i = 0; i < orderedPlayerList.length; i++){
+			//notify watchers of visit
+			if(orderedPlayerList[i].target != null)
+				orderedPlayerList[i].notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].target.name);
+				orderedPlayerList[i].target.notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].target.name);
+			else if(orderedPlayerList[i].protectTarget != null){
+				orderedPlayerList[i].notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].protectTarget.name);
+				orderedPlayerList[i].protectTarget.notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].protectTarget.name);
+			}
+			//if their attack - protectors >= defense
+			if((orderedPlayerList[i].assassins.length - orderedPlayerList[i].protectors.length) >= Math.floor(orderedPlayerList.length/orderedPlayerList[i].role.defense)){
+				orderedPlayerList[i].kill();
+				this.game.sendAll(orderedPlayerList[i].name + " has been assassinated!");
+			}
+			//attack didn't go through
+			else{
+				orderedPlayerList[i].sendBack("There was an unsuccessful attempt on your life. The would be assassins managed to escape.");
+				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
+					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
+			}
+			
+
+		}
+		//if king dies, new election()
+		if(this.game.getPlayersByRole("King").length == 0){
+			game.state = new EmergencyElection(this.game,this.dayNumber);	
+			this.game.state.startTimer(this.game);
+		}
+		//otherwise go directly to night
+		else{
+			this.game.state = new Night(this.game,this.dayNumber);
+			this.game.state.startTimer(this.game);
+		}
 	}
 }
 
-class NightPt1 extends State{
-	constructor(game,dayNumber){
+class Night extends State{
+	constructor(dayNumber){
 		this.dayNumber = dayNumber;
-		super("Night","Night"+dayNumber,10,game);
+		super("Night","Night"+dayNumber,10);
+	}
+	startTimer(game){
+		super.startTimer(game);
+		
+		//executions
+		var orderedPlayerList = this.game.getPlayersInOrder(3);
+		for(var i = 0; i < orderedPlayerList.length; i++){
+			if(orderedPlayerList[i].role.executeTarget != null){
+				orderedPlayerList[i].role.executeTarget.kill();
+				this.game.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
+			}
+		}
 	}
 
 	endState(){
-		if(EE needed)
-			game.state = new EmergencyElection(this.game,this.dayNumber);
-		else
-			game.state = new NightPt2(this.game,this.dayNumber);
-		this.game.state.startTimer(this.game);
-	}
-}
-
-class NightPt2 extends State{
-	constructor(game,dayNumber){
-		this.dayNumber = dayNumber;
-		super("Night","Night"+dayNumber,10,game);
-	}
-
-	endState(){
-		if(this.dayNumber == game.numDays)
+		super.endState();
+		if(this.dayNumber == this.game.numDays)
 			console.log("END THE GAME!");
+	
 		this.game.state = new Day(this.game,this.dayNumber+1);
+		this.game.state.startTimer(this.game);
 	}
 }
 
 class EmergencyElection extends State{
 	constructor(game,dayNumber){
-		super("Election","Emergency Election");
+		super("Election","Emergency Election", 30);
+	}
+	startTimer(game){
+		super.startTimer(game);
+		this.game.sendAll("An Emergency Election has begun. Dukes may now vote one of the Lords as the new King!");
 	}
 
 	endState(){
-		this.game.state = new NightPt2(this.game,this.dayNumber);
+		
+		this.game.state = new Night(this.game,this.dayNumber);
 		this.game.state.startTimer(this.game);
 	}
 }
 
-module.exports = {State, GameLobby, Voting, PreGame, Day, NightPt1, NightPt2, EmergencyElection};
+module.exports = {State, GameLobby, Voting, PreGame, Day, Night, EmergencyElection};

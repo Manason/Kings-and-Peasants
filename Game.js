@@ -9,7 +9,6 @@ class Game{
 		this.io = io;
 		this.playerList = playerList;
 		this.state = null;
-		this.saveState = null;
 		this.numDays = 7;
 		this.numLords = 0;
 		this.maxLords;
@@ -25,7 +24,7 @@ class Game{
 		this.minPlayers = minPlayers;
 		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
 	}
-	/*doNight(){
+	doNight(){
 
 
 
