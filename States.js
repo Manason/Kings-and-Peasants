@@ -57,7 +57,7 @@ class Voting extends State{
 
 class PreGame extends State{
 	constructor(){
-		super("PreGame","Pre-Game",30);
+		super("PreGame","Pre-Game",5);
 	}
 
 	endState(){
@@ -70,7 +70,7 @@ class PreGame extends State{
 
 class Day extends State{
 	constructor(dayNumber){
-		super("Day","Day"+dayNumber,60);
+		super("Day","Day"+dayNumber,20);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
@@ -101,7 +101,7 @@ class Day extends State{
 			}
 			//if their attack - protectors >= defense
 			if((orderedPlayerList[i].assassins.length - orderedPlayerList[i].protectors.length) >= Math.floor(orderedPlayerList.length/orderedPlayerList[i].role.defense)){
-				orderedPlayerList[i].kill();
+				orderedPlayerList[i].kill(this.game);
 				this.game.sendAll(orderedPlayerList[i].name + " has been assassinated!");
 			}
 			//attack didn't go through
@@ -117,12 +117,12 @@ class Day extends State{
 
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
-			game.state = new EmergencyElection(this.game,this.dayNumber);
+			this.game.state = new EmergencyElection(this.dayNumber);
 			this.game.state.startTimer(this.game);
 		}
 		//otherwise go directly to night
 		else{
-			this.game.state = new Night(this.game,this.dayNumber);
+			this.game.state = new Night(this.dayNumber);
 			this.game.state.startTimer(this.game);
 		}
 	}
@@ -151,14 +151,14 @@ class Night extends State{
 			amount += taxPrestige;
 			playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
 		}
-		this.sendAll("The King has collected tax from the " + this.roleToTax + "s.");
+		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
 
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
 			//if we should execute the player
 			if(orderedPlayerList[i].role.executeTarget != null && orderedPlayerList[i].role.title != orderedPlayerList[i].role.executeTarget.title){
-				orderedPlayerList[i].role.executeTarget.kill();
+				orderedPlayerList[i].role.executeTarget.kill(this.game);
 				this.game.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 			}
 		}
@@ -174,7 +174,7 @@ class Night extends State{
 			//handle dukes
 			if(currentPlayer.role.title == "Duke"){
 				//duke blocks another duke
-				if(currentPlayer.role.blocking.role.title == "Duke")
+				if(currentPlayer.role.blocking != null && currentPlayer.role.blocking.role.title == "Duke")
 					currentPlayer.role.blocking.blocked = true;
 				currentPlayer.role.blocking = null;
 			}
@@ -197,14 +197,15 @@ class Night extends State{
 		if(this.dayNumber == this.game.numDays)
 			console.log("END THE GAME!");
 
-		this.game.state = new Day(this.game,this.dayNumber+1);
+		this.game.state = new Day(this.dayNumber+1);
 		this.game.state.startTimer(this.game);
 	}
 }
 
 class EmergencyElection extends State{
-	constructor(game,dayNumber){
+	constructor(dayNumber){
 		super("Election","Emergency Election", 30);
+		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
 		super.startTimer(game);
@@ -215,7 +216,7 @@ class EmergencyElection extends State{
 		var newKing = this.game.setKingByVotes();
 		this.game.sendAll("A new Ruler has been elected by the will of the Dukes! Long live King " + newKing.name+"!");
 		this.game.promotePlayers();
-		this.game.state = new Night(this.game,this.dayNumber);
+		this.game.state = new Night(this.dayNumber);
 		this.game.state.startTimer(this.game);
 	}
 }

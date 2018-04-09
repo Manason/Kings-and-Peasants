@@ -11,7 +11,7 @@ class Player{
 		this.isHost = false;
 		this.socket = socket;
 		this.spies = [];
-		this.assasssins = [];
+		this.assassins = [];
 		this.protectors = [];
 	}
 	//sends an error message to the player
@@ -35,7 +35,7 @@ class Player{
 			this.spies[i].socket.emit('secret', obj);
 		}
 	}
-	kill(){
+	kill(game){
 		this.prestige = 0;
 		this.blocked = false;
 		this.votedFor = null;

@@ -70,8 +70,8 @@ class Command{
 		if(this.player.role.title == "Peasant")
 			return amount;
 		var totalCost = (this.cost + amount);
-		if(totalCost < this.player.prestige){
-			player.error("You don't have enough prestige. This command costs " + (totalCost-amount) + " prestige.");
+		if(totalCost > this.player.prestige){
+			this.player.error("You don't have enough prestige. This command costs " + (totalCost-amount) + " prestige.");
 			return false;
 		}
 		return totalCost;
@@ -194,9 +194,9 @@ class Successor extends Command{
 		input = input.split(/\s+/);
 		if(input.length == 1){
 			if(player.sucessor == null)
-				sendBack("You don't have a successor.");
+				player.sendBack("You don't have a successor.");
 			else
-				sendBack("Your successor is currently " + player.sucessor.name);
+				player.sendBack("Your successor is currently " + player.sucessor.name);
 			return;
 		}
 		var sucessor = super.playerArgument(input[1]);
@@ -308,14 +308,14 @@ class Block extends Command{
 		player.role.blocking = blockedPlayer;
 		//sets up a duke to be blocked the next day
 		if(blockedPlayer.role.title == "Duke"){
-			player.sendBack("You are set to block " +blockedPLayer.name+" first thing in the morning!");
+			player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
 			player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
 			return;
 		}
-		else if(blockedPLayer.role.title == "Knight")
+		else if(blockedPlayer.role.title == "Knight")
 			if(blockedPlayer.role.spying != null){
 				blockedPlayer.role.spying.spies.splice(blockedPlayer.role.spying.spies.indexOf(blockedPlayer),1);
-				blockedPLayer.role.spying = null;
+				blockedPlayer.role.spying = null;
 			}
 		blockedPlayer.blocked = true;
 		player.sendBack("You are now blocking "+blockedPlayer.name+".");
@@ -379,10 +379,12 @@ class Give extends Command{
 
 			if((input[0] == "/ga" || input[0] == "/giveanon") && !super.checkCost(amount))
 				return;
-			else if(input[0] == "/ga" || input[0] == "/giveanon"){
-				player.prestige -= super.checkCost(amount);
-				playerToGive.prestige += amount;
-			}
+			else if(input[0] == "/ga" || input[0] == "/giveanon")
+				player.prestige -= (super.checkCost(amount) - amount);
+			
+			player.prestige -= amount;
+			playerToGive.prestige += amount;
+			
 			playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
 			playerToGive.notifyWatchers(playerToGive.name+" recieved "+amount+" prestige from "+player.name+".");
 			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
@@ -403,7 +405,7 @@ class Assassinate extends Command{
 			if(player.role.target != null)
 				player.sendBack("your assassination target is " + player.role.target.name);
 			else
-				player.sendBack("no assassination target has been set.");
+				player.sendBack("No assassination target has been set.");
 		}
 		else{
 			var target = super.playerArgument(input[1]);
@@ -425,7 +427,7 @@ class Assassinate extends Command{
 					return;
 
 				//if they already have a target, remove it
-				if(player.role.target.assassins.includes(player))
+				if(player.role.target != null && player.role.target.assassins.includes(player))
 					player.role.target.assassins.splice(player.role.target.assassins.indexOf(player), 1);
 				else
 					player.prestige -= super.checkCost(0);
@@ -460,7 +462,7 @@ class Protect extends Command{
 			var target = super.playerArgument(input[1]);
 			if(target == false)
 				return;
-			if(player.role.protectTarget == protectTarget){
+			if(player.role.protectTarget == target){
 				player.role.protectTarget = null;
 				target.protectors.splice(target.protectors.indexOf(player), 1);
 				player.prestige += this.cost;
@@ -470,7 +472,7 @@ class Protect extends Command{
 			else{
 				if(super.checkCost(0) == false)
 					return;
-				if(player.role.target.protectors.includes(player))
+				if(player.role.target != null && player.role.target.protectors.includes(player))
 					player.role.protectTarget.protectors.splice(player.role.protectTarget.protectors.indexOf(player), 1);
 				else
 					player.prestige -= super.checkCost(0);
@@ -595,6 +597,7 @@ class Yell extends Command{
 		var inputList = input.split(/\s+/);
 		if(super.checkCost(0) == false)
 			return;
+	
 		player.prestige -= super.checkCost(0);
 		game.sendYell((input.substring(input.indexOf(inputList[1],inputList[0].length+1))),player);
 	}

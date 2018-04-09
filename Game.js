@@ -28,9 +28,9 @@ class Game{
 		var numberToPromote =  this.maxEarls - this.getPlayersByRole("Earl").length;
 		for(var i = 0; i < numberToPromote; i++){
 			//find a knight
-			var knightList = getPlayersByRole("Knight");
+			var knightList = this.getPlayersByRole("Knight");
 			if(knightList.length == 0)
-				knightList = getPlayersByRole("Peasant");
+				knightList = this.getPlayersByRole("Peasant");
 
 			//promote knight with highest prestige
 			var highestKnight = [knightList[0]];
@@ -41,8 +41,8 @@ class Game{
 					highestKnight = [knightList[j]];
 			}
 			highestKnight = this.shuffle(highestKnight)[0];
-			var target = player.role.target;
-			var protectTarget = player.role.protectTarget;
+			var target = highestKnight.role.target;
+			var protectTarget = highestKnight.role.protectTarget;
 			highestKnight.role = new Role.Earl();
 			highestKnight.target = target;
 			highestKnight.protectTarget = target;
@@ -52,7 +52,7 @@ class Game{
 		numberToPromote =  this.maxKnights - this.getPlayersByRole("Knight").length;
 		for(var i = 0; i < numberToPromote; i++){
 			//find a Peasant
-			var peasantList = getPlayersByRole("Peasant");
+			var peasantList = this.getPlayersByRole("Peasant");
 
 			//promote peasant with highest prestige
 			var highestPeasant = [peasantList[0]];
@@ -63,8 +63,8 @@ class Game{
 					highestPeasant = [peasantList[j]];
 			}
 			highestPeasant = this.shuffle(highestPeasant)[0];
-			var target = player.role.target;
-			var protectTarget = player.role.protectTarget;
+			var target = highestPeasant.role.target;
+			var protectTarget = highestPeasant.role.protectTarget;
 			highestPeasant.role = new Role.Earl();
 			highestPeasant.target = target;
 			highestPeasant.protectTarget = target;
@@ -77,9 +77,9 @@ class Game{
 			return;
 		else{
 			if(player.role.title == "Lord")
-				player.role.successor = this.shuffle(getPlayersByRole("Duke"))[0];
+				player.role.successor = this.shuffle(this.getPlayersByRole("Duke"))[0];
 			else
-				player.role.successor = this.shuffle(getPlayersByRole("Earl").concat(getPlayersByRole("Knight")))[0];
+				player.role.successor = this.shuffle(this.getPlayersByRole("Earl").concat(this.getPlayersByRole("Knight")))[0];
 		}
 
 		var executeTarget = player.role.successor.executeTarget;

@@ -114,15 +114,31 @@
 	});
 
 	function randomTesting(){
-		var cmds1 = ["/start","/start idk","/vote","/vote User2","/duke User2","/sc User2","/sc","/tax Spectator","/tax Lords","/tax Duke","/tax earl","/tax King","/lookup User3","/lookup","/lookup Peasant","/lookup King","fuck these command muthafuckin things","/as;dlfkj;ljw4;fowie","/block User3","/block User1","/block","/Watch","/give User3 2"];
-		var cmds2 = ["/ga 100 User4","/a","/a User3","/a User2 User1","/assassinate     fuckthis","/protect and serve","/protect User2","/protect asdfjlwk","/protect","/execute","/e User3","/e User3","/e User3","/e User3","/e User3","/prestige","/prestige User2","/list","/playerlist King","/whisper User2 a fucken message thats right bitch", "/whisper","/whisper User1","/yell fucktHIS SHIT"];
-		var commands = cmds1.concat(cmds2);
+		//var cmds1 = ["/start","/start idk","/vote","/vote User2","/duke User2","/sc User2","/sc","/tax Spectator","/tax Lords","/tax Duke","/tax earl","/tax King","/lookup User3","/lookup","/lookup Peasant","/lookup King","fuck these command muthafuckin things","/as;dlfkj;ljw4;fowie","/block User3","/block User1","/block","/Watch","/give User3 2"];
+		//var cmds2 = ["/ga User3 3","/a","/a User3","/a User2 User1","/assassinate     fuckthis","/protect and serve","/protect User2","/protect asdfjlwk","/protect","/execute","/e User3","/e User3","/e User3","/e User3","/e User3","/prestige","/prestige User2","/list","/playerlist King","/whisper User2 a fucken message thats right bitch", "/whisper","/whisper User1","/yell fucktHIS SHIT"];
+		//var commands = cmds1.concat(cmds2);
+		var rand = "User"+Math.floor(Math.random()*15 + 1);
+		commands = ["/block " +rand, "/execute " + rand, "/a " + rand, "/protect " + rand, "/watch " + rand, "/list"];
 		var randIndex = Math.floor(Math.random()*commands.length);
-			socket.emit('messageFromClient', {content: commands[randIndex]});
+		var timestamp = new Date().toTimeString().substring(0, 8);
+		$(".chat-window").append(
+		'<div class="chat-entry">' +
+			'<div class="chat-time">'+
+				'<p>'+timestamp+'</p>'+
+			'</div>'+
+			'<div class="chat-name">'+
+				'<p>COMMAND</p>'+
+			'</div>'+
+			'<div class="chat-message">'+
+				'<p>'+commands[randIndex]+'</p>'+
+			'</div>'+
+		'</div>');
+		socket.emit('messageFromClient', {content: commands[randIndex]});
 	}
 
 	//for testing purposes
 	window.onload = function(){
+		socket.emit('messageFromClient', {content: "/host hi"});
 		socket.emit('messageFromClient', {content: "/join hi"});
 		setInterval(function(){
 			randomTesting();
