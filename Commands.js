@@ -57,11 +57,11 @@ class Command{
 		if(player == false){
 			this.player.error("Player not found.");
 			return false;
-		}/*
-		else if(player.role.title == "Spectator"){
-			this.player.error("No interacting with Spectators. Nice try.");
+		}
+		if(player == this.player){
+			this.player.error("You can't run commands on yourself!");
 			return false;
-		}*/
+		}
 		else
 			return player;
 	}
@@ -111,10 +111,10 @@ class StartGame extends Command{
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
-		// if(game.playerList.length < game.minPlayers){
-		// 	player.error(game.minPlayers + " players required to start.");
-		// 	return;
-		// }
+		if(game.playerList.length < game.minPlayers){
+			player.error(game.minPlayers + " players required to start.");
+			return;
+		}
 		game.sendAll("Voting is now open. Vote for your Ruler with /vote");
 		game.state.endState();
 	}
@@ -454,7 +454,7 @@ class Protect extends Command{
 			if(player.role.protectTarget != null)
 				player.sendBack("You will protect " + player.role.protectTarget.name + " tonight.");
 			else
-				player.sendBack("no protection target has been set.");
+				player.sendBack("No protection target has been set.");
 		}
 		else{
 			var target = super.playerArgument(input[1]);
@@ -487,7 +487,7 @@ class Protect extends Command{
 
 class Execute extends Command{
 	constructor(){
-		super(["/e", "/execute"], 50, [0,1], ["Day"], ["King", "Lord", "Duke"], false, ["/execute [player_name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
+		super(["/e", "/execute"], 50, [0,1], ["Day"], ["King", "Lord", "Duke"], false, ["/execute [player_name] - marks a player for execution. Execution takes place at night. Only one player can be executed by you a night.","Can only decree an execution during the day!","Only Kings, Lords, and Dukes may order executions!"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -549,7 +549,7 @@ class Prestige extends Command{
 //lists all players in order of their rank
 class PlayerList extends Command{
 	constructor(){
-		super(["/list"], 0, [0], ["GameLobby","Voting","PreGame","Day","EmergencyElection","Night"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
+		super(["/list","/playerlist"], 0, [0], ["GameLobby","Voting","PreGame","Day","EmergencyElection","Night"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"], false, ["/list - lists all players and their role","Cannot do /list right now","You do not have permission to do /list"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -559,7 +559,7 @@ class PlayerList extends Command{
 		var list = "";
 		var roleList = game.rolesList;
 		for(var x = 0; x < roleList.length; x++){
-			var players = game.getPlayersByRole(roleName);
+			var players = game.getPlayersByRole(roleList[x]);
 			for(var i = 0; i < players.length; i++)
 				list += (players[i].role.title + " " + players[i].name + "<br>");
 		}

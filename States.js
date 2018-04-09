@@ -70,12 +70,12 @@ class PreGame extends State{
 
 class Day extends State{
 	constructor(dayNumber){
+		super("Day","Day"+dayNumber,60);
 		this.dayNumber = dayNumber;
-		super("Day","Day"+dayNumber,600);
 	}
 	startTimer(game){
 		super.startTimer(game);
-		
+
 		//handle income
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		while(orderedPlayerList.length > 0){
@@ -86,7 +86,7 @@ class Day extends State{
 	}
 	endState(){
 		super.endState();
-		
+
 		//process assassinations
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		for(var i = 0; i < orderedPlayerList.length; i++){
@@ -110,14 +110,14 @@ class Day extends State{
 				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
 					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
 			}
-	
+
 		}
 		//handle promotions
 		this.game.promotePlayers();
-		
+
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
-			game.state = new EmergencyElection(this.game,this.dayNumber);	
+			game.state = new EmergencyElection(this.game,this.dayNumber);
 			this.game.state.startTimer(this.game);
 		}
 		//otherwise go directly to night
@@ -130,12 +130,12 @@ class Day extends State{
 
 class Night extends State{
 	constructor(dayNumber){
-		this.dayNumber = dayNumber;
 		super("Night","Night"+dayNumber,10);
+		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
 		super.startTimer(game);
-		
+
 		//collect tax
 		if(this.game.roleToTax == "Random"){
 			var rolesList = this.game.rolesList.splice(1,6);
@@ -152,7 +152,7 @@ class Night extends State{
 			playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
 		}
 		this.sendAll("The King has collected tax from the " + this.roleToTax + "s.");
-		
+
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
@@ -162,10 +162,10 @@ class Night extends State{
 				this.game.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 			}
 		}
-		
+
 		//handle promotions
 		this.game.promotePlayers();
-		
+
 		//handle blocks
 		orderedPlayerList = this.game.getPlayersInOrder(6);
 		for(var i = 0; i < orderedPlayerList.length; i++){
@@ -179,7 +179,7 @@ class Night extends State{
 				currentPlayer.role.blocking = null;
 			}
 		}
-		
+
 		//handle daily reset
 		for (var i = 0; i < this.game.playerList.length; i++){
 			var currentPlayer = this.game.playerList[i];
@@ -196,7 +196,7 @@ class Night extends State{
 		super.endState();
 		if(this.dayNumber == this.game.numDays)
 			console.log("END THE GAME!");
-	
+
 		this.game.state = new Day(this.game,this.dayNumber+1);
 		this.game.state.startTimer(this.game);
 	}

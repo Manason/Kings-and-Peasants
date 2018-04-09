@@ -31,7 +31,7 @@ class Game{
 			var knightList = getPlayersByRole("Knight");
 			if(knightList.length == 0)
 				knightList = getPlayersByRole("Peasant");
-				
+
 			//promote knight with highest prestige
 			var highestKnight = [knightList[0]];
 			for(var j = 1; j < knightList.length; j++){
@@ -47,13 +47,13 @@ class Game{
 			highestKnight.target = target;
 			highestKnight.protectTarget = target;
 			this.sendAll(highestKnight.name + " is appointed the rank of Earl.");
-		
+
 		}
 		numberToPromote =  this.maxKnights - this.getPlayersByRole("Knight").length;
 		for(var i = 0; i < numberToPromote; i++){
 			//find a Peasant
 			var peasantList = getPlayersByRole("Peasant");
-		
+
 			//promote peasant with highest prestige
 			var highestPeasant = [peasantList[0]];
 			for(var j = 1; j < peasantList.length; j++){
@@ -72,20 +72,20 @@ class Game{
 		}
 	}
 	promoteSuccessor(player){
-		
+
 		if(player.role.successor != null && player.role.successor.role.title == "Peasant")
 			return;
 		else{
 			if(player.role.title == "Lord")
 				player.role.successor = this.shuffle(getPlayersByRole("Duke"))[0];
 			else
-				player.role.successor = this.shuffle(getPlayersByRole("Earl").concat(getPlayersByRole("Knight")))[0];	
+				player.role.successor = this.shuffle(getPlayersByRole("Earl").concat(getPlayersByRole("Knight")))[0];
 		}
-		
+
 		var executeTarget = player.role.successor.executeTarget;
 		var target = player.role.successor.target;
 		var protectTarget = player.role.successor.protectTarget;
-		
+
 		if(player.role.title == "Lord"){
 			promoteSuccessor(player.role.successor);
 			player.role.successor.role = new Role.Lord();
@@ -102,10 +102,11 @@ class Game{
 
 	}
 	getPlayersInOrder(limit){
-		if(limit > this.rolesList)
+		if(limit > this.rolesList.length)
+			limit = this.rolesList.length;
 		var array = [];
 		for(var i = 0; i < limit; i++){
-			array.concat(this.getPlayersByRole(this.rolesList[i]));
+			array = array.concat(this.getPlayersByRole(this.rolesList[i]));
 		}
 		return array;
 	}
@@ -199,10 +200,10 @@ class Game{
 			}
 			else if(this.playerList[i].votes > highestVotes){
 				highestPlayers = [this.playerList[i]];
-				highestVotes = highestPlayers[i].votes;
+				highestVotes = highestPlayers[0].votes;
 			}
 			//clear the vote
-			
+
 			this.playerList[i].votedFor = null;
 		}
 		this.shuffle(highestPlayers);
