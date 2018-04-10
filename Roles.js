@@ -5,23 +5,10 @@ class Role{
 		this.rank = rank
 		this.wage = wage;
 		this.defense = defense;
+		this.target = null;
+		this.protectTarget = null;
+		this.executeTarget = null;
 	}
-    sendAnonMessage(player, message){
-
-    }
-    assassinate(player){
-
-    }
-    execute(player, reason){
-
-    }
-    protect(player){
-
-    }
-    sendPrestige(player, amount){
-
-    }
-
 };
 
 class Spectator extends Role{
@@ -34,28 +21,12 @@ class King extends Role{
 	constructor(){
 		super("King", 1, 250, 3);
 	}
-    setTax(rank){ //targets which group to tax for the day
-    }
-    getTaxList(){ //gets a list of each role's prestige totals
-
-    }
-    assassinate(player){
-
-    }
 };
 
 class Lord extends Role{
 	constructor(){
 		super("Lord", 2, 100, 5);
-	}
-    assassinate(player){
-
-    }
-	setSuccessor(player){
-
-	}
-	lookupPrestige(player){
-
+		this.successor = null;
 	}
 };
 
@@ -64,15 +35,7 @@ class Duke extends Role{
 		super("Duke", 3, 60, 6);
 		this.blocking = null;
 		this.dukeBlocked = false;
-	}
-    assassinate(player){
-
-    }
-	setSuccessor(player){
-
-	}
-	block(player){
-
+		this.successor = null;
 	}
 };
 
@@ -80,7 +43,6 @@ class Earl extends Role{
 	constructor(){
 		super("Earl", 4, 40, 6);
 	}
-
 };
 
 class Knight extends Role{
@@ -88,15 +50,11 @@ class Knight extends Role{
 		super("Knight", 5, 20, 6);
 		this.spying = null;
 	}
-    spy(player){
-
-	}
 };
 
 class Peasant extends Role{
 	constructor(){
 		super("Peasant", 6, 10, 6);
-		this.discount = 0.20;
 	}
 };
 module.exports = {Role, Spectator, King, Lord, Duke, Earl, Knight, Peasant};

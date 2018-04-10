@@ -1,13 +1,15 @@
 const Player = require('./Player.js');
 const Role = require('./Roles.js');
 const Command = require('./Commands.js');
+const State = require('./States.js');
 
 class Game{
 	constructor(name, io,playerList, minPlayers){
 		this.name = name;
 		this.io = io;
-		this.socketList = [];
 		this.playerList = playerList;
+		this.state = null;
+		this.numDays = 7;
 		this.numLords = 0;
 		this.maxLords;
 		this.numDukes = 0;
@@ -18,139 +20,216 @@ class Game{
 		this.maxKnights;
 		this.numPeasants = 0;
 		this.dukes = [];
-		this.timerInterval = null;
-		this.timer = 30;
-		this.state = -1;
-		this.roleToTax = "Lord";
+		this.roleToTax = "Random";
+		this.minPlayers = minPlayers;
+		this.rolesList = ["King", "Lord", "Duke", "Earl", "Knight", "Peasant", "Spectator"];
 	}
+	promotePlayers(){
+		var numberToPromote =  this.maxEarls - this.getPlayersByRole("Earl").length;
+		var orderedPlayerList2 = this.getPlayersInOrder(6);
+		for(var i = 0; i < numberToPromote; i++){
+			//find a knight
+			var knightList = this.getPlayersByRole("Knight");
+			if(knightList.length == 0){
+				knightList = this.getPlayersByRole("Peasant");
+			}
+
+			//promote knight with highest prestige
+			var highestKnight = [knightList[0]];
+			for(var j = 1; j < knightList.length; j++){
+				if(knightList[j].prestige == highestKnight[0].prestige)
+					highestKnight.push(knightList[j]);
+				else if(knightList[j].prestige > highestKnight[0].prestige)
+					highestKnight = [knightList[j]];
+			}
+			highestKnight = this.shuffle(highestKnight)[0];
+			var target = highestKnight.role.target;
+			var protectTarget = highestKnight.role.protectTarget;
+			highestKnight.role = new Role.Earl();
+			highestKnight.target = target;
+			highestKnight.protectTarget = target;
+			this.sendAll(highestKnight.name + " is appointed the rank of Earl.");
+
+		}
+		numberToPromote =  this.maxKnights - this.getPlayersByRole("Knight").length;
+		for(var i = 0; i < numberToPromote; i++){
+			//find a Peasant
+			var peasantList = this.getPlayersByRole("Peasant");
+
+			//promote peasant with highest prestige
+			var highestPeasant = [peasantList[0]];
+			for(var j = 1; j < peasantList.length; j++){
+				if(peasantList[j].prestige == highestPeasant[0].prestige)
+					highestPeasant.push(peasantList[j]);
+				else if(peasantList[j].prestige > highestPeasant[0].prestige)
+					highestPeasant = [peasantList[j]];
+			}
+			highestPeasant = this.shuffle(highestPeasant)[0];
+			var target = highestPeasant.role.target;
+			var protectTarget = highestPeasant.role.protectTarget;
+			highestPeasant.role = new Role.Knight();
+			highestPeasant.target = target;
+			highestPeasant.protectTarget = target;
+			this.sendAll(highestPeasant.name + " is appointed the rank of Knight.");
+		}
+	}
+	promoteSuccessor(player){
+
+		if(player.role.successor != null && player.role.successor.role.title == "Peasant")
+			return;
+		else{
+			if(player.role.title == "Lord")
+				player.role.successor = this.shuffle(this.getPlayersByRole("Duke"))[0];
+			else
+				player.role.successor = this.shuffle(this.getPlayersByRole("Earl").concat(this.getPlayersByRole("Knight")))[0];
+		}
+
+		var executeTarget = player.role.successor.executeTarget;
+		var target = player.role.successor.target;
+		var protectTarget = player.role.successor.protectTarget;
+
+		if(player.role.title == "Lord"){
+			this.sendAll(player.role.successor.name + " has been appointed Lord!");
+			this.promoteSuccessor(player.role.successor);
+			player.role.successor.role = new Role.Lord();
+			
+		}
+		else{
+			this.sendAll(player.role.successor.name + " has been appointed Duke!");
+			player.role.successor.role = new Role.Duke();
+		}
+
+		player.role.successor.role.executeTarget = executeTarget;
+		player.role.successor.role.protectTarget = protectTarget;
+		player.role.successor.role.target = target;
+
+	}
+	getPlayersInOrder(limit){
+		if(limit > this.rolesList.length)
+			limit = this.rolesList.length;
+		var array = [];
+		for(var i = 0; i < limit; i++){
+			array = array.concat(this.getPlayersByRole(this.rolesList[i]));
+		}
+		return array;
+	}
+	//sends a Game message to everyone in the game
 	sendAll(message){
 		var obj = {"player":"Game","message":message};
 		this.io.to(this.name).emit('message', obj);
 	}
-
-	timerFunc() {
-		//Send out final message once game is over
-		if(this.timer == -10){
-			var obj = {"cur_time":"Game Finished"};
-			this.io.to(this.name).emit('timer', obj);
-			return;
-		}
-		if(this.timer <= 0){
-			this.state++;
-			this.setState();
-			var obj = {"cur_time":this.timer};
-			this.io.to(this.name).emit('timer', obj);
-			return;
-		}
-		this.timer--;
-		var obj = {"cur_time":this.timer};
-		this.io.to(this.name).emit('timer', obj);
-	}
-	setState(){
-		var state_name = "";
-		if(this.state == 0){
-			state_name = "Voting";
-			this.timer = 3;
-		}
-		else if(this.state == 1){
-			var king = this.setKingByVotes();
-			this.sendAll(king.name + " has been elected King with " + king.votes + " votes!");
-			state_name = "Pre-Game";
-			this.timer = 3;
-		}
-		else if(this.state == 2){
-			state_name = "Day 1";
-			this.timer = 600;
-			this.assignRoles();
-			for(var i = 0; i < this.playerList.length; i++){
-				console.log(this.playerList[i].name + " is a " + this.playerList[i].role.title);
-			}
-		}
-		else if(this.state == 8){
-			state_name = "Fin";
-			this.timer = -10;
-			this.clearInterval(this.timerInterval);
-			this.timerFunc();
-		}
-		else{
-			state_name = "Day " + (this.state-1);
-			this.timer = 600;
-		}
-		var obj = {"state":state_name};
-		this.io.to(this.name).emit('gamestate', obj);
+	//sends a yell message to everyone in the game
+	sendYell(message,player){
+		var obj = {"player":player.name,"message":message};
+		this.io.to(this.name).emit('yell', obj);
 	}
 
-    addPlayer(name, id, socket){
-		this.socketList.push(socket);
+	//returns an array of commands as objects
+	getCommandsList(){
+		var cList = [];
+		for(var i = 1; true; i++){
+			var objName = Object.keys(Command)[i];
+			//check to see if we have finished looking through all the commands
+			if(objName == null)
+				return cList;
+			var commandObj = new Command[objName];
+			cList.push(commandObj);
+		}
+	}
 
-		var player = new Player(name, id,  new Role.Spectator(), socket);
+	//adds a player to this game
+    addPlayer(name, socket){
+
+		var player = new Player(name, new Role.Spectator(), socket); //create player object
+
+		//set first player as host
 		if(this.playerList.length == 0){
+			this.state = new State.GameLobby(this.name);
+			this.state.startTimer(this);
 			player.isHost = true;
 		}
         this.playerList.push(player);
 		var game = this;
-		game.sendAll(player.name+" has joined the game.");
+		game.sendAll(player.name + " has joined the game.");
+
+		//handle messages from client
 		socket.on('messageFromClient', function(data){
 			var input = data.content;
 			input = input.trim();
-			//public chat
+
+			//chat
 			if(!input.startsWith("/")){
 				var obj = {"player":player.name,"message":input};
 				game.io.to(game.name).emit('message', obj); //this is sent to all clients
 			}
+			//commands
 			else{
-				for(var i = 1; true; i++){
-					var objName = Object.keys(Command)[i];
-					if(objName == null){
-						player.sendBack("Command not found. Use /help for help");
-						return;
-					}
-					var commandObj = new Command[objName];
-					if(commandObj.names.includes(input.split(" ")[0])){
-						commandObj.execute(input, player, game);
+				var cList = game.getCommandsList();
+				for(var i = 1; i < cList.length; i++){
+					if (cList[i].names.includes(input.split(" ")[0])){
+						cList[i].execute(input, player, game);
 						return;
 					}
 				}
+				player.sendBack("Command not found. Use /help for help");
 			}
 		});
     }
-	getPlayerById(id){
-		for(var i = 0; i < this.playerList.length; i++){
-			if(this.playerList[i].id == id){
-				return this.playerList[i];
-			}
-		}
-		return false;
-	}
+	//returns the player object with the given name, or false if unable to be found
 	getPlayerByName(name){
-		for(var i = 0; i < this.playerList.length; i++){
+		for(var i = 0; i < this.playerList.length; i++)
 			if(this.playerList[i].name == name)
 				return this.playerList[i];
-		}
 		return false;
 	}
+
+	//returns an array of all players who have the given role
+	getPlayersByRole(roleName){
+		var players = [];
+		for(var i = 0; i < this.playerList.length; i++)
+			if(this.playerList[i].role.title == roleName)
+				players.push(this.playerList[i]);
+		return players;
+	}
+
+	//set king by votes. player with most votes is king, returns player object who is set as king. Clears votes of players.
 	setKingByVotes(){
-		var highestVotes = this.playerList[0].votes;
-		var highestPlayers = [this.playerList[0]];
-		for(var i = 1; i < this.playerList.length; i++){
-			if(this.playerList[i].votes == highestVotes){
-				highestPlayers.push(this.playerList[i]);
+		var playerList = this.getPlayersInOrder(7);
+		var highestPlayers = [playerList[0]];
+		var highestVotes = playerList[0].votes;
+		
+		for(var i = 1; i < playerList.length; i++){
+			if(playerList[i].votes == highestVotes){
+				if(this.state.name == "Voting" || (this.state.name == "EmergencyElection" && playerList[i].role.name == "Lord"))
+					highestPlayers.push(playerList[i]);
+				playerList[i].votes = 0;
 			}
-			else if(this.playerList[i].votes > highestVotes){
-				highestPlayers = [this.playerList[i]];
-				highestVotes = highestPlayers[i].votes;
+			else if(playerList[i].votes > highestVotes){
+				highestPlayers = [playerList[i]];
+				highestVotes = highestPlayers[0].votes;
 			}
+			//clear the vote
+			playerList[i].votedFor = null;
 		}
+
 		this.shuffle(highestPlayers);
+		this.sendAll(highestPlayers[0].name + " has been elected King with " + highestPlayers[0].votes + " votes.");
+		if(this.state.name == "EmergencyElection")
+			this.sendAll("A new Ruler has been elected by the will of the Dukes! Long live King " + highestPlayers[0].name+"!");
+		if(highestPlayers[0].role.title != "Spectator")
+			this.promoteSuccessor(highestPlayers[0]);
 		highestPlayers[0].role = new Role.King();
+		
 		return highestPlayers[0];
 	}
+	//sets the player
 	setDuke(player){
 		player.role = new Role.Duke();
 		this.numDukes++;
 		this.dukes.push(player);
 		return player;
 	}
+	//calculates the number of players that should be at each role
 	calculateRoles(){
 		var numPlayers = this.playerList.length;
 		this.maxKnights = Math.floor(numPlayers/3);
@@ -176,18 +255,20 @@ class Game{
 		}
 		return array;
 	}
+
+	//assigns all roles
     assignRoles(){
-		console.log("assigning roles");
 		var playerPool = [];
         var player;
 		this.calculateRoles();
 
-        for(var i = 0; i < this.playerList.length; i++){
+		//put all spectators in a player pool for assignment
+        for(var i = 0; i < this.playerList.length; i++)
 			if(this.playerList[i].role.title == "Spectator")
 				playerPool.push(this.playerList[i]);
-		}
+
 		playerPool = this.shuffle(playerPool);
-		var initDukes = this.maxDukes+ this.maxLords - this.dukes.length;
+		var initDukes = this.maxDukes+ this.maxLords - this.dukes.length; //number of initial dukes
 		//randomly assign dukes if king hasn't done it already
 		for(var x = 0; x < initDukes; x++){
 			player = playerPool.pop();
@@ -198,6 +279,8 @@ class Game{
         for(var x = 0; x < this.maxLords; x++){
             player = this.dukes.pop();
             player.role = new Role.Lord();
+			this.numLords++;
+			this.numDukes--;
         }
         //assign knights
         for(var x = 0; x < this.maxKnights; x++){
