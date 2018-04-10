@@ -29,8 +29,10 @@ class Game{
 		for(var i = 0; i < numberToPromote; i++){
 			//find a knight
 			var knightList = this.getPlayersByRole("Knight");
-			if(knightList.length == 0)
+			console.log("knightList.length in promotePlayers() is " + knightList.length + ", and number of knights to promote is " + numberToPromote);
+			if(knightList.length == 0){
 				knightList = this.getPlayersByRole("Peasant");
+			}
 
 			//promote knight with highest prestige
 			var highestKnight = [knightList[0]];
@@ -87,7 +89,7 @@ class Game{
 		var protectTarget = player.role.successor.protectTarget;
 
 		if(player.role.title == "Lord"){
-			promoteSuccessor(player.role.successor);
+			this.promoteSuccessor(player.role.successor);
 			player.role.successor.role = new Role.Lord();
 			this.sendAll(player.role.successor.name + " has been appointed Lord!");
 		}

@@ -63,6 +63,11 @@ class PreGame extends State{
 	endState(){
 		super.endState();
 		this.game.assignRoles();
+		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
+		console.log("INITIAL ROLES: ");
+		for(var i = 0; i < orderedPlayerList2.length; i++){
+			console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
+		}
 		this.game.state = new Day(1);
 		this.game.state.startTimer(this.game);
 	}
@@ -86,10 +91,13 @@ class Day extends State{
 	}
 	endState(){
 		super.endState();
-
+		console.log("BEFORE ASSASSINATIONS: ");
 		//process assassinations
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		for(var i = 0; i < orderedPlayerList.length; i++){
+			//console log list of players
+			
+			console.log(orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name);
 			//notify watchers of visit
 			if(orderedPlayerList[i].target != null){
 				orderedPlayerList[i].notifyWatchers(orderedPlayerList[i].name + " visited " + orderedPlayerList[i].target.name);
@@ -114,7 +122,14 @@ class Day extends State{
 		}
 		//handle promotions
 		this.game.promotePlayers();
-
+		//print list of players
+		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
+		console.log("AFTER ASSASSINATIONS: ");
+		for(var i = 0; i < orderedPlayerList2.length; i++){
+		
+		console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
+		}
+		
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
 			this.game.state = new EmergencyElection(this.dayNumber);
@@ -136,9 +151,15 @@ class Night extends State{
 	startTimer(game){
 		super.startTimer(game);
 
+		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
+		console.log("BEFORE TAX: ");
+		for(var i = 0; i < orderedPlayerList2.length; i++){
+		
+		console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
+		}
 		//collect tax
 		if(this.game.roleToTax == "Random"){
-			var rolesList = this.game.rolesList.splice(1,6);
+			var rolesList = this.game.rolesList.slice(1,6);
 			this.game.shuffle(rolesList);
 			this.game.roleToTax = rolesList[0];
 		}
@@ -153,19 +174,32 @@ class Night extends State{
 		}
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
 
+		//print player list
+		orderedPlayerList2 = this.game.getPlayersInOrder(6);
+		console.log("BEFORE EXECUTIONS: ");
+		for(var i = 0; i < orderedPlayerList2.length; i++){
+		console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
+		}
+		
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
 			//if we should execute the player
 			if(orderedPlayerList[i].role.executeTarget != null && orderedPlayerList[i].role.title != orderedPlayerList[i].role.executeTarget.title){
 				orderedPlayerList[i].role.executeTarget.kill(this.game);
-				this.game.sendAll(orderedPlayerList[i].executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
+				this.game.sendAll(orderedPlayerList[i].role.executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 			}
 		}
 
 		//handle promotions
 		this.game.promotePlayers();
 
+		//print playerlist
+		console.log("AFTER EXECUTIONS: ");
+		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
+		for(var i = 0; i < orderedPlayerList2.length; i++){
+		console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
+		}
 		//handle blocks
 		orderedPlayerList = this.game.getPlayersInOrder(6);
 		for(var i = 0; i < orderedPlayerList.length; i++){
