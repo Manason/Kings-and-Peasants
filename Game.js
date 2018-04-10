@@ -27,14 +27,9 @@ class Game{
 	promotePlayers(){
 		var numberToPromote =  this.maxEarls - this.getPlayersByRole("Earl").length;
 		var orderedPlayerList2 = this.getPlayersInOrder(6);
-		console.log("BEFORE promotePlayers():");
-		for(var i = 0; i < orderedPlayerList2.length; i++){
-			console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
-		}
 		for(var i = 0; i < numberToPromote; i++){
 			//find a knight
 			var knightList = this.getPlayersByRole("Knight");
-			console.log("knightList.length in promotePlayers() is " + knightList.length + ", and number of knights to promote is " + numberToPromote);
 			if(knightList.length == 0){
 				knightList = this.getPlayersByRole("Peasant");
 			}
