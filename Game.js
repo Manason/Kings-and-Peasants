@@ -26,6 +26,11 @@ class Game{
 	}
 	promotePlayers(){
 		var numberToPromote =  this.maxEarls - this.getPlayersByRole("Earl").length;
+		var orderedPlayerList2 = this.getPlayersInOrder(6);
+		console.log("BEFORE promotePlayers():");
+		for(var i = 0; i < orderedPlayerList2.length; i++){
+			console.log(orderedPlayerList2[i].role.title + " " + orderedPlayerList2[i].name);
+		}
 		for(var i = 0; i < numberToPromote; i++){
 			//find a knight
 			var knightList = this.getPlayersByRole("Knight");
@@ -67,7 +72,7 @@ class Game{
 			highestPeasant = this.shuffle(highestPeasant)[0];
 			var target = highestPeasant.role.target;
 			var protectTarget = highestPeasant.role.protectTarget;
-			highestPeasant.role = new Role.Earl();
+			highestPeasant.role = new Role.Knight();
 			highestPeasant.target = target;
 			highestPeasant.protectTarget = target;
 			this.sendAll(highestPeasant.name + " is appointed the rank of Knight.");
@@ -89,13 +94,14 @@ class Game{
 		var protectTarget = player.role.successor.protectTarget;
 
 		if(player.role.title == "Lord"){
+			this.sendAll(player.role.successor.name + " has been appointed Lord!");
 			this.promoteSuccessor(player.role.successor);
 			player.role.successor.role = new Role.Lord();
-			this.sendAll(player.role.successor.name + " has been appointed Lord!");
+			
 		}
 		else{
-			player.role.successor.role = new Role.Duke();
 			this.sendAll(player.role.successor.name + " has been appointed Duke!");
+			player.role.successor.role = new Role.Duke();
 		}
 
 		player.role.successor.role.executeTarget = executeTarget;
@@ -193,26 +199,32 @@ class Game{
 
 	//set king by votes. player with most votes is king, returns player object who is set as king. Clears votes of players.
 	setKingByVotes(){
-		var highestVotes = this.playerList[0].votes;
-		var highestPlayers = [this.playerList[0]];
-		for(var i = 1; i < this.playerList.length; i++){
-			if(this.playerList[i].votes == highestVotes){
-				highestPlayers.push(this.playerList[i]);
-				this.playerList[i].votes = 0;
+		var playerList = this.getPlayersInOrder(7);
+		var highestPlayers = [playerList[0]];
+		var highestVotes = playerList[0].votes;
+		
+		for(var i = 1; i < playerList.length; i++){
+			if(playerList[i].votes == highestVotes){
+				if(this.state.name == "Voting" || (this.state.name == "EmergencyElection" && playerList[i].role.name == "Lord"))
+					highestPlayers.push(playerList[i]);
+				playerList[i].votes = 0;
 			}
-			else if(this.playerList[i].votes > highestVotes){
-				highestPlayers = [this.playerList[i]];
+			else if(playerList[i].votes > highestVotes){
+				highestPlayers = [playerList[i]];
 				highestVotes = highestPlayers[0].votes;
 			}
 			//clear the vote
-
-			this.playerList[i].votedFor = null;
+			playerList[i].votedFor = null;
 		}
+
 		this.shuffle(highestPlayers);
+		this.sendAll(highestPlayers[0].name + " has been elected King with " + highestPlayers[0].votes + " votes.");
+		if(this.state.name == "EmergencyElection")
+			this.sendAll("A new Ruler has been elected by the will of the Dukes! Long live King " + highestPlayers[0].name+"!");
 		if(highestPlayers[0].role.title != "Spectator")
 			this.promoteSuccessor(highestPlayers[0]);
 		highestPlayers[0].role = new Role.King();
-		this.sendAll(highestPlayers[0].name + " has been elected King with " + highestPlayers[0].votes + " votes.");
+		
 		return highestPlayers[0];
 	}
 	//sets the player

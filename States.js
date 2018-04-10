@@ -150,7 +150,7 @@ class Night extends State{
 	}
 	startTimer(game){
 		super.startTimer(game);
-
+		console.log("NIGHT " + this.dayNumber + " -------------------------");
 		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
 		console.log("BEFORE TAX: ");
 		for(var i = 0; i < orderedPlayerList2.length; i++){
@@ -186,8 +186,9 @@ class Night extends State{
 		for(var i = 0; i < orderedPlayerList.length; i++){
 			//if we should execute the player
 			if(orderedPlayerList[i].role.executeTarget != null && orderedPlayerList[i].role.title != orderedPlayerList[i].role.executeTarget.title){
-				orderedPlayerList[i].role.executeTarget.kill(this.game);
 				this.game.sendAll(orderedPlayerList[i].role.executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
+				orderedPlayerList[i].role.executeTarget.kill(this.game);
+				
 			}
 		}
 
@@ -238,7 +239,7 @@ class Night extends State{
 
 class EmergencyElection extends State{
 	constructor(dayNumber){
-		super("Election","Emergency Election", 30);
+		super("Election","Emergency Election", 10);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
@@ -247,8 +248,8 @@ class EmergencyElection extends State{
 	}
 
 	endState(){
+		super.endState();
 		var newKing = this.game.setKingByVotes();
-		this.game.sendAll("A new Ruler has been elected by the will of the Dukes! Long live King " + newKing.name+"!");
 		this.game.promotePlayers();
 		this.game.state = new Night(this.dayNumber);
 		this.game.state.startTimer(this.game);
