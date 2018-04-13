@@ -151,6 +151,9 @@
     	date.setSeconds(time.cur_time);
 		timer.innerHTML = date.toISOString().substr(11, 8);
 	});
+	socket.on('playerlist', function(playerList){
+		//update playerList here
+	});
 
 	function randomTesting(){
 		//var cmds1 = ["/start","/start idk","/vote","/vote User2","/duke User2","/sc User2","/sc","/tax Spectator","/tax Lords","/tax Duke","/tax earl","/tax King","/lookup User3","/lookup","/lookup Peasant","/lookup King","fuck these command muthafuckin things","/as;dlfkj;ljw4;fowie","/block User3","/block User1","/block","/Watch","/give User3 2"];
@@ -177,12 +180,13 @@
 	}
 
 	//for testing purposes
-	/*window.onload = function(){
+	window.onload = function(){
 		socket.emit('messageFromClient', {content: "/host hi"});
 		socket.emit('messageFromClient', {content: "/join hi"});
-		setInterval(function(){
+		/*setInterval(function(){
 			randomTesting();
-		},1000);
-	}*/
+		},1000);*/
+	}
+	
 </script>
 </html>
