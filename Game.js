@@ -137,6 +137,20 @@ class Game{
 		}
 	}
 
+	
+	sendPlayerList(){
+		//create a package of players to send to client
+		var objPlayerList = [];
+		var players = this.getPlayersInOrder(7);
+		for(var a = 0; a < this.playerList.length; a++){
+			var player = players[a];
+			
+			objPlayerList.push( {"name":player.name, "role":player.role.title, "votes":player.votes} );
+		}
+		//send playerlist to client
+		game.io.to(game.name).emit('playerlist', objPlayerList);
+		
+	}
 	//adds a player to this game
     addPlayer(name, socket){
 
@@ -152,14 +166,6 @@ class Game{
 		var game = this;
 		game.sendAll(player.name + " has joined the game.");
 		
-		//create a package of players to send to client
-		var objPlayerList = [];
-		for(var a = 0; a < game.playerList.length; a++){
-			var player = game.playerList[a];
-			objPlayerList.push( {"name":player.name, "role":player.role.title, "blocked":player.blocked, "votes":player.votes} );
-		}
-		//send playerlist to client
-		game.io.to(game.name).emit('playerlist', objPlayerList);
 		
 		//handle messages from client
 		socket.on('messageFromClient', function(data){

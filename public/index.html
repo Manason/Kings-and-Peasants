@@ -202,6 +202,22 @@
 	});
 	socket.on('playerlist', function(playerList){
 		//update playerList here
+		var table = document.getElementsByClassName("playerlist")[0].firstChild;
+		table.innerHTML = "";
+		for(var i = 0; i < playerList.length; i++){
+			$(".playerlist table").append(
+				'<tr>'+
+					'<td class="pl-succ">🥈</td>'+
+					'<td class="pl-name">' + playerList[i].role + ' ' + playerList[i].name+'</td>'+
+					'<td class="pl-button pl-assassinate">🗡️</td>'+
+					'<td class="pl-button pl-protect">👼🏻</td>'+
+					'<td class="pl-button pl-execute">💀</td>'+
+					'<td class="pl-button pl-give">💸</td>'+
+					'<td class="pl-button pl-role">✨</td>'+
+				'</tr>'
+			);
+		}
+		
 	});
 
 	function randomTesting(){
