@@ -147,13 +147,16 @@ class Vote extends Command{
 		else if(game.state.name == "EmergencyElection" && votingFor.role.title != "Lord")
 			player.error("You can only vote for a Lord in the election for the new King!");
 		else{
-			if(player.votedFor != null)
+			if(player.votedFor != null){
 				player.votedFor.votes--;
+				game.updateVotes(player.votedFor);
+			}
 
 			player.votedFor = votingFor;
 			votingFor.votes++;
 			player.sendBack("You've voted for "+player.votedFor.name);
 			player.notifyWatchers(player.name + " voted for "+player.votedFor.name);
+			game.updateVotes(player.votedFor);
 		}
 	}
 }
@@ -320,6 +323,8 @@ class Block extends Command{
 		blockedPlayer.blocked = true;
 		player.sendBack("You are now blocking "+blockedPlayer.name+".");
 		player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
+		blockedPlayer.sendBack("You have been blocked by a duke!");
+		blockedPlayer.sendBlocked();
 	}
 }
 
@@ -381,10 +386,10 @@ class Give extends Command{
 				return;
 			else if(input[0] == "/ga" || input[0] == "/giveanon")
 				player.prestige -= (super.checkCost(amount) - amount);
-			
+
 			player.prestige -= amount;
 			playerToGive.prestige += amount;
-			
+
 			playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
 			playerToGive.notifyWatchers(playerToGive.name+" recieved "+amount+" prestige from "+player.name+".");
 			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
@@ -597,7 +602,7 @@ class Yell extends Command{
 		var inputList = input.split(/\s+/);
 		if(super.checkCost(0) == false)
 			return;
-	
+
 		player.prestige -= super.checkCost(0);
 		game.sendYell((input.substring(input.indexOf(inputList[1],inputList[0].length+1))),player);
 	}

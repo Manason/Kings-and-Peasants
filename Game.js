@@ -74,7 +74,6 @@ class Game{
 		}
 	}
 	promoteSuccessor(player){
-
 		if(player.role.successor != null && player.role.successor.role.title == "Peasant")
 			return;
 		else{
@@ -142,9 +141,10 @@ class Game{
 		var players = this.getPlayersInOrder(7);
 		for(var a = 0; a < this.playerList.length; a++){
 			var player = players[a];
-			objPlayerList[a+1] = {"name":player.name, "role":player.role.title, "votes":player.votes};
+			objPlayerList[a+1] = {"name":player.name, "role":player.role.title};
 		}
 
+		//🥈⭐🥇🗡️👼💀💸✨
 		//send playerlist to client
 		for(var a = 0; a < this.playerList.length; a++){
 			var player = players[a];
@@ -152,13 +152,9 @@ class Game{
 			player.socket.emit('playerlist', objPlayerList);
 		}
 	}
-	updatePlayerListClient(){
-		var obj = null;
-		for(var a = 0; a < this.playerList.length; a++){
-			var player = players[a];
-			obj = {"p_name":player.name, "p_role":player.role.title,"p_blocked":player.blocked,"p_votedFor":player.votedFor==null ? "null" : player.votedFor.name,"p_sucessor":player.role.successor==null ? "null" : player.role.successor.name};
-			player.socket.emit('playerlist', obj);
-		}
+	updateVotes(player){
+		var obj = {"player":player.name, "votes":player.votes}
+		this.io.to(this.name).emit('voteUpdate', obj);
 	}
 	//adds a player to this game
     addPlayer(name, socket){
@@ -174,6 +170,7 @@ class Game{
         this.playerList.push(player);
 		var game = this;
 		game.sendAll(player.name + " has joined the game.");
+		game.sendPlayerList();
 
 
 		//handle messages from client

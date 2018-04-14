@@ -40,7 +40,7 @@
 				<td class="emoji">💸</td>
 				<td class="emoji">✨</td>
 			</tr>
-			<tr>
+			<!-- <tr>
 				<td class="">🥇</td>
 				<td class="duke name">Duke Pheo</td>
 				<td class="emoji">🗡️</td>
@@ -66,7 +66,7 @@
 				<td class="emoji">💀</td>
 				<td class="emoji">💸</td>
 				<td class="emoji">✨</td>
-			</tr>
+			</tr> -->
 		</table>
 		<!-- Example of a player during voting stage-->
 		<!-- <div class="player">
@@ -203,21 +203,56 @@
 	socket.on('playerlist', function(playerList){
 		//update playerList here
 		var table = document.getElementsByClassName("playerlist")[0].firstChild;
-		table.innerHTML = "";
-		for(var i = 0; i < playerList.length; i++){
-			$(".playerlist table").append(
-				'<tr>'+
-					'<td class="pl-succ">🥈</td>'+
-					'<td class="pl-name">' + playerList[i].role + ' ' + playerList[i].name+'</td>'+
-					'<td class="pl-button pl-assassinate">🗡️</td>'+
-					'<td class="pl-button pl-protect">👼🏻</td>'+
-					'<td class="pl-button pl-execute">💀</td>'+
-					'<td class="pl-button pl-give">💸</td>'+
-					'<td class="pl-button pl-role">✨</td>'+
-				'</tr>'
-			);
+		$(".playerlist table").empty();
+		for(var i = 1; i < playerList.length; i++){
+			var playerInfo = playerList[0];
+			var tableEntry = '<tr>';
+			//Set icon for successor
+			if(playerInfo.p_name == playerList[i].name)
+				tableEntry += '<td class="pl-succ">⭐</td>';
+			else if(playerInfo.p_successor == playerList[i].name){
+				tableEntry += '<td class="pl-succ">🥇</td>';
+			}
+			else if((playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && (playerList[i].role=="Earl" || playerList[i].role=="Knight"))){
+				tableEntry += '<td class="pl-succ">🥈</td>';
+			}
+			else{
+				tableEntry += '<td class="pl-succ disabled-icon">🥈</td>';
+			}
+			//Set role and name
+			tableEntry += '<td class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</td>';
+			if(playerInfo.p_name != playerList[i].name && playerList[i].role != "Spectator"){
+				//Set button for role action
+				if(playerInfo.p_role=="Lord" && playerInfo.p_role=="Duke" && playerInfo.p_role=="Knight"){
+					if(playerInfo.p_blocked)
+						tableEntry += '<td class="pl-button pl-role disabled-icon">✨</td>';
+					else
+						tableEntry += '<td class="pl-button pl-role">✨</td>';
+				}
+				//Set execute or assassinate buttons
+				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
+					if(playerInfo.p_blocked)
+						tableEntry += '<td class="pl-button pl-execute disabled-icon">💀</td>';
+					else
+						tableEntry += '<td class="pl-button pl-execute">💀</td>';
+				}
+				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
+					tableEntry += '<td class="pl-button pl-assassinate">🗡️</td>';
+				else
+					tableEntry += '<td></td>';
+				//Set protect and give buttons
+				tableEntry += '<td class="pl-button pl-protect">👼🏻</td>';
+				tableEntry += '<td class="pl-button pl-give">💸</td>';
+			}
+			tableEntry += '</tr>';
+			$(".playerlist table").append(tableEntry);
 		}
-		
+	});
+	socket.on('voteUpdate', function(gmst){
+		gamestate.innerHTML = gmst.state;
+	});
+	socket.on('block', function(gmst){
+		gamestate.innerHTML = gmst.state;
 	});
 
 	function randomTesting(){

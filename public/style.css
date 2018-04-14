@@ -31,36 +31,46 @@
 	margin: 0;
 	padding: 0;
 }
-.king {
+.pl-king {
 	color: #660099;
 }
-.lord {
+.pl-lord {
 	color: #4169E1;
 }
-.duke {
+.pl-duke {
 	color: #000000;
 }
-.name {
+.pl-earl {
+	color: #556B2F;
+}
+.pl-knight {
+	color: #778899;
+}
+.pl-peasant {
+	color: #AE8484;
+}
+.pl-name {
+	font-weight: bold;
 	font-size: 20px;
 	padding-right: 25px;
 	/* padding-left: 5px; */
 }
-.emoji {
+.pl-button {
 	border: 1px solid #FFFAF0;
 	border-radius: 5px;
 	margin:5px;
 	padding: 3px;
 }
-.selected {
+.pl-button:hover {
+	border: 1px solid gray;
+	background-color: lightgray;
+}
+.selected-icon {
 	border: 1px solid gray;
 	background-color: darkgray;
 }
-.disabled {
+.disabled-icon {
 	opacity: .25;
-}
-.emoji:hover {
-	border: 1px solid gray;
-	background-color: lightgray;
 }
 
 /* Chat Window & Input */
