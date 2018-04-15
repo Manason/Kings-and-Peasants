@@ -221,20 +221,14 @@
 			}
 			//Set role and name
 			tableEntry += '<td class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</td>';
-			if(playerInfo.p_name != playerList[i].name && playerList[i].role != "Spectator"){
+			if(playerInfo.p_name != playerList[i].name && playerInfo.p_role != "Spectator" && playerList[i].role != "Spectator"){
 				//Set button for role action
 				if(playerInfo.p_role=="Lord" && playerInfo.p_role=="Duke" && playerInfo.p_role=="Knight"){
-					if(playerInfo.p_blocked)
-						tableEntry += '<td class="pl-button pl-role disabled-icon">✨</td>';
-					else
-						tableEntry += '<td class="pl-button pl-role">✨</td>';
+					tableEntry += '<td class="pl-button pl-role">✨</td>';
 				}
 				//Set execute or assassinate buttons
 				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
-					if(playerInfo.p_blocked)
-						tableEntry += '<td class="pl-button pl-execute disabled-icon">💀</td>';
-					else
-						tableEntry += '<td class="pl-button pl-execute">💀</td>';
+					tableEntry += '<td class="pl-button pl-execute">💀</td>';
 				}
 				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
 					tableEntry += '<td class="pl-button pl-assassinate">🗡️</td>';
@@ -246,13 +240,25 @@
 			}
 			tableEntry += '</tr>';
 			$(".playerlist table").append(tableEntry);
+			if(playerInfo.p_blocked){
+				$("pl-role").addClass("disabled-icon");
+				$("pl-execute").addClass("disabled-icon");
+			}
+
 		}
 	});
-	socket.on('voteUpdate', function(gmst){
-		gamestate.innerHTML = gmst.state;
+	socket.on('voteUpdate', function(){
 	});
-	socket.on('block', function(gmst){
-		gamestate.innerHTML = gmst.state;
+	socket.on('block', function(){
+		$("pl-role").addClass("disabled-icon");
+		$("pl-execute").addClass("disabled-icon");
+	});
+	socket.on('setIcons', function(obj){
+		switch (obj.type) {
+			case "protect":
+				$("#table td.pl-name:not(:contains('" + obj.protectTarget + "'))").addClass("disabled-icon");
+				break;
+		}
 	});
 
 	function randomTesting(){
