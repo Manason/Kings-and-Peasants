@@ -30,8 +30,12 @@ class Player{
 		this.socket.emit('whisper', obj);
 	}
 	sendBlocked(){
-		var obj = {"blocked":this.blocked,"player":player.name};
+		var obj = {"blocked":this.blocked,"player":this.name};
 		this.socket.emit('block', obj);
+	}
+	setIcons(type,name){
+		var obj = {"type":type,"name":name};
+		this.socket.emit('setIcons',obj);
 	}
 	notifyWatchers(message){
 		var obj = {"player":"Game","message":message};

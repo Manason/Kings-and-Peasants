@@ -196,9 +196,13 @@
 		gamestate.innerHTML = gmst.state;
 	});
 	socket.on('timer', function(time){
-		var date = new Date(null);
-    	date.setSeconds(time.cur_time);
-		timer.innerHTML = date.toISOString().substr(11, 8);
+		if(isNaN(time.cur_time))
+			timer.innerHTML = time.cur_time;
+		else{
+			var date = new Date(null);
+			date.setSeconds(time.cur_time);
+			timer.innerHTML = date.toISOString().substr(11, 8);
+		}
 	});
 	socket.on('playerlist', function(playerList){
 		//update playerList here
@@ -223,7 +227,7 @@
 			tableEntry += '<td class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</td>';
 			if(playerInfo.p_name != playerList[i].name && playerInfo.p_role != "Spectator" && playerList[i].role != "Spectator"){
 				//Set button for role action
-				if(playerInfo.p_role=="Lord" && playerInfo.p_role=="Duke" && playerInfo.p_role=="Knight"){
+				if(playerInfo.p_role=="Lord" || playerInfo.p_role=="Duke" || playerInfo.p_role=="Knight"){
 					tableEntry += '<td class="pl-button pl-role">✨</td>';
 				}
 				//Set execute or assassinate buttons
@@ -241,24 +245,19 @@
 			tableEntry += '</tr>';
 			$(".playerlist table").append(tableEntry);
 			if(playerInfo.p_blocked){
-				$("pl-role").addClass("disabled-icon");
-				$("pl-execute").addClass("disabled-icon");
+				$(".pl-role").addClass("disabled-icon");
+				$(".pl-execute").addClass("disabled-icon");
 			}
 
 		}
 	});
-	socket.on('voteUpdate', function(){
-	});
 	socket.on('block', function(){
-		$("pl-role").addClass("disabled-icon");
-		$("pl-execute").addClass("disabled-icon");
+		$(".pl-role").addClass("disabled-icon");
+		$(".pl-execute").addClass("disabled-icon");
 	});
 	socket.on('setIcons', function(obj){
-		switch (obj.type) {
-			case "protect":
-				$("#table td.pl-name:not(:contains('" + obj.protectTarget + "'))").addClass("disabled-icon");
-				break;
-		}
+		$("#table td.pl-name:contains('Knight " + obj.name + "') ~ td.pl-"+obj.type).removeClass("disabled-icon");
+		$("#table td.pl-name:not(:contains('Knight " + obj.name + "')) ~ td.pl-"+obj.type).addClass("disabled-icon");
 	});
 
 	function randomTesting(){

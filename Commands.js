@@ -213,6 +213,7 @@ class Successor extends Command{
 			player.sucessor = sucessor;
 			player.sendBack(sucessor.name + " is now your successor.");
 			player.notifyWatchers(player.name + " appointed "+successor.name+" as their successor.");
+			player.setIcons("successor",successor.name);
 		}
 	}
 }
@@ -306,6 +307,7 @@ class Block extends Command{
 		if(player.role.blocking != null && player.role.blocking.title == "Duke" && player.role.blocking == blockedPlayer){
 			player.role.blocking == null;
 			player.notifyWatchers(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
+			player.setIcons("role","null");
 			return;
 		}
 		player.role.blocking = blockedPlayer;
@@ -313,6 +315,7 @@ class Block extends Command{
 		if(blockedPlayer.role.title == "Duke"){
 			player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
 			player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
+			player.setIcons("role",blockedPlayer.name);
 			return;
 		}
 		else if(blockedPlayer.role.title == "Knight")
@@ -323,6 +326,7 @@ class Block extends Command{
 		blockedPlayer.blocked = true;
 		player.sendBack("You are now blocking "+blockedPlayer.name+".");
 		player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
+		player.setIcons("role",blockedPlayer.name);
 		blockedPlayer.sendBack("You have been blocked by a duke!");
 		blockedPlayer.sendBlocked();
 	}
@@ -362,6 +366,7 @@ class Watch extends Command{
 		player.role.spying = spiedPlayer;
 		player.sendBack("You are now watching on "+spiedPlayer.name+".");
 		player.notifyWatchers(player.name+" is now watching "+spiedPlayer.name+".");
+		player.setIcons("role",spiedPlayer.name);
 	}
 }
 
@@ -425,6 +430,7 @@ class Assassinate extends Command{
 					player.prestige += this.cost;
 				player.sendBack(target.name + " is no longer your assassination target.");
 				player.notifyWatchers(player.name + " is no longer planning to attack " + target.name + " tonight.");
+				player.setIcons("assassinate","null");
 			}
 			//to set the target use the command on a target
 			else{
@@ -440,6 +446,7 @@ class Assassinate extends Command{
 				player.role.target = target; //set new target
 				player.sendBack("assassination target set to " + target.name);
 				player.notifyWatchers(player.name + " is planning to attack " + target.name +" tonight.");
+				player.setIcons("assassinate",target.name);
 			}
 
 		}
@@ -473,6 +480,7 @@ class Protect extends Command{
 				player.prestige += this.cost;
 				player.sendBack("You will no longer protect " + target.name + " tonight.");
 				player.notifyWatchers(player.name + " is no longer protecting " + target.name + " tonight.");
+				player.setIcons("protect","null");
 			}
 			else{
 				if(super.checkCost(0) == false)
@@ -485,6 +493,7 @@ class Protect extends Command{
 				player.role.protectTarget = target;
 				player.sendBack("You will protect "+ target.name + " tonight.");
 				player.notifyWatchers(player.name + " has decided to protect " + target.name + " tonight.");
+				player.setIcons("protect",target.name);
 			}
 
 		}
@@ -525,17 +534,20 @@ class Execute extends Command{
 				player.prestige -= super.checkCost(0);
 				player.role.executeTarget = target;
 				game.sendAll(player.name + " has ordered " + target.name + " executed tonight!");
+				player.setIcons("execute",target.name);
 			}
 			//take back an execution
 			else if(player.role.executeTarget == target){
 				player.prestige += this.cost;
 				game.sendAll(player.name + " has rescinded their order to execute " + target.name);
 				player.role.executeTarget = null;
+				player.setIcons("execute","null");
 			}
 			//order a different execution
 			else{
 				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget+ ", and has instead ordered " + target.name + " executed tonight!");
 				player.role.executeTarget = target;
+				player.setIcons("execute",target.name);
 			}
 		}
 
