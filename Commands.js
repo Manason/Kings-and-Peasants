@@ -293,13 +293,13 @@ class Block extends Command{
 			return;
 		}
 		//already blocking player and player isn't a duke
-		if(player.role.blocking != null && player.role.blocking.role.title != "Duke"){
-			player.error("You are already blocking "+player.role.blocking.name);
-			return;
-		}
 		var blockedPlayer = super.playerArgument(input[1]);
 		if(blockedPlayer == false)
 			return;
+		if(player.role.blocking != null && blockedPlayer.role.title != "Duke"){
+			player.error("You are already blocking "+blockedPlayer.name);
+			return;
+		}
 		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
 			player.error("You can't block a "+blockedPlayer.role.title+"!");
 
@@ -413,7 +413,7 @@ class Assassinate extends Command{
 		input = input.split(/\s+/);
 		if(input.length == 1){
 			if(player.role.target != null)
-				player.sendBack("your assassination target is " + player.role.target.name);
+				player.sendBack("Your assassination target is " + player.role.target.name);
 			else
 				player.sendBack("No assassination target has been set.");
 		}
@@ -444,7 +444,7 @@ class Assassinate extends Command{
 					player.prestige -= super.checkCost(0);
 				target.assassins.push(player);
 				player.role.target = target; //set new target
-				player.sendBack("assassination target set to " + target.name);
+				player.sendBack("Assassination target set to " + target.name);
 				player.notifyWatchers(player.name + " is planning to attack " + target.name +" tonight.");
 				player.setIcons("assassinate",target.name);
 			}
@@ -545,7 +545,7 @@ class Execute extends Command{
 			}
 			//order a different execution
 			else{
-				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget+ ", and has instead ordered " + target.name + " executed tonight!");
+				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget.name + ", and has instead ordered " + target.name + " executed tonight!");
 				player.role.executeTarget = target;
 				player.setIcons("execute",target.name);
 			}

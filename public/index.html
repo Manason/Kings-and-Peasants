@@ -238,7 +238,7 @@
 				}
 				//Set execute or assassinate buttons
 				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
-					tableEntry += '<td class="pl-button pl-execute" onclick="socket.emit\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</td>';
+					tableEntry += '<td class="pl-button pl-execute" onclick="socket.emit(\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</td>';
 				}
 				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
 					tableEntry += '<td class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</td>';
@@ -261,15 +261,18 @@
 		$(".pl-role").addClass("disabled-icon");
 		$(".pl-execute").addClass("disabled-icon");
 	});
-	//Change to endswith
-	//Execute doesn't work
-	//Undoing duke block
 	socket.on('setIcons', function(obj){
 		$(".pl-"+obj.type).removeClass("selected-icon");
 		$(".pl-"+obj.type).removeClass("disabled-icon");
 		if(obj.name != "null"){
-			$(".playerlist td.pl-name:contains( "+obj.name+")").siblings(".pl-"+obj.type).addClass("selected-icon");
-			$(".playerlist td.pl-name:not(:contains( "+obj.name+"))").siblings(".pl-"+obj.type).addClass("disabled-icon");
+			$(".playerlist td.pl-name").filter(function () {
+    			return $(this).text().endsWith(" "+obj.name);
+			}).siblings(".pl-"+obj.type).addClass("selected-icon");
+
+
+			$(".playerlist td.pl-name").filter(function () {
+    			return !$(this).text().endsWith(" "+obj.name);
+			}).siblings(".pl-"+obj.type).addClass("disabled-icon");
 		}
 	});
 
