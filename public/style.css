@@ -15,11 +15,23 @@
 	float: right;
 }
 
-/* PlayerList */
-.playerlist {
+
+/* Kings Module */
+.kings-module{
 	position: fixed;
 	right: 0px;
 	top: 150px;
+	border: 1px solid gray;
+}
+
+
+/* PlayerList */
+.playerlist {
+	position: relative;
+	right: 0px;
+	top: 200px;
+	
+	float:right;
 	border: 1px solid gray;
 }
 .playerlist table {

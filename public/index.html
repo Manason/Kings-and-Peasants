@@ -20,6 +20,27 @@
 			<p>Waiting...</p>
 		</div>
 	</div>
+	
+	<div class="kings-module">
+		<table>
+			<tr>
+				<td>Lookup</td>
+				<td class="pl-button" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup Lord\'});">Lords</td>
+				<td class="pl-button" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup Duke\'});">Dukes</td>
+				<td class="pl-button" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup Earl\'});">Earls</td>
+				<td class="pl-button" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup Knight\'});">Knights</td>
+				<td class="pl-button" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup Peasant\'});">Peasants</td>
+			</tr>
+			<tr>
+				<td>Tax</td>
+				<td class="pl-button km-tax" onclick="socket.emit(\'messageFromClient\', {content: \'/tax Lord\'});">Lords</td>
+				<td class="pl-button km-tax" onclick="socket.emit(\'messageFromClient\', {content: \'/tax Duke\'});">Dukes</td>
+				<td class="pl-button km-tax" onclick="socket.emit(\'messageFromClient\', {content: \'/tax Earl\'});">Earls</td>
+				<td class="pl-button km-tax" onclick="socket.emit(\'messageFromClient\', {content: \'/tax Knight\'});">Knights</td>
+				<td class="pl-button km-tax" onclick="socket.emit(\'messageFromClient\', {content: \'/tax Peasant\'});">Peasants</td>
+			</tr>
+		</table>
+	</div>
 	<div class="playerlist">
 		<table>
 			<tr>
@@ -86,26 +107,7 @@
 			<input type="radio" name="roleaction" class="playerlisticon">
 		</div> -->
 	</div>
-	<div class="lookup-and-tax-module">
-		<div class="king-lookup">
-			<p class="lookup-and-tax-header">Lookup:</p>
-			<select name="lookup">
-				<option value="Lookup">Lookup</option>
-				<option value="Lord">Lords</option>
-				<option value="Earl">Earls</option>
-				<option value="Knight">Knights</option>
-				<option value="Peasant">Peasants</option>
-			</select>
-		</div>
-		<div class="king-tax">
-			<p class="lookup-and-tax-header">Tax:</p>
-			<input type="radio" name="group-tax" class="role-tax">Lords</input>
-			<input type="radio" name="group-tax" class="role-tax">Dukes</input>
-			<input type="radio" name="group-tax" class="role-tax">Earls</input>
-			<input type="radio" name="group-tax" class="role-tax">Knights</input>
-			<input type="radio" name="group-tax" class="role-tax">Peasants</input>
-		</div>
-	</div>
+
 	<div class="chat">
 		<div class="chat-window">
 			<!-- <div class="chat-entry">
@@ -265,11 +267,21 @@
 	//Execute doesn't work
 	//Undoing duke block
 	socket.on('setIcons', function(obj){
-		$(".pl-"+obj.type).removeClass("selected-icon");
-		$(".pl-"+obj.type).removeClass("disabled-icon");
-		if(obj.name != "null"){
-			$(".playerlist td.pl-name:contains( "+obj.name+")").siblings(".pl-"+obj.type).addClass("selected-icon");
-			$(".playerlist td.pl-name:not(:contains( "+obj.name+"))").siblings(".pl-"+obj.type).addClass("disabled-icon");
+		if(obj.type == "km-tax"){
+			$("."+obj.type).removeClass("selected-icon");
+			$("."+obj.type).removeClass("disabled-icon");
+			if(obj.name != "null"){
+				$(".km-tax:contains("+obj.name+")").addClass("selected-icon");
+				$(".km-tax:contains("+obj.name+")").addClass("disabled-icon");
+			}
+		}
+		else{
+			$(".pl-"+obj.type).removeClass("selected-icon");
+			$(".pl-"+obj.type).removeClass("disabled-icon");
+			if(obj.name != "null"){
+				$(".playerlist td.pl-name:contains( "+obj.name+")").siblings(".pl-"+obj.type).addClass("selected-icon");
+				$(".playerlist td.pl-name:not(:contains( "+obj.name+"))").siblings(".pl-"+obj.type).addClass("disabled-icon");
+			}
 		}
 	});
 
