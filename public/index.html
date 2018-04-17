@@ -218,7 +218,7 @@
 				tableEntry += '<td class="pl-succ">🥇</td>';
 			}
 			else if((playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && (playerList[i].role=="Earl" || playerList[i].role=="Knight"))){
-				tableEntry += '<td class="pl-succ">🥈</td>';
+				tableEntry += '<td class="pl-succ" onclick="socket.emit(\'messageFromClient\', {content: \'/sc '+playerList[i].name+'\'});">🥈</td>';
 			}
 			else{
 				tableEntry += '<td class="pl-succ disabled-icon">🥈</td>';
@@ -227,20 +227,26 @@
 			tableEntry += '<td class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</td>';
 			if(playerInfo.p_name != playerList[i].name && playerInfo.p_role != "Spectator" && playerList[i].role != "Spectator"){
 				//Set button for role action
-				if(playerInfo.p_role=="Lord" || playerInfo.p_role=="Duke" || playerInfo.p_role=="Knight"){
-					tableEntry += '<td class="pl-button pl-role">✨</td>';
+				if(playerInfo.p_role=="Lord"){
+					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup '+playerList[i].name+'\'});">✨</td>';
+				}
+				else if(playerInfo.p_role=="Duke"){
+					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/block '+playerList[i].name+'\'});">✨</td>';
+				}
+				else if(playerInfo.p_role=="Knight"){
+					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</td>';
 				}
 				//Set execute or assassinate buttons
 				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
-					tableEntry += '<td class="pl-button pl-execute">💀</td>';
+					tableEntry += '<td class="pl-button pl-execute" onclick="socket.emit\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</td>';
 				}
 				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
-					tableEntry += '<td class="pl-button pl-assassinate">🗡️</td>';
+					tableEntry += '<td class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</td>';
 				else
 					tableEntry += '<td></td>';
 				//Set protect and give buttons
-				tableEntry += '<td class="pl-button pl-protect">👼🏻</td>';
-				tableEntry += '<td class="pl-button pl-give">💸</td>';
+				tableEntry += '<td class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</td>';
+				tableEntry += '<td class="pl-button pl-give" onclick="socket.emit(\'messageFromClient\', {content: \'/g '+playerList[i].name+' 2\'});">💸</td>';
 			}
 			tableEntry += '</tr>';
 			$(".playerlist table").append(tableEntry);
@@ -255,9 +261,16 @@
 		$(".pl-role").addClass("disabled-icon");
 		$(".pl-execute").addClass("disabled-icon");
 	});
+	//Change to endswith
+	//Execute doesn't work
+	//Undoing duke block
 	socket.on('setIcons', function(obj){
-		$("#table td.pl-name:contains('Knight " + obj.name + "') ~ td.pl-"+obj.type).removeClass("disabled-icon");
-		$("#table td.pl-name:not(:contains('Knight " + obj.name + "')) ~ td.pl-"+obj.type).addClass("disabled-icon");
+		$(".pl-"+obj.type).removeClass("selected-icon");
+		$(".pl-"+obj.type).removeClass("disabled-icon");
+		if(obj.name != "null"){
+			$(".playerlist td.pl-name:contains( "+obj.name+")").siblings(".pl-"+obj.type).addClass("selected-icon");
+			$(".playerlist td.pl-name:not(:contains( "+obj.name+"))").siblings(".pl-"+obj.type).addClass("disabled-icon");
+		}
 	});
 
 	function randomTesting(){
