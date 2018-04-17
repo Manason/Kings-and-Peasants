@@ -362,13 +362,13 @@ class Watch extends Command{
 
 class Give extends Command{
 	constructor(){
-		super(["/g", "/give", "/ga", "/giveanon"], 5, [2], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player_name> <amount> - Give your prestige to another player. Use /giveanon to give anonymously.","You can only give prestige once the game is started.","Spectators don't get prestige, how can they give it?"]);
+		super(["/g", "/give", "/ga", "/giveanon"], 5, [2], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player_name> <amount> - Give your prestige to another player. Use /giveanon to give anonymously.","You can only give prestige during the day.","Spectators don't get prestige, how can they give it?"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
 			return;
 		input = input.split(/\s+/);
-
+	
 		var playerToGive = super.playerArgument(input[1]);
 		if(playerToGive == false)
 			return;
@@ -381,6 +381,7 @@ class Give extends Command{
 				return;
 			else if(input[0] == "/ga" || input[0] == "/giveanon")
 				player.prestige -= (super.checkCost(amount) - amount);
+
 			
 			player.prestige -= amount;
 			playerToGive.prestige += amount;
@@ -389,6 +390,7 @@ class Give extends Command{
 			playerToGive.notifyWatchers(playerToGive.name+" recieved "+amount+" prestige from "+player.name+".");
 			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
 			player.notifyWatchers(player.name+" gave "+amount+" prestige to "+playerToGive.name+".");
+			game.sendToRole("Earl", "REDACTED has sent REDACTED " + amount + " prestige."); //notify earls
 		}
 	}
 }
