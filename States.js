@@ -75,7 +75,7 @@ class Day extends State{
 	}
 	startTimer(game){
 		super.startTimer(game);
-
+		this.game.sendPlayerList();
 		//handle income
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		while(orderedPlayerList.length > 0){
@@ -115,7 +115,7 @@ class Day extends State{
 		this.game.promotePlayers();
 		//print list of players
 		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
-	
+
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
 			this.game.state = new EmergencyElection(this.dayNumber);
@@ -157,7 +157,7 @@ class Night extends State{
 
 		//print player list
 		orderedPlayerList2 = this.game.getPlayersInOrder(6);
-		
+
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
@@ -165,7 +165,7 @@ class Night extends State{
 			if(orderedPlayerList[i].role.executeTarget != null && orderedPlayerList[i].role.title != orderedPlayerList[i].role.executeTarget.title){
 				this.game.sendAll(orderedPlayerList[i].role.executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 				orderedPlayerList[i].role.executeTarget.kill(this.game);
-				
+
 			}
 		}
 
@@ -195,6 +195,12 @@ class Night extends State{
 			currentPlayer.role.target = null;
 			currentPlayer.role.protectTarget = null;
 			currentPlayer.role.executeTarget = null;
+			if(currentPlayer.role.title == "Duke"){
+				currentPlayer.role.blocking = null;
+			}
+			if(currentPlayer.role.title == "Knight"){
+				currentPlayer.role.spying = null;
+			}
 		}
 	}
 
