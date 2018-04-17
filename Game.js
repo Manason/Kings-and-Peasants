@@ -136,7 +136,14 @@ class Game{
 			cList.push(commandObj);
 		}
 	}
-
+	
+	//sends the given role title the message
+	sendToRole(role, message){
+		for(var i = 0; i < this.playerList.length; i++)
+			if(playerList[i].role.title == role)
+				playerList[i].sendBack(message);
+	}
+	
 	//adds a player to this game
     addPlayer(name, socket){
 
