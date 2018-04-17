@@ -152,7 +152,6 @@ class Game{
 			objPlayerList[a+1] = {"name":player.name, "role":player.role.title};
 		}
 
-		//🥈⭐🥇🗡️👼💀💸✨
 		//send playerlist to client
 		for(var a = 0; a < this.playerList.length; a++){
 			var player = players[a];
