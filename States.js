@@ -195,6 +195,12 @@ class Night extends State{
 			currentPlayer.role.target = null;
 			currentPlayer.role.protectTarget = null;
 			currentPlayer.role.executeTarget = null;
+			if(currentPlayer.role.title == "Duke"){
+				currentPlayer.role.blocking = null;
+			}
+			if(currentPlayer.role.title == "Knight"){
+				currentPlayer.role.spying = null;
+			}
 		}
 	}
 
