@@ -15,11 +15,31 @@
 	float: right;
 }
 
+
+/* Kings Module */
+.kings-module{
+	position: fixed;
+	right: 0px;
+	top: 150px;
+	border: 1px solid gray;
+	font-size:20px;
+}
+.km-header{
+	font-size:20px;
+	
+	padding-left:10px;
+	padding-right:20px;
+    text-shadow: 1px 1px lightblue;
+}
+
+
 /* PlayerList */
 .playerlist {
 	position: fixed;
 	right: 0px;
-	top: 150px;
+	top: 250px;
+	
+	
 	border: 1px solid gray;
 }
 .playerlist table {

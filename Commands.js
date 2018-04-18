@@ -231,6 +231,7 @@ class Tax extends Command{
 			game.roleToTax = super.groupArgument(input[1]);
 
 		player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
+		player.setIcons("km-tax", game.roleToTax);
 	}
 }
 

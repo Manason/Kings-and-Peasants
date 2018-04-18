@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -19,6 +19,27 @@
 		<div class="timer">
 			<p>Waiting...</p>
 		</div>
+	</div>
+	
+	<div class="kings-module">
+		<table>
+			<tr>
+				<td class="km-header">Lookup</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</td>
+			</tr>
+			<tr>
+				<td class="km-header">Tax</td>
+				<td class="pl-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</td>
+				<td class="pl-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</td>
+				<td class="pl-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</td>
+				<td class="pl-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</td>
+				<td class="pl-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</td>
+			</tr>
+		</table>
 	</div>
 	<div class="playerlist">
 		<table>
@@ -86,26 +107,7 @@
 			<input type="radio" name="roleaction" class="playerlisticon">
 		</div> -->
 	</div>
-	<div class="lookup-and-tax-module">
-		<div class="king-lookup">
-			<p class="lookup-and-tax-header">Lookup:</p>
-			<select name="lookup">
-				<option value="Lookup">Lookup</option>
-				<option value="Lord">Lords</option>
-				<option value="Earl">Earls</option>
-				<option value="Knight">Knights</option>
-				<option value="Peasant">Peasants</option>
-			</select>
-		</div>
-		<div class="king-tax">
-			<p class="lookup-and-tax-header">Tax:</p>
-			<input type="radio" name="group-tax" class="role-tax">Lords</input>
-			<input type="radio" name="group-tax" class="role-tax">Dukes</input>
-			<input type="radio" name="group-tax" class="role-tax">Earls</input>
-			<input type="radio" name="group-tax" class="role-tax">Knights</input>
-			<input type="radio" name="group-tax" class="role-tax">Peasants</input>
-		</div>
-	</div>
+
 	<div class="chat">
 		<div class="chat-window">
 			<!-- <div class="chat-entry">
@@ -262,17 +264,24 @@
 		$(".pl-execute").addClass("disabled-icon");
 	});
 	socket.on('setIcons', function(obj){
-		$(".pl-"+obj.type).removeClass("selected-icon");
-		$(".pl-"+obj.type).removeClass("disabled-icon");
-		if(obj.name != "null"){
-			$(".playerlist td.pl-name").filter(function () {
-    			return $(this).text().endsWith(" "+obj.name);
-			}).siblings(".pl-"+obj.type).addClass("selected-icon");
-
-
-			$(".playerlist td.pl-name").filter(function () {
-    			return !$(this).text().endsWith(" "+obj.name);
-			}).siblings(".pl-"+obj.type).addClass("disabled-icon");
+		if(obj.type == "km-tax"){
+			$("."+obj.type).removeClass("selected-icon");
+			if(obj.name != "null")
+				$(".km-"+obj.name.toLowerCase()).addClass("selected-icon");				
+		}
+		else{
+			$(".pl-"+obj.type).removeClass("selected-icon");
+			$(".pl-"+obj.type).removeClass("disabled-icon");
+			if(obj.name != "null"){
+				$(".playerlist td.pl-name").filter(function () {
+					return $(this).text().endsWith(" "+obj.name);
+				}).siblings(".pl-"+obj.type).addClass("selected-icon");
+				
+				if(obj.type == "role")
+					$(".playerlist td.pl-name").filter(function () {
+						return !$(this).text().endsWith(" "+obj.name);
+					}).siblings(".pl-"+obj.type).addClass("disabled-icon");
+			}
 		}
 	});
 
