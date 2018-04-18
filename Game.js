@@ -139,8 +139,8 @@ class Game{
 	//sends the given role title the message
 	sendToRole(role, message){
 		for(var i = 0; i < this.playerList.length; i++)
-			if(playerList[i].role.title == role)
-				playerList[i].sendBack(message);
+			if(this.playerList[i].role.title == role)
+				this.playerList[i].sendBack(message);
 	}
 	
 	sendPlayerList(){
