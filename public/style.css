@@ -1,3 +1,15 @@
+/* Variable Declaration */
+:root {
+  --shadow: lightblue;
+  --background: #FFFAF0;
+  --king: #660099;
+  --lord: #4169E1;
+  --duke: #000000;
+  --earl: #556B2F;
+  --knight: #778899;
+  --peasant: #AE8484;
+  --chatname: crimson;
+}
 /* GameState & Timer */
 .state {
     position: fixed;
@@ -26,7 +38,6 @@
 }
 .km-header{
 	font-size:20px;
-	
 	padding-left:10px;
 	padding-right:20px;
     text-shadow: 1px 1px lightblue;
@@ -38,8 +49,6 @@
 	position: fixed;
 	right: 0px;
 	top: 250px;
-	
-	
 	border: 1px solid gray;
 }
 .playerlist table {
@@ -52,22 +61,22 @@
 	padding: 0;
 }
 .pl-king {
-	color: #660099;
+	color: var(--king);
 }
 .pl-lord {
-	color: #4169E1;
+	color: var(--lord);
 }
 .pl-duke {
-	color: #000000;
+	color: var(--duke);
 }
 .pl-earl {
-	color: #556B2F;
+	color: var(--earl);
 }
 .pl-knight {
-	color: #778899;
+	color: var(--knight);
 }
 .pl-peasant {
-	color: #AE8484;
+	color: var(--peasant);
 }
 .pl-name {
 	font-weight: bold;
@@ -76,7 +85,7 @@
 	/* padding-left: 5px; */
 }
 .pl-button {
-	border: 1px solid #FFFAF0;
+	border: 1px solid var(--background);
 	border-radius: 5px;
 	margin:5px;
 	padding: 3px;
@@ -121,7 +130,7 @@
 }
 .chat-name {
     margin-right: 7px;
-    color: crimson;
+    color: var(--chatname);
 }
 .chat-name p::after {
     content: ":";
