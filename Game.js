@@ -49,6 +49,7 @@ class Game{
 			highestKnight.target = target;
 			highestKnight.protectTarget = target;
 			this.sendAll(highestKnight.name + " is appointed the rank of Earl.");
+			highestKnight.sendRole();
 
 		}
 		numberToPromote =  this.maxKnights - this.getPlayersByRole("Knight").length;
@@ -71,6 +72,7 @@ class Game{
 			highestPeasant.target = target;
 			highestPeasant.protectTarget = target;
 			this.sendAll(highestPeasant.name + " is appointed the rank of Knight.");
+			highestPeasant.sendRole();
 		}
 	}
 	promoteSuccessor(player){
@@ -91,7 +93,6 @@ class Game{
 			this.sendAll(player.role.successor.name + " has been appointed Lord!");
 			this.promoteSuccessor(player.role.successor);
 			player.role.successor.role = new Role.Lord();
-
 		}
 		else{
 			this.sendAll(player.role.successor.name + " has been appointed Duke!");
@@ -101,6 +102,7 @@ class Game{
 		player.role.successor.role.executeTarget = executeTarget;
 		player.role.successor.role.protectTarget = protectTarget;
 		player.role.successor.role.target = target;
+		player.role.successor.sendRole();
 
 	}
 	getPlayersInOrder(limit){
@@ -180,7 +182,7 @@ class Game{
 		var game = this;
 		game.sendAll(player.name + " has joined the game.");
 		game.sendPlayerList();
-
+		player.sendRole();
 
 		//handle messages from client
 		socket.on('messageFromClient', function(data){
@@ -249,7 +251,7 @@ class Game{
 		if(highestPlayers[0].role.title != "Spectator")
 			this.promoteSuccessor(highestPlayers[0]);
 		highestPlayers[0].role = new Role.King();
-
+		highestPlayers[0].sendRole();
 		return highestPlayers[0];
 	}
 	//sets the player

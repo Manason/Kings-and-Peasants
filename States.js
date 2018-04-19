@@ -63,6 +63,8 @@ class PreGame extends State{
 	endState(){
 		super.endState();
 		this.game.assignRoles();
+		for(var i = 0; i < this.game.playerList.length; i++)
+			this.game.playerList[i].sendRole();
 		this.game.state = new Day(1);
 		this.game.state.startTimer(this.game);
 	}
@@ -82,6 +84,7 @@ class Day extends State{
 			var currentPlayer = orderedPlayerList.pop();
 			currentPlayer.prestige += currentPlayer.role.wage;
 			currentPlayer.sendBack("A new day. You receive your daily wage of " + currentPlayer.role.wage + " prestige from the Kingdom.");
+			currentPlayer.sendPrestige();
 		}
 	}
 	endState(){
@@ -104,7 +107,7 @@ class Day extends State{
 				this.game.sendAll(orderedPlayerList[i].name + " has been assassinated!");
 			}
 			//attack didn't go through
-			else{
+			else if(orderedPlayerList[i].assassins.length > 0){
 				orderedPlayerList[i].sendBack("There was an unsuccessful attempt on your life. The would be assassins managed to escape.");
 				for(var j = 0; j < orderedPlayerList[i].assassins.length; j++)
 					orderedPlayerList[i].assassins[j].sendBack("Your assassination attempt on " + orderedPlayerList[i].name + " was unsuccessful.");
@@ -153,10 +156,11 @@ class Night extends State{
 			this.game.getPlayersByRole("King")[0].prestige += taxPrestige;
 			amount += taxPrestige;
 			playersToTax[i].sendBack("The King has taken " + taxPrestige + " prestige from you as a daily tax.");
+			player.sendPrestige();
 		}
 		this.game.getPlayersByRole("King")[0].sendBack("You've gained " + amount + " prestige from tax.");
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
-
+		
 		//print player list
 		orderedPlayerList2 = this.game.getPlayersInOrder(6);
 

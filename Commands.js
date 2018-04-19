@@ -267,6 +267,7 @@ class Lookup extends Command{
 				player.error("You are forbidden to access the King's treasury.");
 			else if(super.checkCost(0) != false){
 				player.prestige -= super.checkCost(0);
+				player.sendPrestige();
 				player.sendBack(checkedPlayer.name+" currently has "+checkedPlayer.prestige+" prestige.");
 				player.notifyWatchers(player.name + " looked up "+checkedPlayer.name+"'s prestige.");
 			}
@@ -395,7 +396,10 @@ class Give extends Command{
 
 			player.prestige -= amount;
 			playerToGive.prestige += amount;
-
+			
+			player.sendPrestige();
+			playerToGive.sendPrestige();
+			
 			playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
 			playerToGive.notifyWatchers(playerToGive.name+" recieved "+amount+" prestige from "+player.name+".");
 			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
@@ -450,7 +454,7 @@ class Assassinate extends Command{
 				player.notifyWatchers(player.name + " is planning to attack " + target.name +" tonight.");
 				player.setIcons("assassinate",target.name);
 			}
-
+			player.sendPrestige();
 		}
 
 	}
@@ -497,7 +501,7 @@ class Protect extends Command{
 				player.notifyWatchers(player.name + " has decided to protect " + target.name + " tonight.");
 				player.setIcons("protect",target.name);
 			}
-
+			player.sendPrestige();
 		}
 
 	}
@@ -551,6 +555,7 @@ class Execute extends Command{
 				player.role.executeTarget = target;
 				player.setIcons("execute",target.name);
 			}
+			player.sendPrestige();
 		}
 
 	}
@@ -619,6 +624,7 @@ class Yell extends Command{
 
 		player.prestige -= super.checkCost(0);
 		game.sendYell((input.substring(input.indexOf(inputList[1],inputList[0].length+1))),player);
+		player.sendPrestige();
 	}
 }
 
