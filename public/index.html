@@ -21,6 +21,13 @@
 		</div>
 	</div>
 	
+	<div class="player-module">
+		<p class="pm-icon">👻</p>
+		<p class="pm-name">Spectator</p>
+		<p class="pm-prestige">Prestige: 0</p>
+		<p class="pm-info">A bunch of info: <br>-you are a spectator</p>
+	</div>
+	
 	<div class="kings-module">
 		<table>
 			<tr>
@@ -205,6 +212,50 @@
 			date.setSeconds(time.cur_time);
 			timer.innerHTML = date.toISOString().substr(11, 8);
 		}
+	});
+	socket.on('updateRole', function(player){
+		$(".pm-name").html(player.role + " " + player.name);
+		switch(player.role){
+			case "King":
+				$(".pm-icon").html("👑");
+				$(".pm-name").css("color: var(--king);");
+				$(".pm-info").html("You are a king");
+				break;
+			case "Lord":
+				$(".pm-icon").html("💎");
+				$(".pm-name").css("color: var(--lord);");
+				$(".pm-info").html("You are a lord");
+				break;
+			case "Duke":
+				$(".pm-icon").html("🏰");
+				$(".pm-name").css("color: var(--duke);");
+				$(".pm-info").html("You are a duke");
+				break;
+			case "Earl":
+				$(".pm-icon").html("📜");
+				$(".pm-name").css("color: var(--earl);");
+				$(".pm-info").html("You are an earl");
+				break;
+			case "Knight":
+				$(".pm-icon").html("🛡️");
+				$(".pm-name").css("color: var(--knight);");
+				$(".pm-info").html("You are a knight");
+				break;
+			case "Peasant":
+				$(".pm-icon").html("⚒️");
+				$(".pm-name").css("color: var(--peasant);");
+				$(".pm-info").html("You are a peasant");
+				break;
+			case "Spectator":
+				$(".pm-icon").html("👻");
+				$(".pm-name").css("color: darkred;");
+				$(".pm-info").html("You are a spectator");
+				break;
+
+		}
+	});
+	socket.on('updatePrestige', function(prestige){
+		$(".pm-prestige").html("Prestige: " + prestige.amount);
 	});
 	socket.on('playerlist', function(playerList){
 		//update playerList here

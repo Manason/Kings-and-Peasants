@@ -33,6 +33,14 @@ class Player{
 		var obj = {"blocked":this.blocked,"player":this.name};
 		this.socket.emit('block', obj);
 	}
+	sendRole(){
+		var obj = {"name":this.name, "role":this.role.title};
+		this.socket.emit('updateRole',obj);
+	}
+	sendPrestige(){
+		var obj = {"amount":this.prestige};
+		this.socket.emit('updatePrestige', obj);
+	}
 	setIcons(type,name){
 		var obj = {"type":type,"name":name};
 		this.socket.emit('setIcons',obj);
@@ -59,6 +67,8 @@ class Player{
 		if(this.role.protectTarget != null)
 			this.role.protectTarget.protectors.splice(this.role.protectTarget.protectors.indexOf(this), 1);
 		this.role = new Role.Peasant();
+		this.sendRole();
+		this.sendPrestige();
 	}
 	givePrestige(amount){
 		this.prestige += amount;
