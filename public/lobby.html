@@ -5,33 +5,62 @@
   <meta charset="utf-8">
   <title>Kings and Peasants</title>
   <meta name="description" content="Rise to the top, or die trying.">
-  <meta name="author" content="Manason">
+  <meta name="authors" content="Manason and Phoenix">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <link rel="stylesheet" href="./lobby.css">
 </head>
 
 <body>
-	<div class="game-list">
-		<div class="game">
-			<p class="game-name">Game Name</p>
-			<p class="game-num-players">1</p>
-			<p class="game-ping">100 ms</p>
-			<button class="game-join-button">Join</button>
-		</div>
-		<div class="game">
-			<p class="game-name">Game Name</p>
-			<p class="game-num-players">1</p>
-			<p class="game-ping">100 ms</p>
-			<button class="game-join-button">Join</button>
-		</div>
-		<div class="game">
-			<p class="game-name">Game Name</p>
-			<p class="game-num-players">1</p>
-			<p class="game-ping">100 ms</p>
-			<button class="game-join-button">Join</button>
-		</div>
-	</div>
-	<button class="game-host-button">Host</button>
+	<table id="game-list">
+		<thead>
+		 	<tr id="header-row">
+			    <th>Game Name</th>
+			    <th>Player Count</th>
+			    <th>Ping</th>
+			</tr>
+		</thead>
+		<tbody class="games">
+			<tr class=game-row>
+				<td class=game-name>[Roleplay-US WEST] Disaster Den 1</td>
+			    <td class=game-player-count>19/29</td>
+			    <td class=game-ping>34 ms</td>
+	    	</tr>
+	    	<tr class=game-row>
+				<td class=game-name>[Roleplay-US WEST] Disaster Den 2</td>
+			    <td class=game-player-count>11/24</td>
+			    <td class=game-ping>16 ms</td>
+	    	</tr>
+			<tr class=game-row>
+				<td class=game-name>[Roleplay-US WEST] Disaster Den 3</td>
+			    <td class=game-player-count>23/25</td>
+			    <td class=game-ping>27 ms</td>
+	    	</tr>
+	    	<tr class=game-row>
+				<td class=game-name>[Roleplay-US WEST] Disaster Den 4</td>
+			    <td class=game-player-count>16/16</td>
+			    <td class=game-ping>22 ms</td>
+	    	</tr>
+	  		<tr class=game-row>
+	   			<td class=game-name>SERIOUS PLAYERS ONLY https://discord.gg/Fs9ApHv</td>
+	    		<td class=game-player-count>2/16</td>
+	    		<td class=game-ping>121 ms</td>
+	  		</tr>
+	  		<tr class=game-row>
+	    		<td class=game-name>Meme Server!!</td>
+	    		<td class=game-player-count>37/69</td>
+	   	 		<td class=game-ping>420ms</td>
+	  		</tr>
+	  	</tbody>
+	</table>
+	<br> 
+	<button id=join-button class=buttons> Join Selected </button>
+	<button id=host-button class=buttons> Host Game </button>
+	<script type="text/javascript">
+		$("tbody tr").click(function() {
+   			$(this).addClass('selected').siblings().removeClass("selected");
+		});
+	</script>
+
 </body>
 </html>

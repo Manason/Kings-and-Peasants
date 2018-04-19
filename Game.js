@@ -74,7 +74,6 @@ class Game{
 		}
 	}
 	promoteSuccessor(player){
-
 		if(player.role.successor != null && player.role.successor.role.title == "Peasant")
 			return;
 		else{
@@ -92,7 +91,7 @@ class Game{
 			this.sendAll(player.role.successor.name + " has been appointed Lord!");
 			this.promoteSuccessor(player.role.successor);
 			player.role.successor.role = new Role.Lord();
-			
+
 		}
 		else{
 			this.sendAll(player.role.successor.name + " has been appointed Duke!");
@@ -137,6 +136,35 @@ class Game{
 		}
 	}
 
+	//sends the given role title the message
+	sendToRole(role, message){
+		for(var i = 0; i < this.playerList.length; i++)
+			if(this.playerList[i].role.title == role)
+				this.playerList[i].sendBack(message);
+	}
+	
+	sendPlayerList(){
+		//create a package of players to send to client
+		var objPlayerList = [];
+		var players = this.getPlayersInOrder(7);
+		for(var a = 0; a < this.playerList.length; a++){
+			var player = players[a];
+			objPlayerList[a+1] = {"name":player.name, "role":player.role.title};
+		}
+
+		//send playerlist to client
+		for(var a = 0; a < this.playerList.length; a++){
+			var player = players[a];
+			objPlayerList[0] = {"p_name":player.name, "p_role":player.role.title,"p_blocked":player.blocked,"p_sucessor":player.role.successor==null ? "null" : player.role.successor.name};
+			player.socket.emit('playerlist', objPlayerList);
+		}
+	}
+	
+	updateVotes(player){
+		var obj = {"player":player.name, "votes":player.votes}
+		this.io.to(this.name).emit('voteUpdate', obj);
+	}
+
 	//adds a player to this game
     addPlayer(name, socket){
 
@@ -151,6 +179,8 @@ class Game{
         this.playerList.push(player);
 		var game = this;
 		game.sendAll(player.name + " has joined the game.");
+		game.sendPlayerList();
+
 
 		//handle messages from client
 		socket.on('messageFromClient', function(data){
@@ -197,7 +227,7 @@ class Game{
 		var playerList = this.getPlayersInOrder(7);
 		var highestPlayers = [playerList[0]];
 		var highestVotes = playerList[0].votes;
-		
+
 		for(var i = 1; i < playerList.length; i++){
 			if(playerList[i].votes == highestVotes){
 				if(this.state.name == "Voting" || (this.state.name == "EmergencyElection" && playerList[i].role.name == "Lord"))
@@ -219,7 +249,7 @@ class Game{
 		if(highestPlayers[0].role.title != "Spectator")
 			this.promoteSuccessor(highestPlayers[0]);
 		highestPlayers[0].role = new Role.King();
-		
+
 		return highestPlayers[0];
 	}
 	//sets the player

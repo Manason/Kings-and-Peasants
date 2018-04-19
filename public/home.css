@@ -1,0 +1,27 @@
+#header1 {
+	text-align: center;
+	color: red;
+	font-size: 75px
+}
+
+#login {
+	margin-left: 450px;
+	margin-top: 10px;
+	font-size: 20px;
+}
+
+#loginbutton {
+	margin-top: 5px;
+	font-size: 15px;
+}
+
+#registertext {
+	margin-left: 450px;
+	margin-top: 30px;
+	font-size: 20px;
+}
+
+#registerbutton {
+	margin-left: 450px;
+	font-size: 15px;
+}

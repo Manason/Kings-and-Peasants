@@ -75,7 +75,7 @@ class Day extends State{
 	}
 	startTimer(game){
 		super.startTimer(game);
-
+		this.game.sendPlayerList();
 		//handle income
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		while(orderedPlayerList.length > 0){
@@ -115,7 +115,7 @@ class Day extends State{
 		this.game.promotePlayers();
 		//print list of players
 		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
-	
+
 		//if king dies, new election()
 		if(this.game.getPlayersByRole("King").length == 0){
 			this.game.state = new EmergencyElection(this.dayNumber);
@@ -144,20 +144,22 @@ class Night extends State{
 			this.game.shuffle(rolesList);
 			this.game.roleToTax = rolesList[0];
 		}
-		var playersToTax = this.game.getPlayersByRole(this.roleToTax);
+		var playersToTax = this.game.getPlayersByRole(this.game.roleToTax);
 		var amount = 0;
+		
 		for(var i = 0; i < playersToTax.length; i++){
-			var taxPrestige = Math.floor(playersToTax[i].prestige * 15);
+			var taxPrestige = Math.floor(playersToTax[i].prestige * 0.15);
 			playersToTax[i].prestige -= taxPrestige;
-			this.getPlayersByRole("King")[0].prestige += taxPrestige;
+			this.game.getPlayersByRole("King")[0].prestige += taxPrestige;
 			amount += taxPrestige;
-			playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
+			playersToTax[i].sendBack("The King has taken " + taxPrestige + " prestige from you as a daily tax.");
 		}
+		this.game.getPlayersByRole("King")[0].sendBack("You've gained " + amount + " prestige from tax.");
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
 
 		//print player list
 		orderedPlayerList2 = this.game.getPlayersInOrder(6);
-		
+
 		//executions
 		var orderedPlayerList = this.game.getPlayersInOrder(3);
 		for(var i = 0; i < orderedPlayerList.length; i++){
@@ -165,7 +167,7 @@ class Night extends State{
 			if(orderedPlayerList[i].role.executeTarget != null && orderedPlayerList[i].role.title != orderedPlayerList[i].role.executeTarget.title){
 				this.game.sendAll(orderedPlayerList[i].role.executeTarget.name + " was executed on order of " + orderedPlayerList[i].role.title + " " + orderedPlayerList[i].name + ".");
 				orderedPlayerList[i].role.executeTarget.kill(this.game);
-				
+
 			}
 		}
 
@@ -195,6 +197,12 @@ class Night extends State{
 			currentPlayer.role.target = null;
 			currentPlayer.role.protectTarget = null;
 			currentPlayer.role.executeTarget = null;
+			if(currentPlayer.role.title == "Duke"){
+				currentPlayer.role.blocking = null;
+			}
+			if(currentPlayer.role.title == "Knight"){
+				currentPlayer.role.spying = null;
+			}
 		}
 	}
 

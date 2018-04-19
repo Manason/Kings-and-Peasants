@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -20,62 +20,113 @@
 			<p>Waiting...</p>
 		</div>
 	</div>
+	
+	<div class="kings-module">
+		<table>
+			<tr>
+				<td class="km-header">Lookup</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</td>
+				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</td>
+			</tr>
+			<tr>
+				<td class="km-header">Tax</td>
+				<td class="pl-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</td>
+				<td class="pl-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</td>
+				<td class="pl-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</td>
+				<td class="pl-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</td>
+				<td class="pl-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</td>
+			</tr>
+		</table>
+	</div>
 	<div class="playerlist">
-		<!--Example of a player during voting stage-->
-		<div class="player">
+		<table>
+			<tr>
+				<td class="">🥈</td>
+				<td class="king name">King Manason</td>
+				<td class="disabled emoji">🗡️</td>
+				<td class="emoji selected">👼🏻</td>
+				<td class="emoji">💀</td>
+				<td class="emoji">💸</td>
+				<td class="emoji">✨</td>
+			</tr>
+			<tr>
+				<td class="">⭐</td>
+				<td class="lord name">Lord Jake</td>
+				<td class="emoji selected">🗡️</td>
+				<td class="emoji">👼🏻</td>
+				<td class="emoji">💀</td>
+				<td class="emoji">💸</td>
+				<td class="emoji">✨</td>
+			</tr>
+			<!-- <tr>
+				<td class="">🥇</td>
+				<td class="duke name">Duke Pheo</td>
+				<td class="emoji">🗡️</td>
+				<td class="emoji">👼🏻</td>
+				<td class="emoji">💀</td>
+				<td class="emoji selected">💸</td>
+				<td class="emoji">✨</td>
+			</tr>
+			<tr>
+				<td class="">🥈</td>
+				<td class="duke name">Duke Teddy</td>
+				<td class="emoji">🗡️</td>
+				<td class="emoji">👼🏻</td>
+				<td class="emoji">💀</td>
+				<td class="emoji">💸</td>
+				<td class="emoji selected">✨</td>
+			</tr>
+			<tr>
+				<td class="">🥈</td>
+				<td class="duke name">Duke Keto</td>
+				<td class="emoji">🗡️</td>
+				<td class="emoji">👼🏻</td>
+				<td class="emoji">💀</td>
+				<td class="emoji">💸</td>
+				<td class="emoji">✨</td>
+			</tr> -->
+		</table>
+		<!-- Example of a player during voting stage-->
+		<!-- <div class="player">
 			<input type="radio" name="successor">
 			<p>Role Name</p>
 			<p class="vote-value">0</p>
 			<input type="button" value="Vote" class="vote-button">
-		</div>
+		</div> -->
 		<!--Example of a player during normal play-->
-		<div class="player">
+		<!-- <div class="player">
 			<input type="radio" name="successor">
 			<p>Role Name</p>
 			<input type="radio" name="assassinate" class="playerlisticon">
 			<input type="radio" name="protect" class="playerlisticon">
 			<input type="radio" name="execute" class="playerlisticon">
 			<input type="button" value="give" class="playerlisticon">
-			<input type="radio" name="roleaction" class="playerlisticon">	
-		</div>
-	</div>
-	<div class="lookup-and-tax-module">
-		<div class="king-lookup">
-			<p class="lookup-and-tax-header">Lookup:</p>
-			<select name="lookup">
-				<option value="Lookup">Lookup</option>
-				<option value="Lord">Lords</option>
-				<option value="Earl">Earls</option>
-				<option value="Knight">Knights</option>
-				<option value="Peasant">Peasants</option>
-			</select>
-		</div>
-		<div class="king-tax">
-			<p class="lookup-and-tax-header">Tax:</p>
-			<input type="radio" name="group-tax" class="role-tax">Lords</input>
-			<input type="radio" name="group-tax" class="role-tax">Dukes</input>
-			<input type="radio" name="group-tax" class="role-tax">Earls</input>
-			<input type="radio" name="group-tax" class="role-tax">Knights</input>
-			<input type="radio" name="group-tax" class="role-tax">Peasants</input>
-		</div>
-	</div>
-	<div class="chat-window">
-		<!-- <div class="chat-entry">
-			<div class="chat-time">
-				<p>10:50</p>
-			</div>
-			<div class="chat-name">
-				<p>Manason</p>
-			</div>
-			<div class="chat-message">
-				<p>This is an example message</p>
-			</div>
+			<input type="radio" name="roleaction" class="playerlisticon">
 		</div> -->
 	</div>
 
-	<div class="chat-input">
-			<input class="chat-input-box" type="text"></input>
-			<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
+	<div class="chat">
+		<div class="chat-window">
+			<!-- <div class="chat-entry">
+				<div class="chat-time">
+					<p>10:50</p>
+				</div>
+				<div class="chat-name">
+					<p>Manason</p>
+				</div>
+				<div class="chat-message">
+					<p>This is an example message</p>
+				</div>
+			</div> -->
+		</div>
+
+		<div class="chat-input">
+				<input class="chat-input-box" type="text"></input>
+				<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
+		</div>
 	</div>
 </body>
 
@@ -147,9 +198,91 @@
 		gamestate.innerHTML = gmst.state;
 	});
 	socket.on('timer', function(time){
-		var date = new Date(null);
-    	date.setSeconds(time.cur_time);
-		timer.innerHTML = date.toISOString().substr(11, 8);
+		if(isNaN(time.cur_time))
+			timer.innerHTML = time.cur_time;
+		else{
+			var date = new Date(null);
+			date.setSeconds(time.cur_time);
+			timer.innerHTML = date.toISOString().substr(11, 8);
+		}
+	});
+	socket.on('playerlist', function(playerList){
+		//update playerList here
+		var table = document.getElementsByClassName("playerlist")[0].firstChild;
+		$(".playerlist table").empty();
+		for(var i = 1; i < playerList.length; i++){
+			var playerInfo = playerList[0];
+			var tableEntry = '<tr>';
+			//Set icon for successor
+			if(playerInfo.p_name == playerList[i].name)
+				tableEntry += '<td class="pl-succ">⭐</td>';
+			else if(playerInfo.p_successor == playerList[i].name){
+				tableEntry += '<td class="pl-succ">🥇</td>';
+			}
+			else if((playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && (playerList[i].role=="Earl" || playerList[i].role=="Knight"))){
+				tableEntry += '<td class="pl-succ" onclick="socket.emit(\'messageFromClient\', {content: \'/sc '+playerList[i].name+'\'});">🥈</td>';
+			}
+			else{
+				tableEntry += '<td class="pl-succ disabled-icon">🥈</td>';
+			}
+			//Set role and name
+			tableEntry += '<td class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</td>';
+			if(playerInfo.p_name != playerList[i].name && playerInfo.p_role != "Spectator" && playerList[i].role != "Spectator"){
+				//Set button for role action
+				if(playerInfo.p_role=="Lord"){
+					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup '+playerList[i].name+'\'});">✨</td>';
+				}
+				else if(playerInfo.p_role=="Duke"){
+					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/block '+playerList[i].name+'\'});">✨</td>';
+				}
+				else if(playerInfo.p_role=="Knight"){
+					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</td>';
+				}
+				//Set execute or assassinate buttons
+				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
+					tableEntry += '<td class="pl-button pl-execute" onclick="socket.emit(\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</td>';
+				}
+				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
+					tableEntry += '<td class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</td>';
+				else
+					tableEntry += '<td></td>';
+				//Set protect and give buttons
+				tableEntry += '<td class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</td>';
+				tableEntry += '<td class="pl-button pl-give" onclick="socket.emit(\'messageFromClient\', {content: \'/g '+playerList[i].name+' 2\'});">💸</td>';
+			}
+			tableEntry += '</tr>';
+			$(".playerlist table").append(tableEntry);
+			if(playerInfo.p_blocked){
+				$(".pl-role").addClass("disabled-icon");
+				$(".pl-execute").addClass("disabled-icon");
+			}
+
+		}
+	});
+	socket.on('block', function(){
+		$(".pl-role").addClass("disabled-icon");
+		$(".pl-execute").addClass("disabled-icon");
+	});
+	socket.on('setIcons', function(obj){
+		if(obj.type == "km-tax"){
+			$("."+obj.type).removeClass("selected-icon");
+			if(obj.name != "null")
+				$(".km-"+obj.name.toLowerCase()).addClass("selected-icon");				
+		}
+		else{
+			$(".pl-"+obj.type).removeClass("selected-icon");
+			$(".pl-"+obj.type).removeClass("disabled-icon");
+			if(obj.name != "null"){
+				$(".playerlist td.pl-name").filter(function () {
+					return $(this).text().endsWith(" "+obj.name);
+				}).siblings(".pl-"+obj.type).addClass("selected-icon");
+				
+				if(obj.type == "role")
+					$(".playerlist td.pl-name").filter(function () {
+						return !$(this).text().endsWith(" "+obj.name);
+					}).siblings(".pl-"+obj.type).addClass("disabled-icon");
+			}
+		}
 	});
 
 	function randomTesting(){
@@ -177,12 +310,13 @@
 	}
 
 	//for testing purposes
-	/*window.onload = function(){
+	window.onload = function(){
 		socket.emit('messageFromClient', {content: "/host hi"});
 		socket.emit('messageFromClient', {content: "/join hi"});
-		setInterval(function(){
+		/*setInterval(function(){
 			randomTesting();
-		},1000);
-	}*/
+		},1000);*/
+	}
+
 </script>
 </html>

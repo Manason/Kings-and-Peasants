@@ -1,3 +1,16 @@
+/* Variable Declaration */
+:root {
+  --shadow: lightblue;
+  --background: #FFFAF0;
+  --king: #660099;
+  --lord: #4169E1;
+  --duke: #000000;
+  --earl: #556B2F;
+  --knight: #778899;
+  --peasant: #AE8484;
+  --chatname: crimson;
+}
+/* GameState & Timer */
 .state {
     position: fixed;
     top: 0px;
@@ -14,6 +27,89 @@
 	float: right;
 }
 
+
+/* Kings Module */
+.kings-module{
+	position: fixed;
+	right: 0px;
+	top: 150px;
+	border: 1px solid gray;
+	font-size:20px;
+}
+.km-header{
+	font-size:20px;
+	padding-left:10px;
+	padding-right:20px;
+    text-shadow: 1px 1px lightblue;
+}
+
+
+/* PlayerList */
+.playerlist {
+	position: fixed;
+	right: 0px;
+	top: 250px;
+	border: 1px solid gray;
+}
+.playerlist table {
+	/* background-color: #e9fcee; */
+	/* border-collapse: collapse; */
+	border-spacing: 5px;
+}
+.playerlist tr{
+	margin: 0;
+	padding: 0;
+}
+.pl-king {
+	color: var(--king);
+}
+.pl-lord {
+	color: var(--lord);
+}
+.pl-duke {
+	color: var(--duke);
+}
+.pl-earl {
+	color: var(--earl);
+}
+.pl-knight {
+	color: var(--knight);
+}
+.pl-peasant {
+	color: var(--peasant);
+}
+.pl-name {
+	font-weight: bold;
+	font-size: 20px;
+	padding-right: 25px;
+	/* padding-left: 5px; */
+}
+.pl-button {
+	border: 1px solid var(--background);
+	border-radius: 5px;
+	margin:5px;
+	padding: 3px;
+}
+.pl-button:hover {
+	border: 1px solid gray;
+	background-color: lightgray;
+}
+.selected-icon {
+	border: 1px solid gray;
+	background-color: darkgray;
+}
+.disabled-icon {
+	opacity: .25;
+}
+
+/* Chat Window & Input */
+/* .chat{
+	display: fixed;
+	left:0px;
+	top:0px;
+	bottom:0px;
+	width: 80%;
+} */
 .chat-window {
     margin: 10px 10px 40px 10px;
 }
@@ -34,7 +130,7 @@
 }
 .chat-name {
     margin-right: 7px;
-    color: crimson;
+    color: var(--chatname);
 }
 .chat-name p::after {
     content: ":";
@@ -42,7 +138,6 @@
 .chat-message {
     margin-right: 7px;
 }
-
 .chat-input {
     display: flex;
     position: fixed;
@@ -51,7 +146,7 @@
     right: 0px;
     padding: 10px;
     flex-direction: row;
-    background-color: white;
+    background-color: var(--background);
 }
 .chat-input-box {
     flex-grow: 1000;
@@ -63,6 +158,7 @@
     border: 1px solid Gray;
 }
 
+/* Scrollbar & Other */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -83,7 +179,6 @@
 ::-webkit-scrollbar-corner {
     background-color: #595959;
 }
-
 p{
     padding:0;
     margin:0;
@@ -91,4 +186,5 @@ p{
 body{
     padding:0;
     margin:0;
+    background-color: var(--background);
 }

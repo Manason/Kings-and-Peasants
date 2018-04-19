@@ -147,13 +147,16 @@ class Vote extends Command{
 		else if(game.state.name == "EmergencyElection" && votingFor.role.title != "Lord")
 			player.error("You can only vote for a Lord in the election for the new King!");
 		else{
-			if(player.votedFor != null)
+			if(player.votedFor != null){
 				player.votedFor.votes--;
+				game.updateVotes(player.votedFor);
+			}
 
 			player.votedFor = votingFor;
 			votingFor.votes++;
 			player.sendBack("You've voted for "+player.votedFor.name);
 			player.notifyWatchers(player.name + " voted for "+player.votedFor.name);
+			game.updateVotes(player.votedFor);
 		}
 	}
 }
@@ -210,6 +213,7 @@ class Successor extends Command{
 			player.sucessor = sucessor;
 			player.sendBack(sucessor.name + " is now your successor.");
 			player.notifyWatchers(player.name + " appointed "+successor.name+" as their successor.");
+			player.setIcons("successor",successor.name);
 		}
 	}
 }
@@ -227,6 +231,7 @@ class Tax extends Command{
 			game.roleToTax = super.groupArgument(input[1]);
 
 		player.sendBack("The " + game.roleToTax + "s will be taxed at the beginning of the next day");
+		player.setIcons("km-tax", game.roleToTax);
 	}
 }
 
@@ -289,13 +294,13 @@ class Block extends Command{
 			return;
 		}
 		//already blocking player and player isn't a duke
-		if(player.role.blocking != null && player.role.blocking.role.title != "Duke"){
-			player.error("You are already blocking "+player.role.blocking.name);
-			return;
-		}
 		var blockedPlayer = super.playerArgument(input[1]);
 		if(blockedPlayer == false)
 			return;
+		if(player.role.blocking != null && blockedPlayer.role.title != "Duke"){
+			player.error("You are already blocking "+blockedPlayer.name);
+			return;
+		}
 		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
 			player.error("You can't block a "+blockedPlayer.role.title+"!");
 
@@ -303,6 +308,7 @@ class Block extends Command{
 		if(player.role.blocking != null && player.role.blocking.title == "Duke" && player.role.blocking == blockedPlayer){
 			player.role.blocking == null;
 			player.notifyWatchers(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
+			player.setIcons("role","null");
 			return;
 		}
 		player.role.blocking = blockedPlayer;
@@ -310,6 +316,7 @@ class Block extends Command{
 		if(blockedPlayer.role.title == "Duke"){
 			player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
 			player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
+			player.setIcons("role",blockedPlayer.name);
 			return;
 		}
 		else if(blockedPlayer.role.title == "Knight")
@@ -320,6 +327,9 @@ class Block extends Command{
 		blockedPlayer.blocked = true;
 		player.sendBack("You are now blocking "+blockedPlayer.name+".");
 		player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
+		player.setIcons("role",blockedPlayer.name);
+		blockedPlayer.sendBack("You have been blocked by a duke!");
+		blockedPlayer.sendBlocked();
 	}
 }
 
@@ -357,12 +367,13 @@ class Watch extends Command{
 		player.role.spying = spiedPlayer;
 		player.sendBack("You are now watching on "+spiedPlayer.name+".");
 		player.notifyWatchers(player.name+" is now watching "+spiedPlayer.name+".");
+		player.setIcons("role",spiedPlayer.name);
 	}
 }
 
 class Give extends Command{
 	constructor(){
-		super(["/g", "/give", "/ga", "/giveanon"], 5, [2], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player_name> <amount> - Give your prestige to another player. Use /giveanon to give anonymously.","You can only give prestige once the game is started.","Spectators don't get prestige, how can they give it?"]);
+		super(["/g", "/give", "/ga", "/giveanon"], 5, [2], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/give <player_name> <amount> - Give your prestige to another player. Use /giveanon to give anonymously.","You can only give prestige during the day.","Spectators don't get prestige, how can they give it?"]);
 	}
 	execute(input, player, game){
 		if(super.execute(input.split(/\s+/).length-1, player, game) == false)
@@ -381,14 +392,15 @@ class Give extends Command{
 				return;
 			else if(input[0] == "/ga" || input[0] == "/giveanon")
 				player.prestige -= (super.checkCost(amount) - amount);
-			
+
 			player.prestige -= amount;
 			playerToGive.prestige += amount;
-			
+
 			playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
 			playerToGive.notifyWatchers(playerToGive.name+" recieved "+amount+" prestige from "+player.name+".");
 			player.sendBack("Sent " + amount + " prestige to " + playerToGive.name);
 			player.notifyWatchers(player.name+" gave "+amount+" prestige to "+playerToGive.name+".");
+			game.sendToRole("Earl", "REDACTED has sent REDACTED " + amount + " prestige."); //notify earls
 		}
 	}
 }
@@ -403,7 +415,7 @@ class Assassinate extends Command{
 		input = input.split(/\s+/);
 		if(input.length == 1){
 			if(player.role.target != null)
-				player.sendBack("your assassination target is " + player.role.target.name);
+				player.sendBack("Your assassination target is " + player.role.target.name);
 			else
 				player.sendBack("No assassination target has been set.");
 		}
@@ -420,6 +432,7 @@ class Assassinate extends Command{
 					player.prestige += this.cost;
 				player.sendBack(target.name + " is no longer your assassination target.");
 				player.notifyWatchers(player.name + " is no longer planning to attack " + target.name + " tonight.");
+				player.setIcons("assassinate","null");
 			}
 			//to set the target use the command on a target
 			else{
@@ -433,8 +446,9 @@ class Assassinate extends Command{
 					player.prestige -= super.checkCost(0);
 				target.assassins.push(player);
 				player.role.target = target; //set new target
-				player.sendBack("assassination target set to " + target.name);
+				player.sendBack("Assassination target set to " + target.name);
 				player.notifyWatchers(player.name + " is planning to attack " + target.name +" tonight.");
+				player.setIcons("assassinate",target.name);
 			}
 
 		}
@@ -468,6 +482,7 @@ class Protect extends Command{
 				player.prestige += this.cost;
 				player.sendBack("You will no longer protect " + target.name + " tonight.");
 				player.notifyWatchers(player.name + " is no longer protecting " + target.name + " tonight.");
+				player.setIcons("protect","null");
 			}
 			else{
 				if(super.checkCost(0) == false)
@@ -480,6 +495,7 @@ class Protect extends Command{
 				player.role.protectTarget = target;
 				player.sendBack("You will protect "+ target.name + " tonight.");
 				player.notifyWatchers(player.name + " has decided to protect " + target.name + " tonight.");
+				player.setIcons("protect",target.name);
 			}
 
 		}
@@ -520,17 +536,20 @@ class Execute extends Command{
 				player.prestige -= super.checkCost(0);
 				player.role.executeTarget = target;
 				game.sendAll(player.name + " has ordered " + target.name + " executed tonight!");
+				player.setIcons("execute",target.name);
 			}
 			//take back an execution
 			else if(player.role.executeTarget == target){
 				player.prestige += this.cost;
 				game.sendAll(player.name + " has rescinded their order to execute " + target.name);
 				player.role.executeTarget = null;
+				player.setIcons("execute","null");
 			}
 			//order a different execution
 			else{
-				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget+ ", and has instead ordered " + target.name + " executed tonight!");
+				game.sendAll(player.name + " has rescinded their order to execute " + player.role.executeTarget.name + ", and has instead ordered " + target.name + " executed tonight!");
 				player.role.executeTarget = target;
+				player.setIcons("execute",target.name);
 			}
 		}
 
@@ -597,7 +616,7 @@ class Yell extends Command{
 		var inputList = input.split(/\s+/);
 		if(super.checkCost(0) == false)
 			return;
-	
+
 		player.prestige -= super.checkCost(0);
 		game.sendYell((input.substring(input.indexOf(inputList[1],inputList[0].length+1))),player);
 	}

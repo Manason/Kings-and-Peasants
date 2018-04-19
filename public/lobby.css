@@ -1,0 +1,81 @@
+#game-list {
+	/* The entire table */
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#header-row {
+	/* The header of each column */
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #e52b2b;
+    color: white;
+    font-size: 20px;
+}
+
+.game-name {
+	/* non-header cells in the game name column */
+	font-size: 20px;
+	color: black;
+}
+
+.game-player-count {
+	/* non-header cells in the player-count column */
+	font-size: 20px;
+	color: blue;
+}
+
+.game-ping {
+	/* non-header cells in the ping column */
+	font-size: 20px;
+	color: green;
+}
+
+#game-list td, #game-list th {
+	/* Every cell in the table, including header cells */
+    border: 2px solid black;
+    padding: 8px;
+}
+
+.game-row:nth-child(even){
+	/* Every even numbered row */
+	background-color: #e8e9ea;
+}
+
+.game-row:hover {
+	/* Row being hovered over */
+	background-color: #b3b5b7;
+}
+
+.games tr.selected {
+	/* Selected row */
+    background-color: #8acc7e;
+}
+
+.buttons {
+	/* The two buttons */
+	background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 25px;
+    width: 20%;
+    transition-duration: 0.2s;
+}
+
+.buttons:hover {
+    background-color: #0a630c; 
+}
+
+.buttons:active {
+	background-color: #022603;
+}
+
+#join-button {
+	margin-left: 30%;
+}
