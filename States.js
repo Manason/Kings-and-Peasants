@@ -144,15 +144,17 @@ class Night extends State{
 			this.game.shuffle(rolesList);
 			this.game.roleToTax = rolesList[0];
 		}
-		var playersToTax = this.game.getPlayersByRole(this.roleToTax);
+		var playersToTax = this.game.getPlayersByRole(this.game.roleToTax);
 		var amount = 0;
+		
 		for(var i = 0; i < playersToTax.length; i++){
-			var taxPrestige = Math.floor(playersToTax[i].prestige * 15);
+			var taxPrestige = Math.floor(playersToTax[i].prestige * 0.15);
 			playersToTax[i].prestige -= taxPrestige;
-			this.getPlayersByRole("King")[0].prestige += taxPrestige;
+			this.game.getPlayersByRole("King")[0].prestige += taxPrestige;
 			amount += taxPrestige;
-			playersToTax[i].sendBack("The King has taken " + amount + " prestige from you as a daily tax.");
+			playersToTax[i].sendBack("The King has taken " + taxPrestige + " prestige from you as a daily tax.");
 		}
+		this.game.getPlayersByRole("King")[0].sendBack("You've gained " + amount + " prestige from tax.");
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
 
 		//print player list
