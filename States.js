@@ -156,7 +156,7 @@ class Night extends State{
 			this.game.getPlayersByRole("King")[0].prestige += taxPrestige;
 			amount += taxPrestige;
 			playersToTax[i].sendBack("The King has taken " + taxPrestige + " prestige from you as a daily tax.");
-			player.sendPrestige();
+			playersToTax[i].sendPrestige();
 		}
 		this.game.getPlayersByRole("King")[0].sendBack("You've gained " + amount + " prestige from tax.");
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");

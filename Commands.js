@@ -440,12 +440,11 @@ class Assassinate extends Command{
 			}
 			//to set the target use the command on a target
 			else{
-				if(super.checkCost(0) == false)
-					return;
-
 				//if they already have a target, remove it
 				if(player.role.target != null && player.role.target.assassins.includes(player))
 					player.role.target.assassins.splice(player.role.target.assassins.indexOf(player), 1);
+				else if(super.checkCost(0) == false)
+					return;
 				else
 					player.prestige -= super.checkCost(0);
 				target.assassins.push(player);
