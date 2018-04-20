@@ -12,107 +12,48 @@
 </head>
 
 <body>
-	<div class="state">
-		<div class="gamestate">
-			<p>Lobby</p>
-		</div>
-		<div class="timer">
-			<p>Waiting...</p>
+	<div class="left-sidebar">
+		<div class="playerlist">
+			<table>
+			</table>
 		</div>
 	</div>
-	
-	<div class="player-module">
-		<p class="pm-icon">👻</p>
-		<p class="pm-name">Spectator</p>
-		<p class="pm-prestige">Prestige: 0</p>
-		<p class="pm-info">A bunch of info: <br>-you are a spectator</p>
-	</div>
-	
-	<div class="kings-module">
-		<table>
-			<tr>
-				<td class="km-header">Lookup</td>
-				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</td>
-				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</td>
-				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</td>
-				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</td>
-				<td class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</td>
-			</tr>
-			<tr>
-				<td class="km-header">Tax</td>
-				<td class="pl-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</td>
-				<td class="pl-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</td>
-				<td class="pl-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</td>
-				<td class="pl-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</td>
-				<td class="pl-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</td>
-			</tr>
-		</table>
-	</div>
-	<div class="playerlist">
-		<table>
-			<tr>
-				<td class="">🥈</td>
-				<td class="king name">King Manason</td>
-				<td class="disabled emoji">🗡️</td>
-				<td class="emoji selected">👼🏻</td>
-				<td class="emoji">💀</td>
-				<td class="emoji">💸</td>
-				<td class="emoji">✨</td>
-			</tr>
-			<tr>
-				<td class="">⭐</td>
-				<td class="lord name">Lord Jake</td>
-				<td class="emoji selected">🗡️</td>
-				<td class="emoji">👼🏻</td>
-				<td class="emoji">💀</td>
-				<td class="emoji">💸</td>
-				<td class="emoji">✨</td>
-			</tr>
-			<!-- <tr>
-				<td class="">🥇</td>
-				<td class="duke name">Duke Pheo</td>
-				<td class="emoji">🗡️</td>
-				<td class="emoji">👼🏻</td>
-				<td class="emoji">💀</td>
-				<td class="emoji selected">💸</td>
-				<td class="emoji">✨</td>
-			</tr>
-			<tr>
-				<td class="">🥈</td>
-				<td class="duke name">Duke Teddy</td>
-				<td class="emoji">🗡️</td>
-				<td class="emoji">👼🏻</td>
-				<td class="emoji">💀</td>
-				<td class="emoji">💸</td>
-				<td class="emoji selected">✨</td>
-			</tr>
-			<tr>
-				<td class="">🥈</td>
-				<td class="duke name">Duke Keto</td>
-				<td class="emoji">🗡️</td>
-				<td class="emoji">👼🏻</td>
-				<td class="emoji">💀</td>
-				<td class="emoji">💸</td>
-				<td class="emoji">✨</td>
-			</tr> -->
-		</table>
-		<!-- Example of a player during voting stage-->
-		<!-- <div class="player">
-			<input type="radio" name="successor">
-			<p>Role Name</p>
-			<p class="vote-value">0</p>
-			<input type="button" value="Vote" class="vote-button">
-		</div> -->
-		<!--Example of a player during normal play-->
-		<!-- <div class="player">
-			<input type="radio" name="successor">
-			<p>Role Name</p>
-			<input type="radio" name="assassinate" class="playerlisticon">
-			<input type="radio" name="protect" class="playerlisticon">
-			<input type="radio" name="execute" class="playerlisticon">
-			<input type="button" value="give" class="playerlisticon">
-			<input type="radio" name="roleaction" class="playerlisticon">
-		</div> -->
+
+	<div class="right-sidebar">
+		<div class="state">
+			<div class="gamestate">
+				<p>Lobby</p>
+			</div>
+			<div class="timer">
+				<p>Waiting...</p>
+			</div>
+		</div>
+		<div class="player-module">
+			<p class="pm-icon">👻</p>
+			<p class="pm-name">Spectator</p>
+			<p class="pm-prestige">Prestige: 0</p>
+			<p class="pm-info">
+				Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.
+			</p>
+		</div>
+		<div class="kings-module">
+			<p class="km-header">Lookup</p>
+			<div class="km-buttons km-lookup">
+				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</p>
+				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</p>
+				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</p>
+				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</p>
+				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</p>
+			</div>
+			<p class="km-header">Tax</p>
+			<div class="km-buttons">
+				<p class="pl-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</p>
+				<p class="pl-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</p>
+				<p class="pl-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</p>
+				<p class="pl-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</p>
+				<p class="pl-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</p>
+			</div>
+		</div>
 	</div>
 
 	<div class="chat">
@@ -318,7 +259,7 @@
 		if(obj.type == "km-tax"){
 			$("."+obj.type).removeClass("selected-icon");
 			if(obj.name != "null")
-				$(".km-"+obj.name.toLowerCase()).addClass("selected-icon");				
+				$(".km-"+obj.name.toLowerCase()).addClass("selected-icon");
 		}
 		else{
 			$(".pl-"+obj.type).removeClass("selected-icon");
@@ -327,7 +268,7 @@
 				$(".playerlist td.pl-name").filter(function () {
 					return $(this).text().endsWith(" "+obj.name);
 				}).siblings(".pl-"+obj.type).addClass("selected-icon");
-				
+
 				if(obj.type == "role")
 					$(".playerlist td.pl-name").filter(function () {
 						return !$(this).text().endsWith(" "+obj.name);

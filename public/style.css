@@ -10,75 +10,104 @@
   --peasant: #AE8484;
   --chatname: crimson;
 }
-/* GameState & Timer */
-.state {
+
+/* Right Sidebar */
+.right-sidebar {
+	height: 100%;
+	min-width: 250px;
+    width: 20%;
     position: fixed;
-    top: 0px;
-    right: 0px;
-	margin: 10px 15px;
-	font: 30px "Trebuchet MS";
-	border: 1px solid black;
-	padding: 15px;
-}
-.gamestate {
-	margin-bottom: 5px;
-}
-.timer {
-	float: right;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    overflow-x: hidden;
+	border-left: 1px solid black;
+	display: flex;
+	flex-direction: column;
 }
 
+/* GameState & Timer */
+.state {
+	display: flex;
+	flex-direction: row;
+	padding: 15px;
+	font: 24px "Trebuchet MS";
+	align-items: center;
+  	justify-content: center;
+	border-bottom: 1px solid black;
+	flex-grow: 1;
+}
+.gamestate{
+	display: inline-flex;
+}
+.gamestate:after{
+	content: "-";
+	padding: 0px 10px;
+}
+.timer{
+	display: inline-flex;
+}
 
 /* Player Module */
 .player-module{
-	position:fixed;
-	left: 500px;
-	top: 10px;
-	border: 1px solid gray;
-	font-size:20px;
-	/*padding: 15px 50px 50px 50px;*/
-	text-align:center;
-	
+	padding: 15px;
+  	text-align: center;
+	flex-grow: 1000;
 }
 .pm-icon{
-	margin-top: 15px; 
-	font-size:25px;
+	font-size: 60px;
+	padding-bottom: 8px;
 }
 .pm-name{
-	color: var(--lord);
-	text-shadow: 1px 1px lightblue;
-	margin: 0px 15px 0px 15px;
+	font: 28px "Trebuchet MS";
+	padding-bottom: 4px;
 }
 .pm-prestige{
-	margin: 0px 30px;
-	padding-bottom:5px;
-	border-bottom:1px solid gray;
-	font-size:15px;
-	margin-bottom:4px;
+	font: 18px "Trebuchet MS";
+	padding-bottom: 10px;
+	border-bottom: 1px solid black;
 }
 .pm-info{
-	margin:10px;
-	width:200px;
-	
-	
-	text-align:left;
-	font-size:15px;
+	padding-top: 12px;
+	text-align: left;
 }
 
 /* Kings Module */
 .kings-module{
-	position: fixed;
-	right: 0px;
-	top: 150px;
-	border: 1px solid gray;
-	font-size:20px;
+	flex-grow: 1;
+	padding: 20px 15px 12px 15px;
+  	text-align: center;
+	border-top: 1px solid black;
 }
 .km-header{
-	font-size:20px;
-	padding-left:10px;
-	padding-right:20px;
-    text-shadow: 1px 1px lightblue;
+	font: 18px "Trebuchet MS";
+	text-shadow: 1px 1px lightblue;
+}
+.km-lookup{
+	padding-bottom: 5px;
+	border-bottom: 1px solid black;
+	margin-bottom: 12px;
+}
+.km-buttons{
+}
+.km-buttons p{
+	display: inline-block;
 }
 
+/* Chat Window & Input */
+
+/* Left Sidebar */
+.left-sidebar {
+	height: 100%;
+	min-width: 225px;
+    width: 20%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: var(--shadow);
+    overflow-x: hidden;
+}
 
 /* PlayerList */
 .playerlist {
@@ -136,62 +165,6 @@
 }
 .disabled-icon {
 	opacity: .25;
-}
-
-/* Chat Window & Input */
-/* .chat{
-	display: fixed;
-	left:0px;
-	top:0px;
-	bottom:0px;
-	width: 80%;
-} */
-.chat-window {
-    margin: 10px 10px 40px 10px;
-}
-.chat-entry {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 5px;
-}
-.chat-time {
-    margin-right: 7px;
-    color: gray;
-}
-.chat-time p::before {
-    content: "<";
-}
-.chat-time p::after {
-    content: ">";
-}
-.chat-name {
-    margin-right: 7px;
-    color: var(--chatname);
-}
-.chat-name p::after {
-    content: ":";
-}
-.chat-message {
-    margin-right: 7px;
-}
-.chat-input {
-    display: flex;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    padding: 10px;
-    flex-direction: row;
-    background-color: var(--background);
-}
-.chat-input-box {
-    flex-grow: 1000;
-    border: 1px solid Gray;
-}
-.chat-input-button {
-    flex-grow: 1;
-    margin-left: 7px;
-    border: 1px solid Gray;
 }
 
 /* Scrollbar & Other */
