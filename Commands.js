@@ -603,6 +603,27 @@ class Whisper extends Command{
 	}
 }
 
+class WhisperAnon extends Command{
+	constructor(){
+		super(["/wa", "/whisperanon", "/whisperanonymous"], 5, [1], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/whisperanon <player_name> <message> - Send a private message to another player anonymously.","You can only whisper during the game.","Silly Spectator, private messages are for players!"]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(/\s+/).length>2 ? 1 : input.split(/\s+/).length, player, game) == false)
+			return;
+		var inputList = input.split(/\s+/);
+		var toPlayer = super.playerArgument(inputList[1]);
+		if(toPlayer == false)
+			return;
+		if(super.checkCost(0) == false)
+			return;
+		player.setPrestige(player.prestige - super.checkCost(0));
+		
+		toPlayer.sendWhisper((input.substring(input.indexOf(inputList[2],inputList[0].length+inputList[1].length+2))),"anonymous");
+		player.notifyWatchers(player.name + " whispered anonymously to " + toPlayer.name + ".");
+		toPlayer.notifyWatchers(player.name + " whispered anonymously to " + toPlayer.name + ".");
+	}
+}
+
 class Yell extends Command{
 	constructor(){
 		super(["/y", "/yell", "/shout"], 10, [0], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight"], false, ["/yell <message> - Shout something into general chat.","You can only yell during the daytime.","You can try yelling, but they can't hear you!"]);
@@ -657,4 +678,4 @@ class Help extends Command{
 
 // Blockable Commands : block, watch, execute, block earls and peasants passive abilities
 // Spyable Commands : vote, successor, lookup, block, watch, give, assassinate, protect
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige, PlayerList, Whisper, Yell, Help};
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige, PlayerList, Whisper, WhisperAnon, Yell, Help};

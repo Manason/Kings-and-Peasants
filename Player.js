@@ -26,7 +26,11 @@ class Player{
 	}
 	//sends the message to the player
 	sendWhisper(message,player){
-		var obj = {"player":player.name,"message":message};
+		var obj;
+		if(player != "anonymous")
+			obj = {"player":player.name,"message":message};
+		else
+			obj = {"player":"Anonymous","message":message};
 		this.socket.emit('whisper', obj);
 	}
 	sendBlocked(){
