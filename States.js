@@ -82,9 +82,8 @@ class Day extends State{
 		var orderedPlayerList = this.game.getPlayersInOrder(6);
 		while(orderedPlayerList.length > 0){
 			var currentPlayer = orderedPlayerList.pop();
-			currentPlayer.prestige += currentPlayer.role.wage;
+			currentPlayer.setPrestige(currentPlayer.prestige + currentPlayer.role.wage);
 			currentPlayer.sendBack("A new day. You receive your daily wage of " + currentPlayer.role.wage + " prestige from the Kingdom.");
-			currentPlayer.sendPrestige();
 		}
 	}
 	endState(){
@@ -152,11 +151,10 @@ class Night extends State{
 		
 		for(var i = 0; i < playersToTax.length; i++){
 			var taxPrestige = Math.floor(playersToTax[i].prestige * 0.15);
-			playersToTax[i].prestige -= taxPrestige;
-			this.game.getPlayersByRole("King")[0].prestige += taxPrestige;
+			playersToTax[i].setPrestige(playersToTax[i].prestige - taxPrestige);
+			this.game.getPlayersByRole("King")[0].setPrestige(this.game.getPlayersByRole("King")[0].prestige + taxPrestige);
 			amount += taxPrestige;
 			playersToTax[i].sendBack("The King has taken " + taxPrestige + " prestige from you as a daily tax.");
-			playersToTax[i].sendPrestige();
 		}
 		this.game.getPlayersByRole("King")[0].sendBack("You've gained " + amount + " prestige from tax.");
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
