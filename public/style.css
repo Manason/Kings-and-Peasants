@@ -10,7 +10,9 @@
   --peasant: #AE8484;
   --chatname: crimson;
 }
-
+.hidden{
+	visibility: hidden;
+}
 /* Right Sidebar */
 .right-sidebar {
 	height: 100%;
