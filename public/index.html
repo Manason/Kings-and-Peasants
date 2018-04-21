@@ -14,7 +14,7 @@
 <body>
 	<div class="left-sidebar">
 		<div class="playerlist">
-			<div class="pl-player">
+			<!-- <div class="pl-player">
 				<p class="pl-succ">⭐</p>
 				<p class="pl-name pl-king">King User1</p>
 			</div>
@@ -94,7 +94,7 @@
 				<p></p>
 				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User7'});">👼🏻</p>
 				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User7 2'});">💸</p>
-			</div>
+			</div> -->
 		</div>
 	</div>
 	<div class="right-sidebar">
@@ -138,7 +138,7 @@
 		<div class="chat-header">
 		</div>
 		<div class="chat-window">
-			<div class="chat-entry">
+			<!-- <div class="chat-entry">
 				<p class="chat-name pl-king">King Manason</p>
 				<p class="chat-message pl-king">This is an example message</p>
 			</div>
@@ -165,7 +165,7 @@
 			<div class="chat-entry">
 				<p class="chat-name">Manason</p>
 				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
-			</div>
+			</div> -->
 		</div>
 
 		<div class="chat-input">
@@ -317,6 +317,16 @@
 			//Set role and name
 			playerEntry += '<p class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</p>';
 			if(playerInfo.p_name != playerList[i].name && playerInfo.p_role != "Spectator" && playerList[i].role != "Spectator"){
+				//Set execute or assassinate buttons
+				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
+					playerEntry += '<p class="pl-button pl-execute" onclick="socket.emit(\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</p>';
+				}
+				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
+					playerEntry += '<p class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</p>';
+				else
+					playerEntry += '<p class="pl-button pl-spacer"></p>';
+				//Set button for protect
+				playerEntry += '<p class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</p>';
 				//Set button for role action
 				if(playerInfo.p_role=="Lord"){
 					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup '+playerList[i].name+'\'});">✨</p>';
@@ -327,20 +337,11 @@
 				else if(playerInfo.p_role=="Knight"){
 					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</p>';
 				}
-				//Set execute or assassinate buttons
-				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
-					playerEntry += '<p class="pl-button pl-execute" onclick="socket.emit(\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</p>';
-				}
-				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
-					playerEntry += '<p class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</p>';
-				else
-					playerEntry += '<p></p>';
-				//Set protect and give buttons
-				playerEntry += '<p class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</p>';
+				//Set button for give
 				playerEntry += '<p class="pl-button pl-give" onclick="socket.emit(\'messageFromClient\', {content: \'/g '+playerList[i].name+' 2\'});">💸</p>';
 			}
 			playerEntry += '</div>';
-			$(".playerlist table").append(playerEntry);
+			$(".playerlist").append(playerEntry);
 			if(playerInfo.p_blocked){
 				$(".pl-role").addClass("disabled-icon");
 				$(".pl-execute").addClass("disabled-icon");
