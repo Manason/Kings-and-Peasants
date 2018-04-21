@@ -114,7 +114,7 @@
 				Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.
 			</p>
 		</div>
-		<div class="kings-module">
+		<div class="kings-module hidden">
 			<p class="km-header">Lookup</p>
 			<div class="km-buttons km-lookup">
 				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</p>
@@ -259,6 +259,7 @@
 				$(".pm-icon").html("👑");
 				$(".pm-name").css("color: var(--king);");
 				$(".pm-info").html("You are the ruler of the kingdom and wield great power. But remember, no one rules alone. Keep the right people happy or your reign may not last long! <br><br>Special Abilities:<br><ul><li>Lookup the combined prestige of any rank</li> <li>Choose a rank to tax. Tax will be collected during the night. (a random rank will be chosen if no rank has been selected).</li></ul>");
+				$(".kings-module").removeClass("hidden");
 				break;
 			case "Lord":
 				$(".pm-icon").html("💎");
@@ -290,8 +291,10 @@
 				$(".pm-name").css("color: darkred;");
 				$(".pm-info").html("Spectator is the role you have before being assigned a role. Do not worry, you are still in the game, and will receive a role shortly.");
 				break;
-
+		
 		}
+		if(player.role != "King")
+			$(".kings-module").addClass("hidden");
 	});
 	socket.on('updatePrestige', function(prestige){
 		$(".pm-prestige").html("Prestige: " + prestige.amount);
