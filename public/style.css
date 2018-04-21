@@ -10,91 +10,166 @@
   --peasant: #AE8484;
   --chatname: crimson;
 }
-/* GameState & Timer */
-.state {
+
+/* Right Sidebar */
+.right-sidebar {
+	height: 100%;
+	min-width: 250px;
+    width: 20%;
     position: fixed;
-    top: 0px;
-    right: 0px;
-	margin: 10px 15px;
-	font: 30px "Trebuchet MS";
-	border: 1px solid black;
-	padding: 15px;
-}
-.gamestate {
-	margin-bottom: 5px;
-}
-.timer {
-	float: right;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    overflow-x: hidden;
+	border-left: 1px solid black;
+	display: flex;
+	flex-direction: column;
 }
 
+/* GameState & Timer */
+.state {
+	display: flex;
+	flex-direction: row;
+	padding: 15px;
+	font: 24px "Trebuchet MS";
+	align-items: center;
+  	justify-content: center;
+	border-bottom: 1px solid black;
+	flex-grow: 1;
+}
+.gamestate{
+	display: inline-flex;
+}
+.gamestate:after{
+	content: "-";
+	padding: 0px 10px;
+}
+.timer{
+	display: inline-flex;
+}
 
 /* Player Module */
 .player-module{
-	position:fixed;
-	left: 500px;
-	top: 10px;
-	border: 1px solid gray;
-	font-size:20px;
-	/*padding: 15px 50px 50px 50px;*/
-	text-align:center;
-	
+	padding: 15px;
+  	text-align: center;
+	flex-grow: 1000;
 }
 .pm-icon{
-	margin-top: 15px; 
-	font-size:25px;
+	font-size: 100px;
+	padding-bottom: 8px;
 }
 .pm-name{
-	color: var(--lord);
-	text-shadow: 1px 1px lightblue;
-	margin: 0px 15px 0px 15px;
+	font: 28px "Trebuchet MS";
+	padding-bottom: 4px;
 }
 .pm-prestige{
-	margin: 0px 30px;
-	padding-bottom:5px;
-	border-bottom:1px solid gray;
-	font-size:15px;
-	margin-bottom:4px;
+	font: 18px "Trebuchet MS";
+	padding-bottom: 10px;
+	border-bottom: 1px solid gray;
 }
 .pm-info{
-	margin:10px;
-	width:200px;
-	
-	
-	text-align:left;
-	font-size:15px;
+	padding-top: 12px;
+	text-align: left;
 }
 
 /* Kings Module */
 .kings-module{
-	position: fixed;
-	right: 0px;
-	top: 150px;
-	border: 1px solid gray;
-	font-size:20px;
+	flex-grow: 1;
+	padding: 20px 7px 12px 7px;
+  	text-align: center;
+	border-top: 1px solid black;
 }
 .km-header{
-	font-size:20px;
-	padding-left:10px;
-	padding-right:20px;
-    text-shadow: 1px 1px lightblue;
+	font: 18px "Trebuchet MS";
+	text-shadow: 1px 1px lightblue;
+}
+.km-lookup{
+	padding-bottom: 12px;
+	border-bottom: 1px solid gray;
+	margin-bottom: 12px;
+}
+.km-buttons{
+	display: flex;
+	justify-content: space-around;
+  	width: 100%;
+}
+.km-buttons p{
+	/* display: inline-flex; */
+}
+.km-button {
+  	text-align: center;
+	font: 27px "Trebuchet MS";
+	border: 1px solid transparent;
+	border-radius: 5px;
+	padding: 3px;
+	width: 36px;
+}
+.km-button:hover {
+	border: 1px solid gray;
+	background-color: lightgray;
 }
 
+/* Left Sidebar */
+.left-sidebar {
+	height: 100%;
+	min-width: 300px;
+    width: 25%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+	border-right: 1px solid black;
+}
 
 /* PlayerList */
+.playerlist-header{
+	padding: 15px;
+	font: 24px "Trebuchet MS";
+	border-bottom: 1px solid black;
+}
 .playerlist {
-	position: fixed;
-	right: 0px;
-	top: 250px;
+}
+.pl-player{
+	display: flex;
+	flex-direction: row;
+	margin: 10px;
+	align-items: center;
+	height: 40px;
+}
+.pl-succ{
+	flex: 1;
+	padding-right: 10px;
+}
+.pl-name {
+	flex: 1000;
+	font-weight: bold;
+	font-size: 20px;
+	padding-right: 25px;
+}
+.pl-button {
+	flex: 1;
+	font-size: 16px;
+	border: 1px solid var(--background);
+	border-radius: 5px;
+	padding: 3px;
+	margin-left: 5px;
+	width: 22px;
+	height: 22px;
+}
+.pl-button:hover {
 	border: 1px solid gray;
+	background-color: lightgray;
 }
-.playerlist table {
-	/* background-color: #e9fcee; */
-	/* border-collapse: collapse; */
-	border-spacing: 5px;
+.pl-spacer{
+	visibility: hidden;
 }
-.playerlist tr{
-	margin: 0;
-	padding: 0;
+.selected-icon {
+	border: 1px solid gray;
+	background-color: darkgray;
+}
+.disabled-icon {
+	opacity: 0.25;
 }
 .pl-king {
 	color: var(--king);
@@ -114,84 +189,52 @@
 .pl-peasant {
 	color: var(--peasant);
 }
-.pl-name {
-	font-weight: bold;
-	font-size: 20px;
-	padding-right: 25px;
-	/* padding-left: 5px; */
-}
-.pl-button {
-	border: 1px solid var(--background);
-	border-radius: 5px;
-	margin:5px;
-	padding: 3px;
-}
-.pl-button:hover {
-	border: 1px solid gray;
-	background-color: lightgray;
-}
-.selected-icon {
-	border: 1px solid gray;
-	background-color: darkgray;
-}
-.disabled-icon {
-	opacity: .25;
-}
 
 /* Chat Window & Input */
-/* .chat{
-	display: fixed;
-	left:0px;
-	top:0px;
-	bottom:0px;
-	width: 80%;
-} */
-.chat-window {
-    margin: 10px 10px 40px 10px;
+.chat{
+	height: 100%;
+	margin-left: 20%;
+	width: 60%;
+	display: flex;
+	flex-direction: column;
 }
-.chat-entry {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 5px;
+.chat-window{
+	flex: 30;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: scroll;
+	overflow-x: hidden;
 }
-.chat-time {
-    margin-right: 7px;
-    color: gray;
+.chat-input{
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	bottom: 0px;
+	width: 100%;
+	height: 42px;
+	padding: 0px;
+	margin: 0px;
+	box-sizing: border-box;
+	padding: 10px;
 }
-.chat-time p::before {
-    content: "<";
+.chat-input-box{
+	flex: 1000;
+	margin-right: 10px;
+	border: 1px solid var(--shadow);
 }
-.chat-time p::after {
-    content: ">";
+.chat-input-button{
+	flex: 1;
 }
-.chat-name {
-    margin-right: 7px;
-    color: var(--chatname);
+.chat-entry{
+	margin: 5px;
 }
-.chat-name p::after {
-    content: ":";
+.chat-name{
+	display: inline;
+	padding-right: 8px;
+	font-weight: bold;
 }
-.chat-message {
-    margin-right: 7px;
-}
-.chat-input {
-    display: flex;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    padding: 10px;
-    flex-direction: row;
-    background-color: var(--background);
-}
-.chat-input-box {
-    flex-grow: 1000;
-    border: 1px solid Gray;
-}
-.chat-input-button {
-    flex-grow: 1;
-    margin-left: 7px;
-    border: 1px solid Gray;
+.chat-message{
+	display: inline;
 }
 
 /* Scrollbar & Other */
@@ -220,7 +263,13 @@ p{
     margin:0;
 }
 body{
-    padding:0;
-    margin:0;
+	height: 100%;
+	width: 100%;
+    padding: 0;
+    margin: 0;
     background-color: var(--background);
+}
+html{
+	height: 100%;
+	width: 100%;
 }
