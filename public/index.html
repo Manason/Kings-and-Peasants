@@ -14,11 +14,89 @@
 <body>
 	<div class="left-sidebar">
 		<div class="playerlist">
-			<table>
-			</table>
+			<div class="pl-player">
+				<p class="pl-succ">⭐</p>
+				<p class="pl-name pl-king">King User1</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-lord">Lord User2</p>
+				<p class="pl-button pl-execute" onclick="socket.emit('messageFromClient', {content: '/e User2'});">💀</p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User2'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User2 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-lord">Lord User10</p>
+				<p class="pl-button pl-execute selected-icon" onclick="socket.emit('messageFromClient', {content: '/e User10'});">💀</p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User10'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User10 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-duke">Duke User5</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User5'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User5 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-duke">Duke User9</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User9'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User9 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-earl">Earl User11</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User11'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User11 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-knight">Knight User3</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User3'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User3 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-knight">Knight User4</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User4'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User4 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-knight">Knight User8</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User8'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User8 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-knight">Knight User12</p>
+				<p></p>
+				<p class="pl-button pl-protect selected-icon" onclick="socket.emit('messageFromClient', {content: '/p User12'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User12 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-peasant">Peasant User6</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User6'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User6 2'});">💸</p>
+			</div>
+			<div class="pl-player">
+				<p class="pl-succ disabled-icon">🥈</p>
+				<p class="pl-name pl-peasant">Peasant User7</p>
+				<p></p>
+				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User7'});">👼🏻</p>
+				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User7 2'});">💸</p>
+			</div>
 		</div>
 	</div>
-
 	<div class="right-sidebar">
 		<div class="state">
 			<div class="gamestate">
@@ -39,41 +117,60 @@
 		<div class="kings-module">
 			<p class="km-header">Lookup</p>
 			<div class="km-buttons km-lookup">
-				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</p>
-				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</p>
-				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</p>
-				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</p>
-				<p class="pl-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</p>
+				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</p>
+				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</p>
+				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</p>
+				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</p>
+				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</p>
 			</div>
 			<p class="km-header">Tax</p>
 			<div class="km-buttons">
-				<p class="pl-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</p>
-				<p class="pl-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</p>
-				<p class="pl-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</p>
-				<p class="pl-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</p>
-				<p class="pl-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</p>
+				<p class="km-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</p>
+				<p class="selected-icon km-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</p>
+				<p class="km-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</p>
+				<p class="km-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</p>
+				<p class="km-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</p>
 			</div>
 		</div>
 	</div>
 
 	<div class="chat">
+		<div class="chat-header">
+		</div>
 		<div class="chat-window">
-			<!-- <div class="chat-entry">
-				<div class="chat-time">
-					<p>10:50</p>
-				</div>
-				<div class="chat-name">
-					<p>Manason</p>
-				</div>
-				<div class="chat-message">
-					<p>This is an example message</p>
-				</div>
-			</div> -->
+			<div class="chat-entry">
+				<p class="chat-name pl-king">King Manason</p>
+				<p class="chat-message pl-king">This is an example message</p>
+			</div>
+			<div class="chat-entry">
+				<p class="chat-name pl-duke">Duke Manason</p>
+				<p class="chat-message">This is an example message</p>
+			</div>
+			<div class="chat-entry">
+				<p class="chat-name pl-knight">Knight Manason</p>
+				<p class="chat-message">This is an example message</p>
+			</div>
+			<div class="chat-entry">
+				<p class="chat-name pl-peasant">Peasant Manason</p>
+				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+			</div>
+			<div class="chat-entry">
+				<p class="chat-name pl-earl">Earl Manason</p>
+				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+			</div>
+			<div class="chat-entry">
+				<p class="chat-name pl-lord">Lord Manason</p>
+				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+			</div>
+			<div class="chat-entry">
+				<p class="chat-name">Manason</p>
+				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+			</div>
 		</div>
 
 		<div class="chat-input">
-				<input class="chat-input-box" type="text"></input>
-				<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
+			<input class="chat-input-box" type="text"></input>
+			<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
 		</div>
 	</div>
 </body>
@@ -200,50 +297,49 @@
 	});
 	socket.on('playerlist', function(playerList){
 		//update playerList here
-		var table = document.getElementsByClassName("playerlist")[0].firstChild;
-		$(".playerlist table").empty();
+		$(".playerlist").empty();
 		for(var i = 1; i < playerList.length; i++){
 			var playerInfo = playerList[0];
-			var tableEntry = '<tr>';
+			var playerEntry = '<div class="pl-player">';
 			//Set icon for successor
 			if(playerInfo.p_name == playerList[i].name)
-				tableEntry += '<td class="pl-succ">⭐</td>';
+				playerEntry += '<p class="pl-succ">⭐</p>';
 			else if(playerInfo.p_successor == playerList[i].name){
-				tableEntry += '<td class="pl-succ">🥇</td>';
+				playerEntry += '<p class="pl-succ">🥇</p>';
 			}
 			else if((playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && (playerList[i].role=="Earl" || playerList[i].role=="Knight"))){
-				tableEntry += '<td class="pl-succ" onclick="socket.emit(\'messageFromClient\', {content: \'/sc '+playerList[i].name+'\'});">🥈</td>';
+				playerEntry += '<p class="pl-succ" onclick="socket.emit(\'messageFromClient\', {content: \'/sc '+playerList[i].name+'\'});">🥈</p>';
 			}
 			else{
-				tableEntry += '<td class="pl-succ disabled-icon">🥈</td>';
+				playerEntry += '<p class="pl-succ disabled-icon">🥈</p>';
 			}
 			//Set role and name
-			tableEntry += '<td class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</td>';
+			playerEntry += '<p class="pl-name pl-'+playerList[i].role.toLowerCase()+'">' + playerList[i].role + ' ' + playerList[i].name+'</p>';
 			if(playerInfo.p_name != playerList[i].name && playerInfo.p_role != "Spectator" && playerList[i].role != "Spectator"){
 				//Set button for role action
 				if(playerInfo.p_role=="Lord"){
-					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup '+playerList[i].name+'\'});">✨</td>';
+					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/lookup '+playerList[i].name+'\'});">✨</p>';
 				}
 				else if(playerInfo.p_role=="Duke"){
-					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/block '+playerList[i].name+'\'});">✨</td>';
+					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/block '+playerList[i].name+'\'});">✨</p>';
 				}
 				else if(playerInfo.p_role=="Knight"){
-					tableEntry += '<td class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</td>';
+					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</p>';
 				}
 				//Set execute or assassinate buttons
 				if((playerInfo.p_role=="King" && playerList[i].role=="Lord") || (playerInfo.p_role=="Lord" && playerList[i].role=="Duke") || (playerInfo.p_role=="Duke" && playerList[i].role=="Earl")) {
-					tableEntry += '<td class="pl-button pl-execute" onclick="socket.emit(\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</td>';
+					playerEntry += '<p class="pl-button pl-execute" onclick="socket.emit(\'messageFromClient\', {content: \'/e '+playerList[i].name+'\'});">💀</p>';
 				}
 				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
-					tableEntry += '<td class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</td>';
+					playerEntry += '<p class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</p>';
 				else
-					tableEntry += '<td></td>';
+					playerEntry += '<p></p>';
 				//Set protect and give buttons
-				tableEntry += '<td class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</td>';
-				tableEntry += '<td class="pl-button pl-give" onclick="socket.emit(\'messageFromClient\', {content: \'/g '+playerList[i].name+' 2\'});">💸</td>';
+				playerEntry += '<p class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</p>';
+				playerEntry += '<p class="pl-button pl-give" onclick="socket.emit(\'messageFromClient\', {content: \'/g '+playerList[i].name+' 2\'});">💸</p>';
 			}
-			tableEntry += '</tr>';
-			$(".playerlist table").append(tableEntry);
+			playerEntry += '</div>';
+			$(".playerlist table").append(playerEntry);
 			if(playerInfo.p_blocked){
 				$(".pl-role").addClass("disabled-icon");
 				$(".pl-execute").addClass("disabled-icon");
@@ -265,12 +361,12 @@
 			$(".pl-"+obj.type).removeClass("selected-icon");
 			$(".pl-"+obj.type).removeClass("disabled-icon");
 			if(obj.name != "null"){
-				$(".playerlist td.pl-name").filter(function () {
+				$(".playerlist p.pl-name").filter(function () {
 					return $(this).text().endsWith(" "+obj.name);
 				}).siblings(".pl-"+obj.type).addClass("selected-icon");
 
 				if(obj.type == "role")
-					$(".playerlist td.pl-name").filter(function () {
+					$(".playerlist p.pl-name").filter(function () {
 						return !$(this).text().endsWith(" "+obj.name);
 					}).siblings(".pl-"+obj.type).addClass("disabled-icon");
 			}

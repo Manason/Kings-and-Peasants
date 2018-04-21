@@ -55,7 +55,7 @@
 	flex-grow: 1000;
 }
 .pm-icon{
-	font-size: 60px;
+	font-size: 100px;
 	padding-bottom: 8px;
 }
 .pm-name{
@@ -65,7 +65,7 @@
 .pm-prestige{
 	font: 18px "Trebuchet MS";
 	padding-bottom: 10px;
-	border-bottom: 1px solid black;
+	border-bottom: 1px solid gray;
 }
 .pm-info{
 	padding-top: 12px;
@@ -75,7 +75,7 @@
 /* Kings Module */
 .kings-module{
 	flex-grow: 1;
-	padding: 20px 15px 12px 15px;
+	padding: 20px 7px 12px 7px;
   	text-align: center;
 	border-top: 1px solid black;
 }
@@ -84,46 +84,87 @@
 	text-shadow: 1px 1px lightblue;
 }
 .km-lookup{
-	padding-bottom: 5px;
-	border-bottom: 1px solid black;
+	padding-bottom: 12px;
+	border-bottom: 1px solid gray;
 	margin-bottom: 12px;
 }
 .km-buttons{
+	display: flex;
+	justify-content: space-around;
+  	width: 100%;
 }
 .km-buttons p{
-	display: inline-block;
+	/* display: inline-flex; */
 }
-
-/* Chat Window & Input */
+.km-button {
+  	text-align: center;
+	font: 27px "Trebuchet MS";
+	border: 1px solid transparent;
+	border-radius: 5px;
+	padding: 3px;
+	width: 36px;
+}
+.km-button:hover {
+	border: 1px solid gray;
+	background-color: lightgray;
+}
 
 /* Left Sidebar */
 .left-sidebar {
 	height: 100%;
-	min-width: 225px;
+	min-width: 300px;
     width: 20%;
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: var(--shadow);
     overflow-x: hidden;
+	border-right: 1px solid black;
 }
 
 /* PlayerList */
+.playerlist-header{
+	padding: 15px;
+	font: 24px "Trebuchet MS";
+	border-bottom: 1px solid black;
+}
 .playerlist {
-	position: fixed;
-	right: 0px;
-	top: 250px;
+}
+.pl-player{
+	display: flex;
+	flex-direction: row;
+	margin: 10px;
+	align-items: center;
+	height: 40px;
+}
+.pl-succ{
+	flex: 1;
+	padding-right: 10px;
+}
+.pl-name {
+	flex: 1000;
+	font-weight: bold;
+	font-size: 20px;
+	padding-right: 25px;
+}
+.pl-button {
+	flex: 1;
+	font-size: 16px;
+	border: 1px solid var(--background);
+	border-radius: 5px;
+	padding: 3px;
+	margin-left: 5px;
+}
+.pl-button:hover {
 	border: 1px solid gray;
+	background-color: lightgray;
 }
-.playerlist table {
-	/* background-color: #e9fcee; */
-	/* border-collapse: collapse; */
-	border-spacing: 5px;
+.selected-icon {
+	border: 1px solid gray;
+	background-color: darkgray;
 }
-.playerlist tr{
-	margin: 0;
-	padding: 0;
+.disabled-icon {
+	opacity: 0.25;
 }
 .pl-king {
 	color: var(--king);
@@ -143,28 +184,52 @@
 .pl-peasant {
 	color: var(--peasant);
 }
-.pl-name {
+
+/* Chat Window & Input */
+.chat{
+	height: 100%;
+	margin-left: 20%;
+	width: 60%;
+	display: flex;
+	flex-direction: column;
+}
+.chat-window{
+	flex: 30;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: scroll;
+	overflow-x: hidden;
+}
+.chat-input{
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	bottom: 0px;
+	width: 100%;
+	height: 42px;
+	padding: 0px;
+	margin: 0px;
+	box-sizing: border-box;
+	padding: 10px;
+}
+.chat-input-box{
+	flex: 1000;
+	margin-right: 10px;
+	border: 1px solid var(--shadow);
+}
+.chat-input-button{
+	flex: 1;
+}
+.chat-entry{
+	margin: 5px;
+}
+.chat-name{
+	display: inline;
+	padding-right: 8px;
 	font-weight: bold;
-	font-size: 20px;
-	padding-right: 25px;
-	/* padding-left: 5px; */
 }
-.pl-button {
-	border: 1px solid var(--background);
-	border-radius: 5px;
-	margin:5px;
-	padding: 3px;
-}
-.pl-button:hover {
-	border: 1px solid gray;
-	background-color: lightgray;
-}
-.selected-icon {
-	border: 1px solid gray;
-	background-color: darkgray;
-}
-.disabled-icon {
-	opacity: .25;
+.chat-message{
+	display: inline;
 }
 
 /* Scrollbar & Other */
@@ -193,7 +258,13 @@ p{
     margin:0;
 }
 body{
-    padding:0;
-    margin:0;
+	height: 100%;
+	width: 100%;
+    padding: 0;
+    margin: 0;
     background-color: var(--background);
+}
+html{
+	height: 100%;
+	width: 100%;
 }
