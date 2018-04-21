@@ -180,6 +180,7 @@
 	var gamestate = document.getElementsByClassName("gamestate")[0];
 	var timer = document.getElementsByClassName("timer")[0];
 	var socket = io.connect('http://localhost:8080');
+
 	input.onkeypress = function(e){
 		if(e.keyCode == '13'){
 			enterInput();
@@ -257,37 +258,37 @@
 			case "King":
 				$(".pm-icon").html("👑");
 				$(".pm-name").css("color: var(--king);");
-				$(".pm-info").html("You are a king");
+				$(".pm-info").html("You are the ruler of the kingdom and wield great power. But remember, no one rules alone. Keep the right people happy or your reign may not last long! <br><br>Special Abilities:<br><ul><li>Lookup the combined prestige of any rank</li> <li>Choose a rank to tax. Tax will be collected during the night. (a random rank will be chosen if no rank has been selected).</li></ul>");
 				break;
 			case "Lord":
 				$(".pm-icon").html("💎");
 				$(".pm-name").css("color: var(--lord);");
-				$(".pm-info").html("You are a lord");
+				$(".pm-info").html("Your word is second only to the King. Use your knowledge and abilities to secure your position and amass great wealth. Can appoint a Duke as your successor. <br><br>Special Abilities:<br><ul><li>Lookup any players prestige for a small cost</li></ul>");
 				break;
 			case "Duke":
 				$(".pm-icon").html("🏰");
 				$(".pm-name").css("color: var(--duke);");
-				$(".pm-info").html("You are a duke");
+				$(".pm-info").html("You are the backbone of the nobility, with the unique ability to vote for the next king. Be careful of making enemies, lest the common folk decide you are no longer fit for your position. Can appoint an Earl or a Knight as your successor.<br><br>Special Abilities:<br><ul><li>Block one other player once per day, preventing them from using their own special ability. Does not work on Lords or the King. If used on a fellow Duke, only takes effect at the beginning of the following day.</li></ul>");
 				break;
 			case "Earl":
 				$(".pm-icon").html("📜");
 				$(".pm-name").css("color: var(--earl);");
-				$(".pm-info").html("You are an earl");
+				$(".pm-info").html("Well respected as a leader of the common folk and few in number, you are especially vulnerable to Dukes who view you as a threat or Knights itching to take your place. You will often be the first to recognize alliances and plots. Use this to your advantage.<br><br>Special Abilities:<br><ul><li>Notified in real time when one player gives another player prestige. Player names will be redacted.</li></ul>");
 				break;
 			case "Knight":
 				$(".pm-icon").html("🛡️");
 				$(".pm-name").css("color: var(--knight);");
-				$(".pm-info").html("You are a knight");
+				$(".pm-info").html("You have the most powerful ability, and many influential nobility will want to use you. Choose your allies wisely, you will most likely make enemies as well.<br><br>Special Abilities:<br><ul><li>Watch one other player once per day, telling you who they visit, who visits them, and why. Does not work on the King.</li></ul>");
 				break;
 			case "Peasant":
 				$(".pm-icon").html("⚒️");
 				$(".pm-name").css("color: var(--peasant);");
-				$(".pm-info").html("You are a peasant");
+				$(".pm-info").html("Weak and poor, you cannot do much alone, but working together with other commoners, you have the power to topple even the King!<br><br>Special Abilities:<br><ul><li>All abilities that would normally cost prestige, are free.</li></ul>");
 				break;
 			case "Spectator":
 				$(".pm-icon").html("👻");
 				$(".pm-name").css("color: darkred;");
-				$(".pm-info").html("You are a spectator");
+				$(".pm-info").html("Spectator is the role you have before being assigned a role. Do not worry, you are still in the game, and will receive a role shortly.");
 				break;
 
 		}

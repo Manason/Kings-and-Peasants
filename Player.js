@@ -26,7 +26,11 @@ class Player{
 	}
 	//sends the message to the player
 	sendWhisper(message,player){
-		var obj = {"player":player.name,"message":message};
+		var obj;
+		if(player != "anonymous")
+			obj = {"player":player.name,"message":message};
+		else
+			obj = {"player":"Anonymous","message":message};
 		this.socket.emit('whisper', obj);
 	}
 	sendBlocked(){
@@ -36,10 +40,6 @@ class Player{
 	sendRole(){
 		var obj = {"name":this.name, "role":this.role.title};
 		this.socket.emit('updateRole',obj);
-	}
-	sendPrestige(){
-		var obj = {"amount":this.prestige};
-		this.socket.emit('updatePrestige', obj);
 	}
 	setIcons(type,name){
 		var obj = {"type":type,"name":name};
@@ -52,7 +52,7 @@ class Player{
 		}
 	}
 	kill(game){
-		this.prestige = 0;
+		this.setPrestige(0);
 		this.blocked = false;
 		this.votedFor = null;
 		this.votes = 0;
@@ -70,9 +70,10 @@ class Player{
 		this.sendRole();
 		this.sendPrestige();
 	}
-	givePrestige(amount){
-		this.prestige += amount;
-		sendBack("Received " + amount + " prestige");
+	setPrestige(amount){
+		this.prestige = amount;
+		var obj = {"amount":this.prestige};
+		this.socket.emit('updatePrestige', obj);
 	}
 };
 

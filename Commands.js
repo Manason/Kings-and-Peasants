@@ -266,8 +266,7 @@ class Lookup extends Command{
 			if(checkedPlayer.role.title == "King")
 				player.error("You are forbidden to access the King's treasury.");
 			else if(super.checkCost(0) != false){
-				player.prestige -= super.checkCost(0);
-				player.sendPrestige();
+				player.setPrestige(player.prestige - super.checkCost(0));
 				player.sendBack(checkedPlayer.name+" currently has "+checkedPlayer.prestige+" prestige.");
 				player.notifyWatchers(player.name + " looked up "+checkedPlayer.name+"'s prestige.");
 			}
@@ -283,54 +282,61 @@ class Block extends Command{
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
 		input = input.split(/\s+/);
-		if(player.blocked){
+		if(player.blocked)
 			player.error("You can't do this while blocked.");
-			return;
-		}
-		if(input.length == 1){
+		else if(input.length == 1){
 			if(player.role.blocking == null)
 				player.sendBack("You aren't blocking anyone yet.");
 			else
 				player.sendBack("You are blocking " + player.role.blocking.name);
-			return;
 		}
-		//already blocking player and player isn't a duke
-		var blockedPlayer = super.playerArgument(input[1]);
-		if(blockedPlayer == false)
-			return;
-		if(player.role.blocking != null && blockedPlayer.role.title != "Duke"){
-			player.error("You are already blocking "+blockedPlayer.name);
-			return;
-		}
-		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
-			player.error("You can't block a "+blockedPlayer.role.title+"!");
-
-		//undoes the block on the duke you previously wanted to block
-		if(player.role.blocking != null && player.role.blocking.title == "Duke" && player.role.blocking == blockedPlayer){
-			player.role.blocking == null;
-			player.notifyWatchers(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
-			player.setIcons("role","null");
-			return;
-		}
-		player.role.blocking = blockedPlayer;
-		//sets up a duke to be blocked the next day
-		if(blockedPlayer.role.title == "Duke"){
-			player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
-			player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
-			player.setIcons("role",blockedPlayer.name);
-			return;
-		}
-		else if(blockedPlayer.role.title == "Knight")
-			if(blockedPlayer.role.spying != null){
-				blockedPlayer.role.spying.spies.splice(blockedPlayer.role.spying.spies.indexOf(blockedPlayer),1);
-				blockedPlayer.role.spying = null;
+		else{
+			//already blocking player and player isn't a duke
+			var blockedPlayer = super.playerArgument(input[1]);
+			if(blockedPlayer == false)
+				return;
+			else if(player.role.blocking != null && (blockedPlayer.role.title != "Duke" || player.role.blocking.role.title != "Duke"))
+				player.error("You are already blocking "+ player.role.blocking.name);
+			
+			//trying to block King or Lord
+			else if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
+				player.error("You can't block a "+blockedPlayer.role.title+"!");
+			
+			//player is already blocking a duke and wants to unblock them
+			else if(player.role.blocking != null && player.role.blocking.role.title == "Duke" && player.role.blocking == blockedPlayer){
+				player.role.blocking = null;
+				player.notifyWatchers(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
+				player.setIcons("role","null");
+				player.sendBack(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
 			}
-		blockedPlayer.blocked = true;
-		player.sendBack("You are now blocking "+blockedPlayer.name+".");
-		player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
-		player.setIcons("role",blockedPlayer.name);
-		blockedPlayer.sendBack("You have been blocked by a duke!");
-		blockedPlayer.sendBlocked();
+			else{
+				player.role.blocking = blockedPlayer;
+				
+				//sets up a duke to be blocked the next day
+				if(blockedPlayer.role.title == "Duke"){
+					player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
+					player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
+					player.setIcons("role",blockedPlayer.name);
+				}
+				else{
+					
+					//if knight is being blocked, stop the knight from watching
+					if(blockedPlayer.role.title == "Knight")
+						if(blockedPlayer.role.spying != null){
+							blockedPlayer.role.spying.spies.splice(blockedPlayer.role.spying.spies.indexOf(blockedPlayer),1);
+							blockedPlayer.role.spying = null;
+						}
+					
+					//handle blocking as normal
+					blockedPlayer.blocked = true;
+					player.sendBack("You are now blocking "+blockedPlayer.name+".");
+					player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
+					player.setIcons("role",blockedPlayer.name);
+					blockedPlayer.sendBack("You have been blocked by a duke!");
+					blockedPlayer.sendBlocked();
+				}
+			}
+		}
 	}
 }
 
@@ -392,13 +398,10 @@ class Give extends Command{
 			if((input[0] == "/ga" || input[0] == "/giveanon") && !super.checkCost(amount))
 				return;
 			else if(input[0] == "/ga" || input[0] == "/giveanon")
-				player.prestige -= (super.checkCost(amount) - amount);
-
-			player.prestige -= amount;
-			playerToGive.prestige += amount;
+				player.setPrestige(player.prestige - (super.checkCost(amount) - amount));
 			
-			player.sendPrestige();
-			playerToGive.sendPrestige();
+			player.setPrestige(player.prestige - amount);
+			playerToGive.setPrestige(playerToGive.prestige + amount);
 			
 			playerToGive.sendBack(player.name + " has sent you " + amount + " prestige!");
 			playerToGive.notifyWatchers(playerToGive.name+" recieved "+amount+" prestige from "+player.name+".");
@@ -433,7 +436,7 @@ class Assassinate extends Command{
 				player.role.target = null;
 				target.assassins.splice(target.assassins.indexOf(player), 1);
 				if(player.role.title != "Peasant")
-					player.prestige += this.cost;
+					player.setPrestige(player.prestige + this.cost);
 				player.sendBack(target.name + " is no longer your assassination target.");
 				player.notifyWatchers(player.name + " is no longer planning to attack " + target.name + " tonight.");
 				player.setIcons("assassinate","null");
@@ -446,14 +449,13 @@ class Assassinate extends Command{
 				else if(super.checkCost(0) == false)
 					return;
 				else
-					player.prestige -= super.checkCost(0);
+					player.setPrestige(player.prestige - super.checkCost(0));
 				target.assassins.push(player);
 				player.role.target = target; //set new target
 				player.sendBack("Assassination target set to " + target.name);
 				player.notifyWatchers(player.name + " is planning to attack " + target.name +" tonight.");
 				player.setIcons("assassinate",target.name);
 			}
-			player.sendPrestige();
 		}
 
 	}
@@ -482,7 +484,7 @@ class Protect extends Command{
 			if(player.role.protectTarget == target){
 				player.role.protectTarget = null;
 				target.protectors.splice(target.protectors.indexOf(player), 1);
-				player.prestige += this.cost;
+				player.setPrestige(player.prestige + this.cost);
 				player.sendBack("You will no longer protect " + target.name + " tonight.");
 				player.notifyWatchers(player.name + " is no longer protecting " + target.name + " tonight.");
 				player.setIcons("protect","null");
@@ -493,14 +495,13 @@ class Protect extends Command{
 				if(player.role.target != null && player.role.target.protectors.includes(player))
 					player.role.protectTarget.protectors.splice(player.role.protectTarget.protectors.indexOf(player), 1);
 				else
-					player.prestige -= super.checkCost(0);
+					player.setPrestige(player.prestige - super.checkCost(0));
 				target.protectors.push(player);
 				player.role.protectTarget = target;
 				player.sendBack("You will protect "+ target.name + " tonight.");
 				player.notifyWatchers(player.name + " has decided to protect " + target.name + " tonight.");
 				player.setIcons("protect",target.name);
 			}
-			player.sendPrestige();
 		}
 
 	}
@@ -536,14 +537,14 @@ class Execute extends Command{
 			}
 			//order execution
 			if(player.role.executeTarget == null && super.checkCost(0) != false){
-				player.prestige -= super.checkCost(0);
+				player.setPrestige(player.prestige - super.checkCost(0));
 				player.role.executeTarget = target;
 				game.sendAll(player.name + " has ordered " + target.name + " executed tonight!");
 				player.setIcons("execute",target.name);
 			}
 			//take back an execution
 			else if(player.role.executeTarget == target){
-				player.prestige += this.cost;
+				player.setPrestige(player.prestige + this.cost);
 				game.sendAll(player.name + " has rescinded their order to execute " + target.name);
 				player.role.executeTarget = null;
 				player.setIcons("execute","null");
@@ -554,7 +555,6 @@ class Execute extends Command{
 				player.role.executeTarget = target;
 				player.setIcons("execute",target.name);
 			}
-			player.sendPrestige();
 		}
 
 	}
@@ -610,6 +610,27 @@ class Whisper extends Command{
 	}
 }
 
+class WhisperAnon extends Command{
+	constructor(){
+		super(["/wa", "/whisperanon", "/whisperanonymous"], 5, [1], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight", "Peasant"], false, ["/whisperanon <player_name> <message> - Send a private message to another player anonymously.","You can only whisper during the game.","Silly Spectator, private messages are for players!"]);
+	}
+	execute(input, player, game){
+		if(super.execute(input.split(/\s+/).length>2 ? 1 : input.split(/\s+/).length, player, game) == false)
+			return;
+		var inputList = input.split(/\s+/);
+		var toPlayer = super.playerArgument(inputList[1]);
+		if(toPlayer == false)
+			return;
+		if(super.checkCost(0) == false)
+			return;
+		player.setPrestige(player.prestige - super.checkCost(0));
+		
+		toPlayer.sendWhisper((input.substring(input.indexOf(inputList[2],inputList[0].length+inputList[1].length+2))),"anonymous");
+		player.notifyWatchers(player.name + " whispered anonymously to " + toPlayer.name + ".");
+		toPlayer.notifyWatchers(player.name + " whispered anonymously to " + toPlayer.name + ".");
+	}
+}
+
 class Yell extends Command{
 	constructor(){
 		super(["/y", "/yell", "/shout"], 10, [0], ["Day"], ["King", "Lord", "Duke", "Earl", "Knight"], false, ["/yell <message> - Shout something into general chat.","You can only yell during the daytime.","You can try yelling, but they can't hear you!"]);
@@ -621,9 +642,8 @@ class Yell extends Command{
 		if(super.checkCost(0) == false)
 			return;
 
-		player.prestige -= super.checkCost(0);
+		player.setPrestige(player.prestige - super.checkCost(0));
 		game.sendYell((input.substring(input.indexOf(inputList[1],inputList[0].length+1))),player);
-		player.sendPrestige();
 	}
 }
 
@@ -665,4 +685,4 @@ class Help extends Command{
 
 // Blockable Commands : block, watch, execute, block earls and peasants passive abilities
 // Spyable Commands : vote, successor, lookup, block, watch, give, assassinate, protect
-module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige, PlayerList, Whisper, Yell, Help};
+module.exports = {Command, Name, StartGame, Vote, Duke, Successor, Tax, Lookup, Block, Watch, Give, Assassinate, Protect, Execute, Prestige, PlayerList, Whisper, WhisperAnon, Yell, Help};
