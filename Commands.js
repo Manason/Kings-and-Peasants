@@ -282,54 +282,61 @@ class Block extends Command{
 		if(super.execute(input.split(/\s+/).length-1,player, game) == false)
 			return;
 		input = input.split(/\s+/);
-		if(player.blocked){
+		if(player.blocked)
 			player.error("You can't do this while blocked.");
-			return;
-		}
-		if(input.length == 1){
+		else if(input.length == 1){
 			if(player.role.blocking == null)
 				player.sendBack("You aren't blocking anyone yet.");
 			else
 				player.sendBack("You are blocking " + player.role.blocking.name);
-			return;
 		}
-		//already blocking player and player isn't a duke
-		var blockedPlayer = super.playerArgument(input[1]);
-		if(blockedPlayer == false)
-			return;
-		if(player.role.blocking != null && blockedPlayer.role.title != "Duke"){
-			player.error("You are already blocking "+blockedPlayer.name);
-			return;
-		}
-		if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
-			player.error("You can't block a "+blockedPlayer.role.title+"!");
-
-		//undoes the block on the duke you previously wanted to block
-		if(player.role.blocking != null && player.role.blocking.title == "Duke" && player.role.blocking == blockedPlayer){
-			player.role.blocking == null;
-			player.notifyWatchers(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
-			player.setIcons("role","null");
-			return;
-		}
-		player.role.blocking = blockedPlayer;
-		//sets up a duke to be blocked the next day
-		if(blockedPlayer.role.title == "Duke"){
-			player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
-			player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
-			player.setIcons("role",blockedPlayer.name);
-			return;
-		}
-		else if(blockedPlayer.role.title == "Knight")
-			if(blockedPlayer.role.spying != null){
-				blockedPlayer.role.spying.spies.splice(blockedPlayer.role.spying.spies.indexOf(blockedPlayer),1);
-				blockedPlayer.role.spying = null;
+		else{
+			//already blocking player and player isn't a duke
+			var blockedPlayer = super.playerArgument(input[1]);
+			if(blockedPlayer == false)
+				return;
+			else if(player.role.blocking != null && (blockedPlayer.role.title != "Duke" || player.role.blocking.role.title != "Duke"))
+				player.error("You are already blocking "+ player.role.blocking.name);
+			
+			//trying to block King or Lord
+			else if(blockedPlayer.role.title == "King" || blockedPlayer.role.title == "Lord")
+				player.error("You can't block a "+blockedPlayer.role.title+"!");
+			
+			//player is already blocking a duke and wants to unblock them
+			else if(player.role.blocking != null && player.role.blocking.role.title == "Duke" && player.role.blocking == blockedPlayer){
+				player.role.blocking = null;
+				player.notifyWatchers(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
+				player.setIcons("role","null");
+				player.sendBack(player.name+" has decided not to block Duke "+blockedPlayer.name+" tomorrow.");
 			}
-		blockedPlayer.blocked = true;
-		player.sendBack("You are now blocking "+blockedPlayer.name+".");
-		player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
-		player.setIcons("role",blockedPlayer.name);
-		blockedPlayer.sendBack("You have been blocked by a duke!");
-		blockedPlayer.sendBlocked();
+			else{
+				player.role.blocking = blockedPlayer;
+				
+				//sets up a duke to be blocked the next day
+				if(blockedPlayer.role.title == "Duke"){
+					player.sendBack("You are set to block " +blockedPlayer.name+" first thing in the morning!");
+					player.notifyWatchers(player.name+" has decided to block Duke "+blockedPlayer.name+" tomorrow.");
+					player.setIcons("role",blockedPlayer.name);
+				}
+				else{
+					
+					//if knight is being blocked, stop the knight from watching
+					if(blockedPlayer.role.title == "Knight")
+						if(blockedPlayer.role.spying != null){
+							blockedPlayer.role.spying.spies.splice(blockedPlayer.role.spying.spies.indexOf(blockedPlayer),1);
+							blockedPlayer.role.spying = null;
+						}
+					
+					//handle blocking as normal
+					blockedPlayer.blocked = true;
+					player.sendBack("You are now blocking "+blockedPlayer.name+".");
+					player.notifyWatchers(player.name+" is now blocking "+blockedPlayer.name+".");
+					player.setIcons("role",blockedPlayer.name);
+					blockedPlayer.sendBack("You have been blocked by a duke!");
+					blockedPlayer.sendBlocked();
+				}
+			}
+		}
 	}
 }
 
