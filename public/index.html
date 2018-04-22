@@ -200,7 +200,7 @@
 	var input = document.getElementsByClassName("chat-input-box")[0];
 	var gamestate = document.getElementsByClassName("gamestate")[0];
 	var timer = document.getElementsByClassName("timer")[0];
-	var socket = io.connect('http://localhost:8080');
+	var socket = io.connect();
 
 	input.onkeypress = function(e){
 		if(e.keyCode == '13'){
