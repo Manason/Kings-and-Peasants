@@ -116,12 +116,12 @@ class Game{
 	}
 	//sends a Game message to everyone in the game
 	sendAll(message){
-		var obj = {"player":"Game","message":message};
+		var obj = {"player":"Game","role":"game","message":message};
 		this.io.to(this.name).emit('message', obj);
 	}
 	//sends a yell message to everyone in the game
 	sendYell(message,player){
-		var obj = {"player":player.name,"message":message};
+		var obj = {"player":player.name,"role":"yell","message":message};
 		this.io.to(this.name).emit('yell', obj);
 	}
 
@@ -144,7 +144,7 @@ class Game{
 			if(this.playerList[i].role.title == role)
 				this.playerList[i].sendBack(message);
 	}
-	
+
 	sendPlayerList(){
 		//create a package of players to send to client
 		var objPlayerList = [];
@@ -161,7 +161,7 @@ class Game{
 			player.socket.emit('playerlist', objPlayerList);
 		}
 	}
-	
+
 	updateVotes(player){
 		var obj = {"player":player.name, "votes":player.votes}
 		this.io.to(this.name).emit('voteUpdate', obj);
@@ -191,7 +191,7 @@ class Game{
 
 			//chat
 			if(!input.startsWith("/")){
-				var obj = {"player":player.name,"message":input};
+				var obj = {"player":player.name,"role":player.role.title,"message":input};
 				game.io.to(game.name).emit('message', obj); //this is sent to all clients
 			}
 			//commands
