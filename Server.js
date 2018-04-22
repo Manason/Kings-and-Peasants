@@ -10,8 +10,8 @@ var io = require('socket.io')(http);
 const Game = require('./Game.js');
 
 //called on server startup
-http.listen(8080, function(){
-	console.log("server running on port 8080");
+http.listen(process.env.PORT || 8080, function(){
+	console.log("server running on port " + this.address().port);
 });
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/public/index.html');
