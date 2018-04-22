@@ -1,7 +1,10 @@
+var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
+var https = require('http').Server(app);
+var privateKey = fs.readFile
 var io = require('socket.io')(http);
 
 const Game = require('./Game.js');
@@ -10,7 +13,9 @@ const Game = require('./Game.js');
 http.listen(8080, function(){
 	console.log("server running on port 8080");
 });
-
+app.get('/', function(req, res){
+	res.sendFile(__dirname + '/public/index.html');
+});
 app.use(express.static('public')); //serves index.html
 
 function sendAll(message){
