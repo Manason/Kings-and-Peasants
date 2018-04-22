@@ -14,7 +14,7 @@
 <body>
 	<div class="left-sidebar">
 		<div class="playerlist">
-			<!-- <div class="pl-player">
+			<div class="pl-player">
 				<p class="pl-succ">⭐</p>
 				<p class="pl-name pl-king">King User1</p>
 			</div>
@@ -94,83 +94,104 @@
 				<p></p>
 				<p class="pl-button pl-protect" onclick="socket.emit('messageFromClient', {content: '/p User7'});">👼🏻</p>
 				<p class="pl-button pl-give" onclick="socket.emit('messageFromClient', {content: '/g User7 2'});">💸</p>
-			</div> -->
-		</div>
-	</div>
-	<div class="right-sidebar">
-		<div class="state">
-			<div class="gamestate">
-				<p>Lobby</p>
-			</div>
-			<div class="timer">
-				<p>Waiting...</p>
-			</div>
-		</div>
-		<div class="player-module">
-			<p class="pm-icon">👻</p>
-			<p class="pm-name">Spectator</p>
-			<p class="pm-prestige">Prestige: 0</p>
-			<p class="pm-info">
-				Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.
-			</p>
-		</div>
-		<div class="kings-module hidden">
-			<p class="km-header">Lookup</p>
-			<div class="km-buttons km-lookup">
-				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</p>
-				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</p>
-				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</p>
-				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</p>
-				<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</p>
-			</div>
-			<p class="km-header">Tax</p>
-			<div class="km-buttons">
-				<p class="km-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</p>
-				<p class="selected-icon km-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</p>
-				<p class="km-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</p>
-				<p class="km-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</p>
-				<p class="km-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</p>
 			</div>
 		</div>
 	</div>
+	<div class="main-area">
+		<div class="chat">
+			<div class="chat-header">
+			</div>
+			<div class="chat-window">
+				<div class="chat-entry">
+					<p class="chat-name pl-king">[King Manason]</p>
+					<p class="chat-message pl-king">This is an example message</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name pl-duke">[Duke Manason]</p>
+					<p class="chat-message">This is an example message</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name pl-knight">[Knight Manason]</p>
+					<p class="chat-message">This is an example message</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name pl-peasant">[Peasant Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name pl-earl">[Earl Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name pl-lord">[Lord Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name">[Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name">[Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name">[Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name">[Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name">[Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+				<div class="chat-entry">
+					<p class="chat-name">[Manason]</p>
+					<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+				</div>
+			</div>
 
-	<div class="chat">
-		<div class="chat-header">
+			<div class="chat-input">
+				<input class="chat-input-box" type="text"></input>
+				<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
+			</div>
 		</div>
-		<div class="chat-window">
-			<!-- <div class="chat-entry">
-				<p class="chat-name pl-king">King Manason</p>
-				<p class="chat-message pl-king">This is an example message</p>
+		<div class="right-sidebar">
+			<div class="state">
+				<div class="gamestate">
+					<p>Lobby</p>
+				</div>
+				<div class="timer">
+					<p>Waiting...</p>
+				</div>
 			</div>
-			<div class="chat-entry">
-				<p class="chat-name pl-duke">Duke Manason</p>
-				<p class="chat-message">This is an example message</p>
+			<div class="player-module">
+				<p class="pm-icon">👻</p>
+				<p class="pm-name">Spectator</p>
+				<p class="pm-prestige">Prestige: 0</p>
+				<p class="pm-info">
+					Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.
+				</p>
 			</div>
-			<div class="chat-entry">
-				<p class="chat-name pl-knight">Knight Manason</p>
-				<p class="chat-message">This is an example message</p>
+			<div class="kings-module hidden">
+				<p class="km-header">Lookup</p>
+				<div class="km-buttons km-lookup">
+					<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Lord'});">💎</p>
+					<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Duke'});">🏰</p>
+					<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Earl'});">📜</p>
+					<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Knight'});">🛡️</p>
+					<p class="km-button" onclick="socket.emit('messageFromClient', {content: '/lookup Peasant'});">⚒️</p>
+				</div>
+				<p class="km-header">Tax</p>
+				<div class="km-buttons">
+					<p class="km-button km-tax km-lord" onclick="socket.emit('messageFromClient', {content: '/tax Lord'});">💎</p>
+					<p class="selected-icon km-button km-tax km-duke" onclick="socket.emit('messageFromClient', {content: '/tax Duke'});">🏰</p>
+					<p class="km-button km-tax km-earl" onclick="socket.emit('messageFromClient', {content: '/tax Earl'});">📜</p>
+					<p class="km-button km-tax km-knight" onclick="socket.emit('messageFromClient', {content: '/tax Knight'});">🛡️</p>
+					<p class="km-button km-tax km-peasant" onclick="socket.emit('messageFromClient', {content: '/tax Peasant'});">⚒️</p>
+				</div>
 			</div>
-			<div class="chat-entry">
-				<p class="chat-name pl-peasant">Peasant Manason</p>
-				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
-			</div>
-			<div class="chat-entry">
-				<p class="chat-name pl-earl">Earl Manason</p>
-				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
-			</div>
-			<div class="chat-entry">
-				<p class="chat-name pl-lord">Lord Manason</p>
-				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
-			</div>
-			<div class="chat-entry">
-				<p class="chat-name">Manason</p>
-				<p class="chat-message">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
-			</div> -->
-		</div>
-
-		<div class="chat-input">
-			<input class="chat-input-box" type="text"></input>
-			<input class="chat-input-button" type="submit" value="Send" onclick="enterInput();"></input>
 		</div>
 	</div>
 </body>
@@ -198,11 +219,8 @@
 		var timestamp = new Date().toTimeString().substring(0, 8);
 		$(".chat-window").append(
 		'<div class="chat-entry">' +
-			'<div class="chat-time">'+
-				'<p>'+timestamp+'</p>'+
-			'</div>'+
 			'<div class="chat-name">'+
-				'<p>'+msg.player+'</p>'+
+				'<p>['+msg.player+']</p>'+
 			'</div>'+
 			'<div class="chat-message">'+
 				'<p>'+msg.message+'</p>'+
@@ -214,11 +232,8 @@
 		var timestamp = new Date().toTimeString().substring(0, 8);
 		$(".chat-window").append(
 		'<div class="chat-entry">' +
-			'<div class="chat-time">'+
-				'<p>'+timestamp+'</p>'+
-			'</div>'+
 			'<div class="chat-name">'+
-				'<p>'+msg.player+'</p>'+
+				'<p>['+msg.player+']</p>'+
 			'</div>'+
 			'<div class="chat-message">'+
 				'<p>whispered '+msg.message+'</p>'+
@@ -229,11 +244,8 @@
 		var timestamp = new Date().toTimeString().substring(0, 8);
 		$(".chat-window").append(
 		'<div class="chat-entry">' +
-			'<div class="chat-time">'+
-				'<p>'+timestamp+'</p>'+
-			'</div>'+
 			'<div class="chat-name">'+
-				'<p>'+msg.player+'</p>'+
+				'<p>['+msg.player+']</p>'+
 			'</div>'+
 			'<div class="chat-message">'+
 				'<p>YELLED '+msg.message+'</p>'+
@@ -291,7 +303,7 @@
 				$(".pm-name").css("color: darkred;");
 				$(".pm-info").html("Spectator is the role you have before being assigned a role. Do not worry, you are still in the game, and will receive a role shortly.");
 				break;
-		
+
 		}
 		if(player.role != "King")
 			$(".kings-module").addClass("hidden");
@@ -326,8 +338,7 @@
 				}
 				else if(playerInfo.p_role=="Earl" || playerInfo.p_role=="Knight" || playerInfo.p_role=="Peasant")
 					playerEntry += '<p class="pl-button pl-assassinate" onclick="socket.emit(\'messageFromClient\', {content: \'/a '+playerList[i].name+'\'});">🗡️</p>';
-				else
-					playerEntry += '<p class="pl-button pl-spacer"></p>';
+
 				//Set button for protect
 				playerEntry += '<p class="pl-button pl-protect" onclick="socket.emit(\'messageFromClient\', {content: \'/p '+playerList[i].name+'\'});">👼🏻</p>';
 				//Set button for role action
