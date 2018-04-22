@@ -3,8 +3,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
-var https = require('http').Server(app);
-var privateKey = fs.readFile
 var io = require('socket.io')(http);
 
 const Game = require('./Game.js');
