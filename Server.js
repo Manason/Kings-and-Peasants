@@ -17,7 +17,7 @@ app.get('/', function(req, res){
 app.use(express.static('public')); //serves index.html
 
 function sendAll(message){
-	var obj = {"player":"Server","message":message};
+	var obj = {"player":"Server","role":"game","message":message};
 	io.sockets.emit('message', obj);
 }
 
@@ -27,13 +27,13 @@ var games = [];
 io.on('connection', function(socket){
 
 	var inGame = false;
-	
+
 	//sends a message from server to all players in the lobby
 	function sendToLobby(message){
-		var obj = {"player":"Server","message":message};
+		var obj = {"player":"Server","role":"game","message":message};
 		io.to('lobby').emit('message', obj);
 	}
-	
+
 	var userID = currentID; //used to initially name each user something unique
 	socket.join('lobby');
 	currentID++;
@@ -41,13 +41,13 @@ io.on('connection', function(socket){
 
 	//sends an error message to the user
 	function error(message){
-		var obj = {"player":"Error","message":message};
+		var obj = {"player":"Error","role":"error","message":message};
 		socket.emit('message', obj);
 	}
-	
+
 	//sends a server message to the user
 	function sendBack(message){
-		var obj = {"player":"Server","message":message};
+		var obj = {"player":"Server","role":"game","message":message};
 		socket.emit('message', obj);
 	}
 
@@ -59,7 +59,7 @@ io.on('connection', function(socket){
 		var input = data.content;
 		input = input.trim();
 		if(!input.startsWith("/")){
-			var obj = {"player":"User"+userID,"message":input};
+			var obj = {"player":"User"+userID,"role":"spectator","message":input};
 			io.to('lobby').emit('message', obj);
 		}
 		else{
@@ -70,20 +70,20 @@ io.on('connection', function(socket){
 						return;
 					}
 					var name = input.split(" ")[1];
-					
+
 					//check that game name isn't already taken
 					for(var i = 0; i < games.length; i++)
 						if(games[i].name == name){
 							error("Game name already exists.");
 							return;
 						}
-					
+
 					//check that game is not called lobby
 					if(name == "lobby"){
 						error("Can't name the game that. Try again.");
 						break;
 					}
-				
+
 					//create the game then have host join it
 					games.push(new Game(name, io, [], 10));
 				case "/join":
@@ -98,7 +98,7 @@ io.on('connection', function(socket){
 							games[i].addPlayer("User"+userID, socket);
 							return;
 						}
-					
+
 					error("Game doesn't exist.");
 					break;
 				case "/help":

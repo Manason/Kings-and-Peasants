@@ -72,7 +72,7 @@ class PreGame extends State{
 
 class Day extends State{
 	constructor(dayNumber){
-		super("Day","Day"+dayNumber,20);
+		super("Day","Day "+dayNumber,20);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
@@ -148,7 +148,7 @@ class Night extends State{
 		}
 		var playersToTax = this.game.getPlayersByRole(this.game.roleToTax);
 		var amount = 0;
-		
+
 		for(var i = 0; i < playersToTax.length; i++){
 			var taxPrestige = Math.floor(playersToTax[i].prestige * 0.15);
 			playersToTax[i].setPrestige(playersToTax[i].prestige - taxPrestige);
@@ -158,7 +158,7 @@ class Night extends State{
 		}
 		this.game.getPlayersByRole("King")[0].sendBack("You've gained " + amount + " prestige from tax.");
 		this.game.sendAll("The King has collected tax from the " + this.game.roleToTax + "s.");
-		
+
 		//print player list
 		orderedPlayerList2 = this.game.getPlayersInOrder(6);
 
@@ -205,6 +205,7 @@ class Night extends State{
 			if(currentPlayer.role.title == "Knight"){
 				currentPlayer.role.spying = null;
 			}
+			this.game.roleToTax = null;
 		}
 	}
 

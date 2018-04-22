@@ -16,21 +16,21 @@ class Player{
 	}
 	//sends an error message to the player
 	error(message){
-		var obj = {"player":"Error","message":message};
+		var obj = {"player":"Error","role":"error","message":message};
 		this.socket.emit('message', obj);
 	}
 	//sends a server message to the player
 	sendBack(message){
-		var obj = {"player":"Server","message":message};
+		var obj = {"player":"Game","role":"game","message":message};
 		this.socket.emit('message', obj);
 	}
 	//sends the message to the player
 	sendWhisper(message,player){
 		var obj;
 		if(player != "anonymous")
-			obj = {"player":player.name,"message":message};
+			obj = {"player":player.name,"role":"whisper","message":message};
 		else
-			obj = {"player":"Anonymous","message":message};
+			obj = {"player":"Anonymous","role":"anon","message":message};
 		this.socket.emit('whisper', obj);
 	}
 	sendBlocked(){

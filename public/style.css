@@ -9,8 +9,11 @@
   --knight: #778899;
   --peasant: #AE8484;
   --spectator: #000000;
-  --server:	#32CD32;
+  --game: #32CD32;
   --error: crimson;
+  --whisper: #FF1493;
+  --anon: #CD5C5C;
+  --yell: #FF4500;
 }
 
 /* Left Sidebar */
@@ -73,26 +76,46 @@
 .pl-king {
 	color: var(--king);
 }
-.pl-lord {
+.pl-lord .pl-name,
+.pl-lord .chat-name{
 	color: var(--lord);
 }
-.pl-duke {
+.pl-duke .pl-name,
+.pl-duke .chat-name{
 	color: var(--duke);
 }
-.pl-earl {
+.pl-earl .pl-name{
 	color: var(--earl);
 }
-.pl-knight {
+.pl-earl .chat-name{
+	color: var(--earl);
+}
+.pl-knight .pl-name,
+.pl-knight .chat-name{
 	color: var(--knight);
 }
-.pl-peasant {
+.pl-peasant .pl-name,
+.pl-peasant .chat-name{
 	color: var(--peasant);
 }
-.pl-server {
-	color: var(--server);
+.pl-spectator .pl-name,
+.pl-spectator .chat-name{
+	color: var(--spectator);
 }
-.pl-error {
+.pl-game .chat-name{
+	color: var(--game);
+}
+.pl-error .chat-name{
 	color: var(--error);
+}
+.pl-whisper {
+	color: var(--whisper);
+}
+.pl-anon {
+	color: var(--anon);
+}
+.pl-yell {
+	color: var(--yell);
 }
 
 /* Main Area (Chat and Right Sidebar) */
@@ -106,7 +129,7 @@
 /* Right Sidebar */
 .right-sidebar {
 	flex: 1;
-	min-width: 250px;
+	min-width: 300px;
     z-index: 1;
     overflow-x: hidden;
 	border-left: 1px solid black;
@@ -116,6 +139,8 @@
 
 /* GameState & Timer */
 .state {
+	flex: 1;
+	min-height: 30px;
 	padding: 15px;
 	font: 24px "Trebuchet MS";
 	align-items: center;
@@ -124,19 +149,19 @@
   	justify-content: center;
 	border-bottom: 1px solid black;
 }
-.gamestate{
-	display: inline-flex;
-}
-.gamestate:after{
-	content: "-";
+.st-seperator{
 	padding: 0px 10px;
 }
-.timer{
+.st-gamestate{
+	display: inline-flex;
+}
+.st-timer{
 	display: inline-flex;
 }
 
 /* Player Module */
 .player-module{
+	flex: 1000;
 	padding: 15px;
   	text-align: center;
 }
@@ -160,8 +185,8 @@
 
 /* Kings Module */
 .kings-module{
-	flex-grow: 1;
-	padding: 20px 7px 12px 7px;
+	flex: 1;
+	padding: 20px 7px 15px 7px;
   	text-align: center;
 	border-top: 1px solid black;
 }
@@ -207,6 +232,34 @@
 	padding: 10px;
 	overflow: scroll;
 	overflow-x: hidden;
+	display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.chat-entries{
+	width: 100%;
+	max-width: 600px;
+	font: 16px "Times New Roman";
+}
+.chat-break{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.chat-break-left{
+	height: 0;
+	border-bottom: 3px solid black;
+	flex: 1000;
+}
+.chat-break-text{
+	padding: 0px 10px;
+	flex-shrink: 0;
+	font-weight: bold;
+}
+.chat-break-right{
+	height: 0;
+	border-bottom: 3px solid black;
+	flex: 1000;
 }
 .chat-input{
 	display: flex;
