@@ -4,11 +4,13 @@
   --background: #FFFAF0;
   --king: #660099;
   --lord: #4169E1;
-  --duke: #000000;
+  --duke: #000000; /* CHANGE THIS COLOR (same as spectator) */
   --earl: #556B2F;
   --knight: #778899;
   --peasant: #AE8484;
-  --chatname: crimson;
+  --spectator: #000000;
+  --server:	#32CD32;
+  --error: crimson;
 }
 
 /* Left Sidebar */
@@ -85,6 +87,12 @@
 }
 .pl-peasant {
 	color: var(--peasant);
+}
+.pl-server {
+	color: var(--server);
+}
+.pl-error {
+	color: var(--error);
 }
 
 /* Main Area (Chat and Right Sidebar) */
