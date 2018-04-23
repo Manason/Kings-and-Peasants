@@ -347,7 +347,7 @@
 					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</p>';
 				}
 				//Set button for give
-				playerEntry += '<p class="pl-button pl-give" onclick="socket.emit(\'messageFromClient\', {content: \'/g '+playerList[i].name+' 2\'});">💸</p>';
+				playerEntry += '<p class="pl-button pl-give" onclick="giveModal(\''+playerList[i].name+'\', $(this).parent());"></p>';
 			}
 			playerEntry += '</div>';
 			$(".playerlist").append(playerEntry);
@@ -358,6 +358,19 @@
 
 		}
 	});
+	//creates an html element for the give modal
+	function giveModal(playerName, playerEntry){
+		var modalHTML = '<div class="give-modal">'+
+			'<input class="give-input" type="number">'+
+			'<button type="button" class="give-ok-button" onclick="sendGive(\''+playerName+'\', $(this));">Ok</button>'+
+			'<button type="button" class="give-cancel-button" onclick="$(this).parent().remove();">Cancel</button>'+
+		'</div>';
+		playerEntry.append(modalHTML);
+	}
+	function sendGive(playerName, giveButton){
+		socket.emit('messageFromClient', {content: '/g '+playerName+' '+ giveButton.siblings(".give-input").val()});
+		giveButton.parent().remove();
+	}
 	socket.on('block', function(){
 		$(".pl-role").addClass("disabled-icon");
 		$(".pl-execute").addClass("disabled-icon");
