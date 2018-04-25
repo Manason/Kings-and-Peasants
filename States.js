@@ -141,7 +141,7 @@ class Night extends State{
 		var orderedPlayerList2 = this.game.getPlayersInOrder(6);
 
 		//collect tax
-		if(this.game.roleToTax == "Random"){
+		if(this.game.roleToTax == null || this.game.roleToTax == "Random"){
 			var rolesList = this.game.rolesList.slice(1,6);
 			this.game.shuffle(rolesList);
 			this.game.roleToTax = rolesList[0];
@@ -205,7 +205,7 @@ class Night extends State{
 			if(currentPlayer.role.title == "Knight"){
 				currentPlayer.role.spying = null;
 			}
-			this.game.roleToTax = null;
+			this.game.roleToTax = "Random";
 		}
 	}
 
