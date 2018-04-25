@@ -238,4 +238,17 @@ class EmergencyElection extends State{
 	}
 }
 
-module.exports = {State, GameLobby, Voting, PreGame, Day, Night, EmergencyElection};
+class Scoreboard extends State{
+	constructor(){
+		super("Scoreboard", "Scoreboard", 30);
+	}
+	startTimer(game){
+		super.startTimer(game);
+		this.game.sendScoreboard();
+	}
+	endState(){
+		super.endState();
+	}
+}
+
+module.exports = {State, GameLobby, Voting, PreGame, Day, Night, EmergencyElection, Scoreboard};
