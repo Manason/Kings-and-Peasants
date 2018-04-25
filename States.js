@@ -72,7 +72,7 @@ class PreGame extends State{
 
 class Day extends State{
 	constructor(dayNumber){
-		super("Day","Day "+dayNumber,2);
+		super("Day","Day "+dayNumber,20);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
@@ -133,7 +133,7 @@ class Day extends State{
 
 class Night extends State{
 	constructor(dayNumber){
-		super("Night","Night"+dayNumber,2);
+		super("Night","Night"+dayNumber,5);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){

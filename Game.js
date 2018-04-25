@@ -9,7 +9,7 @@ class Game{
 		this.io = io;
 		this.playerList = playerList;
 		this.state = null;
-		this.numDays = 1;
+		this.numDays = 7;
 		this.numLords = 0;
 		this.maxLords;
 		this.numDukes = 0;
