@@ -9,7 +9,7 @@ class Game{
 		this.io = io;
 		this.playerList = playerList;
 		this.state = null;
-		this.numDays = 7;
+		this.numDays = 1;
 		this.numLords = 0;
 		this.maxLords;
 		this.numDukes = 0;
@@ -164,12 +164,14 @@ class Game{
 	sendScoreboard(){
 		var objPlayerList = [];
 		var players = this.playerList;
-		players.sort(function(a, b){return a.year - b.year});
-		for(var i = 0; i < this.playerList.length; i++){
+		
+		players.sort(function(a, b){return b.prestige - a.prestige});
+		for(var i = 0; i < players.length; i++){
 			var player = players[i];
-			objPlayerList[i] = {"p_name":player.name, "p_role":player.role.title,"p_prestige":player.prestige};
-			player.socket.emit('scoreboard',objPlayerList);
+			objPlayerList[i] = {"name":player.name, "role":player.role.title,"prestige":player.prestige};
 		}
+		for(var i = 0; i < players.length; i++)
+			players[i].socket.emit('scoreboard',objPlayerList);
 	}
 
 	updateVotes(player){

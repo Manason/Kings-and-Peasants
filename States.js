@@ -44,7 +44,7 @@ class GameLobby extends State{
 
 class Voting extends State{
 	constructor(){
-		super("Voting","Voting",5);
+		super("Voting","Voting",2);
 	}
 
 	endState(){
@@ -57,7 +57,7 @@ class Voting extends State{
 
 class PreGame extends State{
 	constructor(){
-		super("PreGame","Pre-Game",5);
+		super("PreGame","Pre-Game",2);
 	}
 
 	endState(){
@@ -72,7 +72,7 @@ class PreGame extends State{
 
 class Day extends State{
 	constructor(dayNumber){
-		super("Day","Day "+dayNumber,20);
+		super("Day","Day "+dayNumber,2);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
@@ -133,7 +133,7 @@ class Day extends State{
 
 class Night extends State{
 	constructor(dayNumber){
-		super("Night","Night"+dayNumber,10);
+		super("Night","Night"+dayNumber,2);
 		this.dayNumber = dayNumber;
 	}
 	startTimer(game){
@@ -211,8 +211,13 @@ class Night extends State{
 
 	endState(){
 		super.endState();
-		if(this.dayNumber == this.game.numDays)
+		if(this.dayNumber == this.game.numDays){
+			this.game.state = new Scoreboard();
+			this.game.state.startTimer(this.game);
 			console.log("END THE GAME!");
+			return;
+		}
+			
 
 		this.game.state = new Day(this.dayNumber+1);
 		this.game.state.startTimer(this.game);
@@ -248,6 +253,7 @@ class Scoreboard extends State{
 	}
 	endState(){
 		super.endState();
+		//TODO: handle sending the players somewhere after the game is over
 	}
 }
 
