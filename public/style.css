@@ -77,7 +77,9 @@
 .disabled-icon {
 	opacity: 0.25;
 }
-.pl-king {
+.pl-king .pl-name,
+.pl-king .chat-name,
+.pl-king .chat-message{
 	color: var(--king);
 }
 .pl-lord .pl-name,
@@ -295,6 +297,42 @@
 .chat-message{
 	display: inline;
 }
+.scoreboard-background{
+	position:absolute;
+	width:100%;
+	height:100%;
+	background-color: var(--background);
+	display:flex;
+	align-items:center;
+	flex-direction: column;
+	overflow: scroll;
+	overflow-x:hidden;
+	z-index:2;
+}
+.sb-title{
+	text-align:center;
+	font: 66px "Trebutchet MS";
+}
+.scoreboard{
+	width:30%;
+	/*border: 2px solid black;*/
+	display:flex;
+	/*background-color: var(--shadow);*/
+	flex-direction: column;
+	align-items:stretch;
+	padding-bottom:50px;
+}
+.sb-player{
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
+	align-items:center;
+	align-content:stretch;
+	font: 22px "Trebuchet MS";
+	padding: 10px;
+	
+}
+
 
 /* Scrollbar & Other */
 .hidden{

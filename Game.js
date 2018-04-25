@@ -161,6 +161,18 @@ class Game{
 			player.socket.emit('playerlist', objPlayerList);
 		}
 	}
+	sendScoreboard(){
+		var objPlayerList = [];
+		var players = this.playerList;
+		
+		players.sort(function(a, b){return b.prestige - a.prestige});
+		for(var i = 0; i < players.length; i++){
+			var player = players[i];
+			objPlayerList[i] = {"name":player.name, "role":player.role.title,"prestige":player.prestige};
+		}
+		for(var i = 0; i < players.length; i++)
+			players[i].socket.emit('scoreboard',objPlayerList);
+	}
 
 	updateVotes(player){
 		var obj = {"player":player.name, "votes":player.votes}
