@@ -347,7 +347,7 @@
 					playerEntry += '<p class="pl-button pl-role" onclick="socket.emit(\'messageFromClient\', {content: \'/watch '+playerList[i].name+'\'});">✨</p>';
 				}
 				//Set button for give
-				playerEntry += '<p class="pl-button pl-give" onclick="giveModal(\''+playerList[i].name+'\', $(this).parent());"></p>';
+				playerEntry += '<p class="pl-button pl-give" onclick="giveModal(\''+playerList[i].name+'\', $(this).parent());">💸</p>';
 			}
 			playerEntry += '</div>';
 			$(".playerlist").append(playerEntry);
