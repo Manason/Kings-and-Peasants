@@ -401,13 +401,13 @@
 			}
 		}
 	});
-	
+
 	socket.on('scoreboard', function(playerList){
 		for(var i = 0; i < playerList.length; i++){
 			$(".scoreboard").append('<div class="sb-player pl-'+playerList[i].role.toLowerCase()+'"><p class="sb-name chat-name">'+playerList[i].role+ ' '+playerList[i].name+'</p><p class="sb-prestige">'+playerList[i].prestige+'</p></div>');
 		}
 		$(".scoreboard-background").removeClass("hidden");
-	});		
+	});
 	function randomTesting(){
 		//var cmds1 = ["/start","/start idk","/vote","/vote User2","/duke User2","/sc User2","/sc","/tax Spectator","/tax Lords","/tax Duke","/tax earl","/tax King","/lookup User3","/lookup","/lookup Peasant","/lookup King","fuck these command muthafuckin things","/as;dlfkj;ljw4;fowie","/block User3","/block User1","/block","/Watch","/give User3 2"];
 		//var cmds2 = ["/ga User3 3","/a","/a User3","/a User2 User1","/assassinate     fuckthis","/protect and serve","/protect User2","/protect asdfjlwk","/protect","/execute","/e User3","/e User3","/e User3","/e User3","/e User3","/prestige","/prestige User2","/list","/playerlist King","/whisper User2 a fucken message thats right bitch", "/whisper","/whisper User1","/yell fucktHIS SHIT"];

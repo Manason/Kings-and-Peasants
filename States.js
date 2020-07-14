@@ -217,7 +217,7 @@ class Night extends State{
 			console.log("END THE GAME!");
 			return;
 		}
-			
+
 
 		this.game.state = new Day(this.dayNumber+1);
 		this.game.state.startTimer(this.game);
